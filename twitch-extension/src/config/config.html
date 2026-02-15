@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لوحة التحكم - فوازير روز</title>
+  <script src="https://d.ext-twitch.tv/extensions/latest.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #2d1b4e 100%);
+      color: #fff;
+      min-height: 100vh;
+      direction: rtl;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+      background: linear-gradient(135deg, rgba(0, 217, 255, 0.1) 0%, rgba(255, 0, 110, 0.1) 100%);
+      padding: 20px;
+      border-radius: 12px;
+      border: 2px solid #00D9FF;
+      box-shadow: 0 0 20px rgba(0, 217, 255, 0.3);
+    }
+
+    .header h1 {
+      font-size: 24px;
+      color: #00D9FF;
+      margin-bottom: 8px;
+    }
+
+    .header p {
+      color: rgba(0, 217, 255, 0.7);
+      font-size: 14px;
+    }
+
+    .control-section {
+      background: rgba(0, 217, 255, 0.1);
+      border: 1px solid rgba(0, 217, 255, 0.5);
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .control-section h2 {
+      color: #00D9FF;
+      font-size: 18px;
+      margin-bottom: 15px;
+      border-bottom: 2px solid #FF006E;
+      padding-bottom: 10px;
+    }
+
+    .setting {
+      margin-bottom: 15px;
+    }
+
+    .setting label {
+      display: block;
+      color: #00D9FF;
+      font-size: 14px;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+
+    .setting input[type="text"],
+    .setting input[type="number"],
+    .setting select {
+      width: 100%;
+      padding: 10px;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(0, 217, 255, 0.5);
+      border-radius: 6px;
+      color: #00D9FF;
+      font-size: 14px;
+    }
+
+    .setting input[type="text"]:focus,
+    .setting input[type="number"]:focus,
+    .setting select:focus {
+      outline: none;
+      border-color: #00D9FF;
+      box-shadow: 0 0 10px rgba(0, 217, 255, 0.3);
+    }
+
+    .button-group {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .button-group button {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 14px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(to right, #00D9FF, #00A8CC);
+      color: #000;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 20px rgba(0, 217, 255, 0.5);
+    }
+
+    .btn-danger {
+      background: linear-gradient(to right, #FF006E, #CC0055);
+      color: #fff;
+    }
+
+    .btn-danger:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 20px rgba(255, 0, 110, 0.5);
+    }
+
+    .players-stats {
+      background: rgba(0, 217, 255, 0.1);
+      border: 1px solid rgba(0, 217, 255, 0.5);
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 20px;
+    }
+
+    .stat-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 4px;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+
+    .stat-label {
+      color: #00D9FF;
+      font-weight: bold;
+    }
+
+    .stat-value {
+      color: #FF006E;
+      font-weight: bold;
+    }
+
+    .info-message {
+      background: rgba(0, 255, 136, 0.2);
+      border: 1px solid #00FF88;
+      color: #00FF88;
+      padding: 12px;
+      border-radius: 6px;
+      margin-bottom: 15px;
+      font-size: 13px;
+    }
+
+    .warning-message {
+      background: rgba(255, 193, 7, 0.2);
+      border: 1px solid #FFC107;
+      color: #FFE082;
+      padding: 12px;
+      border-radius: 6px;
+      margin-bottom: 15px;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🎮 لوحة التحكم - فوازير روز</h1>
+      <p>إدارة اللعبة والمشاهدين</p>
+    </div>
+
+    <div id="messageDiv"></div>
+
+    <div class="control-section">
+      <h2>📊 إحصائيات اللعبة</h2>
+      <div class="players-stats">
+        <div class="stat-item">
+          <span class="stat-label">👥 عدد اللاعبين</span>
+          <span class="stat-value" id="playerCount">0</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">🎮 اللعبة الحالية</span>
+          <span class="stat-value" id="currentGame">لا توجد</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">⏱️ الجولة</span>
+          <span class="stat-value" id="currentRound">-</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="control-section">
+      <h2>⚙️ إعدادات اللعبة</h2>
+      
+      <div class="setting">
+        <label>اختر اللعبة:</label>
+        <select id="gameSelect" onchange="onGameChange()">
+          <option value="">-- اختر لعبة --</option>
+          <option value="questions">أسئلة</option>
+          <option value="roulette">روليت</option>
+          <option value="fruits-war">حرب الفواكة</option>
+          <option value="chairs">جولة كراسي</option>
+        </select>
+      </div>
+
+      <div class="setting">
+        <label>حد أقصى للاعبين:</label>
+        <input type="number" id="maxPlayers" value="20" min="2" max="100">
+      </div>
+
+      <div class="setting">
+        <label>مفتاح الكود (لإضافة لاعبين):</label>
+        <input type="text" id="joinCode" value="join" placeholder="كلمة المفتاح">
+      </div>
+
+      <div class="button-group">
+        <button class="btn-primary" onclick="startGame()">🎮 بدء اللعبة</button>
+        <button class="btn-danger" onclick="endGame()">⏹️ إنهاء اللعبة</button>
+      </div>
+    </div>
+
+    <div class="control-section">
+      <h2>👥 إدارة اللاعبين</h2>
+      
+      <div id="playersList" style="max-height: 300px; overflow-y: auto;">
+        <div style="color: #666; text-align: center; padding: 20px;">
+          لا يوجد لاعبون حالياً
+        </div>
+      </div>
+
+      <div class="button-group" style="margin-top: 15px;">
+        <button class="btn-danger" onclick="clearAllPlayers()">🗑️ حذف الجميع</button>
+      </div>
+    </div>
+
+    <div class="info-message">
+      💡 للمشاهدين: اكتبوا "join" في الشات للانضمام للعبة!
+    </div>
+  </div>
+
+  <script>
+    let channelId = '';
+    let gameState = {
+      currentGame: null,
+      players: [],
+      isActive: false,
+      joinCode: 'join'
+    };
+
+    // Initialize Twitch Extension
+    window.Twitch.ext.onAuthorized((auth) => {
+      channelId = auth.channelId;
+      console.log('Broadcaster connected:', channelId);
+      loadSettings();
+    });
+
+    function onGameChange() {
+      const gameSelect = document.getElementById('gameSelect').value;
+      gameState.currentGame = gameSelect;
+      updateStats();
+    }
+
+    function startGame() {
+      const gameSelect = document.getElementById('gameSelect').value;
+      if (!gameSelect) {
+        showMessage('الرجاء اختيار لعبة أولاً', 'warning');
+        return;
+      }
+      
+      gameState.isActive = true;
+      gameState.currentGame = gameSelect;
+      showMessage(`✅ تم بدء لعبة: ${getGameName(gameSelect)}`, 'info');
+      
+      // إرسال إشعار للمشاهدين
+      window.Twitch.ext.rig.log(`Game started: ${gameSelect}`);
+    }
+
+    function endGame() {
+      gameState.isActive = false;
+      showMessage('⏹️ تم إنهاء اللعبة', 'warning');
+      document.getElementById('currentGame').textContent = 'لا توجد';
+      document.getElementById('currentRound').textContent = '-';
+    }
+
+    function getGameName(gameId) {
+      const games = {
+        'questions': 'أسئلة',
+        'roulette': 'روليت',
+        'fruits-war': 'حرب الفواكة',
+        'chairs': 'جولة كراسي'
+      };
+      return games[gameId] || gameId;
+    }
+
+    function clearAllPlayers() {
+      if (confirm('هل تريد حذف جميع اللاعبين؟')) {
+        gameState.players = [];
+        updatePlayersList();
+        showMessage('✅ تم حذف جميع اللاعبين', 'info');
+      }
+    }
+
+    function updateStats() {
+      document.getElementById('playerCount').textContent = gameState.players.length;
+      document.getElementById('currentGame').textContent = gameState.currentGame 
+        ? getGameName(gameState.currentGame) 
+        : 'لا توجد';
+    }
+
+    function updatePlayersList() {
+      const playersList = document.getElementById('playersList');
+      
+      if (gameState.players.length === 0) {
+        playersList.innerHTML = '<div style="color: #666; text-align: center; padding: 20px;">لا يوجد لاعبون حالياً</div>';
+        return;
+      }
+
+      playersList.innerHTML = gameState.players.map(player => `
+        <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0, 217, 255, 0.1); padding: 10px; border-radius: 4px; margin-bottom: 8px; font-size: 13px;">
+          <span style="color: #00D9FF; font-weight: bold;">👤 ${player.name || 'لاعب'}</span>
+          <div style="display: flex; gap: 5px;">
+            <span style="color: #FF006E;">💯 ${player.score || 0}</span>
+            <button onclick="removePlayer('${player.id}')" style="background: rgba(255, 0, 110, 0.3); border: none; color: #FF006E; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 11px;">حذف</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function removePlayer(playerId) {
+      gameState.players = gameState.players.filter(p => p.id !== playerId);
+      updatePlayersList();
+      updateStats();
+    }
+
+    function showMessage(message, type) {
+      const messageDiv = document.getElementById('messageDiv');
+      const className = type === 'info' ? 'info-message' : 'warning-message';
+      messageDiv.innerHTML = `<div class="${className}">${message}</div>`;
+      setTimeout(() => {
+        messageDiv.innerHTML = '';
+      }, 3000);
+    }
+
+    function loadSettings() {
+      document.getElementById('joinCode').value = gameState.joinCode;
+    }
+
+    // حفظ الإعدادات
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('joinCode').addEventListener('change', () => {
+        gameState.joinCode = document.getElementById('joinCode').value || 'join';
+      });
+
+      document.getElementById('maxPlayers').addEventListener('change', () => {
+        const maxPlayers = parseInt(document.getElementById('maxPlayers').value);
+        if (maxPlayers > 0) {
+          window.Twitch.ext.rig.log(`Max players set to: ${maxPlayers}`);
+        }
+      });
+
+      // تحديث الإحصائيات كل 5 ثواني
+      setInterval(updateStats, 5000);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      @keyframes spinGlobe {
+        0% { transform: rotateY(0deg); }
+        100% { transform: rotateY(360deg); }
+      }
+      @keyframes rotateLetter {
+        0%, 100% { transform: rotateY(0deg); }
+        50% { transform: rotateY(180deg); }
+      }
+      @keyframes float {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-8px); }
+      }
+      .globe { animation: spinGlobe 6s linear infinite; transform-origin: center; }
+      .letter1 { animation: rotateLetter 2s ease-in-out infinite; }
+      .letter2 { animation: rotateLetter 2s ease-in-out infinite 0.4s; }
+      .letter3 { animation: rotateLetter 2s ease-in-out infinite 0.8s; }
+      .pulse { animation: float 2s ease-in-out infinite; }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect width="400" height="300" fill="#0a0e27" />
+
+  <!-- Globe -->
+  <g class="globe">
+    <circle cx="200" cy="120" r="50" fill="none" stroke="#00D9FF" stroke-width="2" opacity="0.4" />
+    <circle cx="200" cy="120" r="48" fill="none" stroke="#FF006E" stroke-width="1" opacity="0.3" />
+    <path d="M 200 70 Q 240 120 200 170 Q 160 120 200 70" fill="none" stroke="#00D9FF" stroke-width="1.5" opacity="0.5" />
+    <text x="200" y="130" font-size="36" font-weight="bold" text-anchor="middle" fill="#00D9FF" opacity="0.8">🌍</text>
+  </g>
+
+  <!-- City Markers -->
+  <g class="pulse">
+    <circle cx="150" cy="100" r="4" fill="#FF006E" opacity="0.7" />
+    <circle cx="150" cy="100" r="8" fill="none" stroke="#FF006E" stroke-width="2" opacity="0.3" />
+  </g>
+  <g class="pulse" style="animation-delay: 0.5s">
+    <circle cx="250" cy="110" r="4" fill="#A855F7" opacity="0.7" />
+    <circle cx="250" cy="110" r="8" fill="none" stroke="#A855F7" stroke-width="2" opacity="0.3" />
+  </g>
+  <g class="pulse" style="animation-delay: 1s">
+    <circle cx="200" cy="160" r="4" fill="#00D9FF" opacity="0.7" />
+    <circle cx="200" cy="160" r="8" fill="none" stroke="#00D9FF" stroke-width="2" opacity="0.3" />
+  </g>
+
+  <!-- Letters spinning -->
+  <g class="letter1" transform="translate(100, 230)">
+    <rect x="-15" y="-15" width="30" height="30" fill="#FF006E" opacity="0.8" rx="4" />
+    <text x="0" y="8" font-size="16" font-weight="bold" text-anchor="middle" fill="#FFF">A</text>
+  </g>
+
+  <g class="letter2" transform="translate(200, 230)">
+    <rect x="-15" y="-15" width="30" height="30" fill="#00D9FF" opacity="0.8" rx="4" />
+    <text x="0" y="8" font-size="16" font-weight="bold" text-anchor="middle" fill="#0a0e27">B</text>
+  </g>
+
+  <g class="letter3" transform="translate(300, 230)">
+    <rect x="-15" y="-15" width="30" height="30" fill="#A855F7" opacity="0.8" rx="4" />
+    <text x="0" y="8" font-size="16" font-weight="bold" text-anchor="middle" fill="#FFF">C</text>
+  </g>
+
+  <!-- Title -->
+  <text x="200" y="30" font-size="18" font-weight="bold" text-anchor="middle" fill="#00D9FF">عواصم الدول</text>
+</svg>

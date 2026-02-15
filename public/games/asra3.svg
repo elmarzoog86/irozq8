@@ -1,0 +1,87 @@
+<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      @keyframes pulse {
+        0%, 100% { r: 8; opacity: 1; }
+        50% { r: 12; opacity: 0.5; }
+      }
+      @keyframes speedFlash {
+        0%, 100% { opacity: 0.3; }
+        50% { opacity: 1; }
+      }
+      @keyframes rotate {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+      @keyframes zigzag {
+        0% { transform: translateX(0px); }
+        25% { transform: translateX(8px); }
+        50% { transform: translateX(0px); }
+        75% { transform: translateX(-8px); }
+        100% { transform: translateX(0px); }
+      }
+      .pulse-circle { animation: pulse 1.5s ease-in-out infinite; }
+      .flash { animation: speedFlash 0.8s ease-in-out infinite; }
+      .rotating { animation: rotate 2s linear infinite; transform-origin: center; }
+      .zigzag-motion { animation: zigzag 0.6s ease-in-out infinite; }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect width="400" height="300" fill="#0a0e27" />
+
+  <!-- Speed lines background -->
+  <line x1="0" y1="80" x2="80" y2="80" stroke="#00D9FF" stroke-width="2" opacity="0.2" />
+  <line x1="0" y1="100" x2="60" y2="100" stroke="#FF006E" stroke-width="2" opacity="0.2" />
+  <line x1="320" y1="150" x2="400" y2="150" stroke="#A855F7" stroke-width="2" opacity="0.2" />
+  <line x1="320" y1="170" x2="400" y2="170" stroke="#00D9FF" stroke-width="2" opacity="0.2" />
+
+  <!-- Speed indicator -->
+  <circle cx="200" cy="100" r="40" fill="none" stroke="#FF006E" stroke-width="3" opacity="0.4" />
+  <circle cx="200" cy="100" r="50" fill="none" stroke="#00D9FF" stroke-width="2" opacity="0.2" />
+
+  <!-- Speed gauge needle -->
+  <g class="rotating">
+    <line x1="200" y1="100" x2="200" y2="55" stroke="#FF006E" stroke-width="3" />
+    <circle cx="200" cy="100" r="5" fill="#FF006E" />
+  </g>
+
+  <!-- Three racing characters -->
+  <!-- Character 1 -->
+  <g class="zigzag-motion" transform="translate(80, 180)">
+    <circle cx="0" cy="-15" r="10" fill="#00D9FF" />
+    <rect x="-12" y="-5" width="24" height="15" fill="#00D9FF" opacity="0.7" rx="3" />
+    <text x="0" y="8" font-size="20" text-anchor="middle" fill="#FFF">🏃</text>
+  </g>
+
+  <!-- Character 2 -->
+  <g class="zigzag-motion" style="animation-delay: 0.2s" transform="translate(200, 190)">
+    <circle cx="0" cy="-15" r="10" fill="#FF006E" />
+    <rect x="-12" y="-5" width="24" height="15" fill="#FF006E" opacity="0.7" rx="3" />
+    <text x="0" y="8" font-size="20" text-anchor="middle" fill="#FFF">🏃</text>
+  </g>
+
+  <!-- Character 3 -->
+  <g class="zigzag-motion" style="animation-delay: 0.4s" transform="translate(320, 185)">
+    <circle cx="0" cy="-15" r="10" fill="#A855F7" />
+    <rect x="-12" y="-5" width="24" height="15" fill="#A855F7" opacity="0.7" rx="3" />
+    <text x="0" y="8" font-size="20" text-anchor="middle" fill="#FFF">🏃</text>
+  </g>
+
+  <!-- Finish line -->
+  <g>
+    <rect x="180" y="250" width="40" height="30" fill="#FF006E" />
+    <rect x="190" y="250" width="20" height="30" fill="#FFF" opacity="0.5" />
+  </g>
+
+  <!-- Pulsing star -->
+  <g class="pulse-circle" transform="translate(70, 50)">
+    <circle cx="0" cy="0" r="8" fill="#FF006E" />
+  </g>
+  <g class="pulse-circle" style="animation-delay: 0.3s" transform="translate(330, 40)">
+    <circle cx="0" cy="0" r="8" fill="#00D9FF" />
+  </g>
+
+  <!-- Title -->
+  <text x="200" y="30" font-size="18" font-weight="bold" text-anchor="middle" fill="#00D9FF">جولة أسرع</text>
+</svg>

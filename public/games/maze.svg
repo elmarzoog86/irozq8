@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+  <defs>
+    <style>
+      @keyframes move {
+        0%, 100% { transform: translate(0, 0); }
+        25% { transform: translate(20px, 0); }
+        50% { transform: translate(20px, 20px); }
+        75% { transform: translate(0, 20px); }
+      }
+      @keyframes glow {
+        0%, 100% { filter: drop-shadow(0 0 5px rgba(0, 217, 255, 0.5)); }
+        50% { filter: drop-shadow(0 0 15px rgba(255, 0, 110, 0.8)); }
+      }
+      .ball { animation: move 3s ease-in-out infinite; }
+      .trophy { animation: glow 2s ease-in-out infinite; }
+    </style>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#6D28D9;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#EC4899;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="400" height="300" fill="url(#bgGrad)"/>
+  
+  <!-- Maze walls -->
+  <g stroke="#00D9FF" stroke-width="3" fill="none" opacity="0.7">
+    <!-- Top wall -->
+    <line x1="50" y1="50" x2="350" y2="50"/>
+    <!-- Right wall -->
+    <line x1="350" y1="50" x2="350" y2="250"/>
+    <!-- Bottom wall -->
+    <line x1="350" y1="250" x2="50" y2="250"/>
+    <!-- Left wall -->
+    <line x1="50" y1="250" x2="50" y2="50"/>
+    
+    <!-- Inner maze lines -->
+    <line x1="100" y1="50" x2="100" y2="130"/>
+    <line x1="150" y1="130" x2="150" y2="50"/>
+    <line x1="200" y1="90" x2="200" y2="170"/>
+    <line x1="250" y1="170" x2="250" y2="90"/>
+    <line x1="100" y1="180" x2="200" y2="180"/>
+    <line x1="250" y1="140" x2="350" y2="140"/>
+  </g>
+  
+  <!-- Moving ball -->
+  <circle cx="50" cy="50" r="8" fill="#FF006E" class="ball"/>
+  
+  <!-- Trophy -->
+  <g transform="translate(320, 230)" class="trophy">
+    <!-- Cup -->
+    <path d="M -5,-10 L -8,-5 L -8,5 L 8,5 L 8,-5 L 5,-10" stroke="#00D9FF" stroke-width="2" fill="none"/>
+    <!-- Handle -->
+    <path d="M 8,-2 Q 15,0 15,5" stroke="#00D9FF" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <!-- Base -->
+    <line x1="-8" y1="5" x2="8" y2="5" stroke="#00D9FF" stroke-width="2"/>
+    <line x1="-10" y1="8" x2="10" y2="8" stroke="#00D9FF" stroke-width="1" opacity="0.6"/>
+  </g>
+  
+  <!-- Path indicator -->
+  <circle cx="150" cy="100" r="3" fill="#A855F7" opacity="0.5"/>
+  <circle cx="200" cy="140" r="3" fill="#A855F7" opacity="0.5"/>
+  <circle cx="250" cy="180" r="3" fill="#A855F7" opacity="0.5"/>
+</svg>

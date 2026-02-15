@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+  <defs>
+    <style>
+      @keyframes fall {
+        0% { transform: translateY(-50px); opacity: 0; }
+        10% { opacity: 1; }
+        90% { opacity: 1; }
+        100% { transform: translateY(200px); opacity: 0; }
+      }
+      @keyframes bounce {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+      }
+      .fruit1 { animation: fall 3s ease-in infinite; }
+      .fruit2 { animation: fall 3.5s ease-in infinite; animation-delay: 0.5s; }
+      .fruit3 { animation: fall 3s ease-in infinite; animation-delay: 1s; }
+      .banana { animation: bounce 2s ease-in-out infinite; }
+    </style>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#6D28D9;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#EC4899;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="400" height="300" fill="url(#bgGrad)"/>
+  
+  <!-- Falling Fruits -->
+  <!-- Fruit 1 - Strawberry -->
+  <g transform="translate(100, 100)" class="fruit1">
+    <circle cx="0" cy="0" r="12" fill="#FF006E"/>
+    <circle cx="-4" cy="-8" r="3" fill="#FF006E"/>
+    <circle cx="4" cy="-8" r="3" fill="#FF006E"/>
+  </g>
+  
+  <!-- Fruit 2 - Apple -->
+  <g transform="translate(200, 80)" class="fruit2">
+    <circle cx="0" cy="0" r="14" fill="#FF1744"/>
+    <circle cx="0" cy="-14" r="3" fill="#90EE90"/>
+  </g>
+  
+  <!-- Fruit 3 - Banana -->
+  <g transform="translate(300, 120)" class="fruit3">
+    <path d="M -10,5 Q 0,0 10,5" stroke="#FFD700" stroke-width="8" fill="none" stroke-linecap="round"/>
+  </g>
+  
+  <!-- Bottom Area - Game Zone -->
+  <g>
+    <!-- Zone background -->
+    <rect x="50" y="220" width="300" height="60" fill="rgba(0, 217, 255, 0.1)" stroke="#00D9FF" stroke-width="2" stroke-dasharray="5,5"/>
+    
+    <!-- Zone label -->
+    <text x="200" y="255" text-anchor="middle" font-size="18" fill="#00D9FF" font-weight="bold">منطقة اللعب</text>
+  </g>
+  
+  <!-- Banana animation at bottom -->
+  <g transform="translate(200, 250)" class="banana">
+    <circle cx="0" cy="0" r="8" fill="#FFD700"/>
+  </g>
+  
+  <!-- Score indicators -->
+  <circle cx="380" cy="30" r="15" fill="none" stroke="#FF006E" stroke-width="2"/>
+  <text x="380" y="37" text-anchor="middle" font-size="16" fill="#FF006E" font-weight="bold">×3</text>
+</svg>

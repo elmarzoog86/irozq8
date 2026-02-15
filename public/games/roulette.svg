@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+  <defs>
+    <style>
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+      @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.6; }
+      }
+      .roulette { animation: spin 8s linear infinite; }
+      .center { animation: pulse 1.5s ease-in-out infinite; }
+    </style>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#6D28D9;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#EC4899;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="400" height="300" fill="url(#bgGrad)"/>
+  
+  <!-- Roulette Wheel -->
+  <g transform="translate(150, 150)" class="roulette">
+    <!-- Cyan section -->
+    <path d="M 0,0 L 0,-80 A 80,80 0 0,1 56.57,-56.57 Z" fill="#00D9FF" opacity="0.8"/>
+    <!-- Pink section -->
+    <path d="M 0,0 L 56.57,-56.57 A 80,80 0 0,1 80,0 Z" fill="#FF006E" opacity="0.8"/>
+    <!-- Purple section -->
+    <path d="M 0,0 L 80,0 A 80,80 0 0,1 56.57,56.57 Z" fill="#A855F7" opacity="0.8"/>
+    <!-- Blue section -->
+    <path d="M 0,0 L 56.57,56.57 A 80,80 0 0,1 0,80 Z" fill="#00D9FF" opacity="0.6"/>
+    <!-- Pink section -->
+    <path d="M 0,0 L 0,80 A 80,80 0 0,1 -56.57,56.57 Z" fill="#FF006E" opacity="0.6"/>
+    <!-- Purple section -->
+    <path d="M 0,0 L -56.57,56.57 A 80,80 0 0,1 -80,0 Z" fill="#A855F7" opacity="0.6"/>
+    <!-- Cyan section -->
+    <path d="M 0,0 L -80,0 A 80,80 0 0,1 -56.57,-56.57 Z" fill="#00D9FF" opacity="0.4"/>
+    <!-- Blue section -->
+    <path d="M 0,0 L -56.57,-56.57 A 80,80 0 0,1 0,-80 Z" fill="#00D9FF" opacity="0.7"/>
+    
+    <!-- Outer circle -->
+    <circle cx="0" cy="0" r="80" fill="none" stroke="#FFFFFF" stroke-width="2" opacity="0.5"/>
+  </g>
+  
+  <!-- Center Circle -->
+  <circle cx="150" cy="150" r="12" fill="#00D9FF" class="center"/>
+  <circle cx="150" cy="150" r="8" fill="#FF006E"/>
+  
+  <!-- Pointer Arrow -->
+  <polygon points="150,80 145,100 155,100" fill="#00D9FF" opacity="0.8"/>
+</svg>

@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>فوازير روز - Twitch Extension</title>
+  <script src="https://d.ext-twitch.tv/extensions/latest.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #2d1b4e 100%);
+      color: #fff;
+      min-height: 100vh;
+      direction: rtl;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+      background: linear-gradient(135deg, rgba(0, 217, 255, 0.1) 0%, rgba(255, 0, 110, 0.1) 100%);
+      padding: 20px;
+      border-radius: 12px;
+      border: 2px solid #00D9FF;
+      box-shadow: 0 0 20px rgba(0, 217, 255, 0.3);
+    }
+
+    .header h1 {
+      font-size: 28px;
+      background: linear-gradient(to right, #00D9FF, #FF006E, #A855F7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 8px;
+    }
+
+    .header p {
+      color: #00D9FF;
+      font-size: 14px;
+    }
+
+    .status {
+      padding: 15px;
+      background: rgba(0, 217, 255, 0.2);
+      border: 1px solid #00D9FF;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .status.connected {
+      background: rgba(0, 255, 136, 0.2);
+      border-color: #00FF88;
+      color: #00FF88;
+    }
+
+    .status.disconnected {
+      background: rgba(255, 0, 0, 0.2);
+      border-color: #FF0000;
+      color: #FF6B6B;
+    }
+
+    .info-box {
+      background: rgba(0, 217, 255, 0.15);
+      border: 1px solid rgba(0, 217, 255, 0.5);
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .info-box h3 {
+      color: #00D9FF;
+      margin-bottom: 8px;
+      font-size: 16px;
+    }
+
+    .info-box p {
+      color: #00D9FF;
+      font-size: 24px;
+      font-weight: bold;
+      font-family: 'Courier New', monospace;
+      letter-spacing: 2px;
+    }
+
+    .join-instruction {
+      background: linear-gradient(135deg, rgba(255, 0, 110, 0.1) 0%, rgba(168, 85, 247, 0.1) 100%);
+      border: 1px solid #FF006E;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .join-instruction h3 {
+      color: #FF006E;
+      margin-bottom: 10px;
+    }
+
+    .join-instruction p {
+      color: #FFB6D9;
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+
+    .join-button {
+      background: linear-gradient(to right, #00D9FF, #00A8CC);
+      color: #000;
+      border: none;
+      padding: 12px 24px;
+      font-size: 16px;
+      font-weight: bold;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      width: 100%;
+    }
+
+    .join-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 20px rgba(0, 217, 255, 0.5);
+    }
+
+    .join-button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .players-list {
+      background: rgba(0, 217, 255, 0.1);
+      border: 1px solid rgba(0, 217, 255, 0.5);
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 20px;
+    }
+
+    .players-list h3 {
+      color: #00D9FF;
+      margin-bottom: 12px;
+      font-size: 14px;
+    }
+
+    .player-item {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 8px 12px;
+      margin-bottom: 6px;
+      border-radius: 4px;
+      font-size: 13px;
+      color: #00FF88;
+      border-left: 3px solid #00D9FF;
+    }
+
+    .player-item.you {
+      border-left-color: #FF006E;
+      color: #FFB6D9;
+    }
+
+    .empty-list {
+      color: #666;
+      text-align: center;
+      padding: 20px 0;
+      font-size: 12px;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: linear-gradient(135deg, #0a0e27 0%, #2d1b4e 100%);
+      border: 2px solid #00D9FF;
+      border-radius: 12px;
+      padding: 30px;
+      max-width: 400px;
+      text-align: center;
+      box-shadow: 0 0 30px rgba(0, 217, 255, 0.5);
+    }
+
+    .modal-content h2 {
+      color: #00D9FF;
+      margin-bottom: 20px;
+      font-size: 24px;
+    }
+
+    .modal-content input {
+      width: 100%;
+      padding: 12px;
+      background: rgba(0, 217, 255, 0.1);
+      border: 1px solid #00D9FF;
+      border-radius: 6px;
+      color: #00D9FF;
+      font-size: 14px;
+      margin-bottom: 15px;
+      text-align: center;
+      direction: ltr;
+    }
+
+    .modal-content input::placeholder {
+      color: rgba(0, 217, 255, 0.5);
+    }
+
+    .modal-buttons {
+      display: flex;
+      gap: 10px;
+    }
+
+    .modal-buttons button {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .modal-buttons .confirm {
+      background: linear-gradient(to right, #00D9FF, #00A8CC);
+      color: #000;
+    }
+
+    .modal-buttons .cancel {
+      background: rgba(0, 217, 255, 0.1);
+      color: #00D9FF;
+      border: 1px solid #00D9FF;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🎮 فوازير روز</h1>
+      <p>منصة الألعاب التفاعلية</p>
+    </div>
+
+    <div id="statusDiv" class="status disconnected">
+      📡 جاري الاتصال...
+    </div>
+
+    <div class="join-instruction">
+      <h3>🎯 كيفية الانضمام؟</h3>
+      <p>اكتب في الشات:</p>
+      <p style="font-size: 20px; color: #00D9FF; font-family: 'Courier New', monospace;">join</p>
+      <p style="font-size: 12px; margin-top: 10px;">سيتم إضافتك تلقائياً لقائمة اللاعبين!</p>
+    </div>
+
+    <div class="info-box">
+      <h3>رقم اللاعب الخاص بك</h3>
+      <p id="playerNumber">-</p>
+    </div>
+
+    <button class="join-button" id="joinButton" onclick="handleJoin()">
+      ✅ انضم للعبة الآن
+    </button>
+
+    <div class="players-list">
+      <h3>👥 اللاعبون المتصلون</h3>
+      <div id="playersList" class="empty-list">
+        لا يوجد لاعبون متصلون حالياً
+      </div>
+    </div>
+  </div>
+
+  <div id="nameModal" class="modal">
+    <div class="modal-content">
+      <h2>أدخل اسمك</h2>
+      <input type="text" id="playerNameInput" placeholder="اسمك هنا" maxlength="20">
+      <div class="modal-buttons">
+        <button class="confirm" onclick="confirmName()">تأكيد ✓</button>
+        <button class="cancel" onclick="cancelName()">إلغاء ✕</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let twitchAuth = {};
+    let currentPlayer = null;
+    let gamePlayers = [];
+
+    // Initialize Twitch Extension
+    window.Twitch = window.Twitch || {};
+    window.Twitch.ext = window.Twitch.ext || {};
+
+    // Twitch onAuthorized
+    window.Twitch.ext.onAuthorized((auth) => {
+      twitchAuth = auth;
+      console.log('Authorized:', auth);
+      connectToGame();
+      updateStatus(true);
+    });
+
+    // Twitch onError
+    window.Twitch.ext.onError((error) => {
+      console.error('Twitch Error:', error);
+      updateStatus(false);
+    });
+
+    function updateStatus(connected) {
+      const statusDiv = document.getElementById('statusDiv');
+      if (connected) {
+        statusDiv.className = 'status connected';
+        statusDiv.textContent = '✅ متصل - جاهز للانضمام';
+      } else {
+        statusDiv.className = 'status disconnected';
+        statusDiv.textContent = '❌ غير متصل - حاول مرة أخرى';
+      }
+    }
+
+    function connectToGame() {
+      // في حالة الإنتاج، استبدل localhost بـ الموقع الفعلي
+      const websocketUrl = 'ws://localhost:3001/api/twitch-game';
+      
+      try {
+        const ws = new WebSocket(websocketUrl);
+
+        ws.onopen = () => {
+          console.log('Connected to game server');
+          // إرسال معلومات المستخدم الأولية
+          ws.send(JSON.stringify({
+            type: 'CONNECT',
+            userId: twitchAuth.userId,
+            displayName: twitchAuth.displayName,
+            clientId: twitchAuth.clientId
+          }));
+        };
+
+        ws.onmessage = (event) => {
+          const data = JSON.parse(event.data);
+          console.log('Message from server:', data);
+
+          if (data.type === 'PLAYER_JOINED') {
+            addPlayerToList(data.player);
+          } else if (data.type === 'PLAYERS_LIST') {
+            gamePlayers = data.players;
+            updatePlayersList();
+          } else if (data.type === 'PLAYER_ELIMINATED') {
+            removePlayerFromList(data.playerId);
+          }
+        };
+
+        ws.onerror = (error) => {
+          console.error('WebSocket error:', error);
+          updateStatus(false);
+        };
+
+        ws.onclose = () => {
+          console.log('Disconnected from game server');
+          // محاولة إعادة الاتصال بعد 5 ثواني
+          setTimeout(connectToGame, 5000);
+        };
+      } catch (error) {
+        console.error('Connection error:', error);
+        updateStatus(false);
+      }
+    }
+
+    function handleJoin() {
+      // فتح نافذة اختيار الاسم
+      document.getElementById('nameModal').classList.add('active');
+      document.getElementById('playerNameInput').focus();
+    }
+
+    function confirmName() {
+      const name = document.getElementById('playerNameInput').value.trim();
+      if (name.length === 0) {
+        alert('الرجاء إدخال اسمك');
+        return;
+      }
+
+      currentPlayer = {
+        id: twitchAuth.userId,
+        name: name,
+        displayName: twitchAuth.displayName,
+        score: 0,
+        joined: true
+      };
+
+      // إرسال طلب الانضمام
+      window.Twitch.ext.rig.log('Player joined: ' + name);
+      
+      // إغلاق النافذة
+      document.getElementById('nameModal').classList.remove('active');
+
+      // تحديث قائمة اللاعبين
+      addPlayerToList(currentPlayer);
+
+      // تحديث رقم اللاعب
+      document.getElementById('playerNumber').textContent = currentPlayer.id.substring(0, 8);
+    }
+
+    function cancelName() {
+      document.getElementById('nameModal').classList.remove('active');
+      document.getElementById('playerNameInput').value = '';
+    }
+
+    function addPlayerToList(player) {
+      if (!gamePlayers.find(p => p.id === player.id)) {
+        gamePlayers.push(player);
+      }
+      updatePlayersList();
+    }
+
+    function removePlayerFromList(playerId) {
+      gamePlayers = gamePlayers.filter(p => p.id !== playerId);
+      updatePlayersList();
+    }
+
+    function updatePlayersList() {
+      const playersList = document.getElementById('playersList');
+      
+      if (gamePlayers.length === 0) {
+        playersList.innerHTML = '<div class="empty-list">لا يوجد لاعبون متصلون حالياً</div>';
+        return;
+      }
+
+      playersList.innerHTML = gamePlayers.map(player => `
+        <div class="player-item ${player.id === currentPlayer?.id ? 'you' : ''}">
+          ${player.id === currentPlayer?.id ? '👤 أنت - ' : ''}${player.name} (${player.score || 0} نقاط)
+        </div>
+      `).join('');
+    }
+
+    // التعامل مع مفتاح Enter في حقل الاسم
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('playerNameInput').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') confirmName();
+      });
+    });
+  </script>
+</body>
+</html>

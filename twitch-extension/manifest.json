@@ -1,0 +1,26 @@
+{
+  "manifest_version": "1.0",
+  "version": "1.0.0",
+  "name": "فوازير روز - Jawlah Games",
+  "description": "منصة الألعاب التفاعلية - شارك مع المشاهدين بكتابة 'join'",
+  "author": "Jawlah",
+  "viewerUrl": "https://localhost:3001/twitch-extension",
+  "configUrl": "https://localhost:3001/twitch-extension/config",
+  "permissions": [
+    "bits:read",
+    "channel:read:subscriptions",
+    "chat:read",
+    "user:read:email"
+  ],
+  "requiredConfiguration": false,
+  "globalConfiguration": {
+    "required": false,
+    "broadcastable": false,
+    "globallyTransactable": false
+  },
+  "viewer": {
+    "viewersCanLinkExternalContent": true
+  },
+  "isPartnerMonetized": false,
+  "requiredMirrorUrl": "http://localhost:3000"
+}

@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Streamer's Quest - Control Panel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #ecf0f1;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: #eae2b7;
+            margin-bottom: 2rem;
+            font-size: 2.5rem;
+            letter-spacing: 2px;
+        }
+
+        .control-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .control-card {
+            background: #16213e;
+            border: 2px solid #0f3460;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        }
+
+        .control-card h2 {
+            color: #eae2b7;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .control-group:last-child {
+            margin-bottom: 0;
+        }
+
+        label {
+            font-weight: bold;
+            color: #bdc3c7;
+            font-size: 0.9rem;
+        }
+
+        input[type="number"],
+        input[type="text"],
+        select {
+            padding: 0.8rem;
+            background: #0f3460;
+            border: 1px solid #eae2b7;
+            border-radius: 6px;
+            color: #ecf0f1;
+            font-size: 1rem;
+        }
+
+        input[type="number"]:focus,
+        input[type="text"]:focus,
+        select:focus {
+            outline: none;
+            border-color: #eae2b7;
+            box-shadow: 0 0 10px rgba(234, 226, 183, 0.3);
+        }
+
+        button {
+            padding: 0.8rem 1.5rem;
+            background: linear-gradient(135deg, #eae2b7 0%, #d4af37 100%);
+            color: #1a1a2e;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 20px rgba(234, 226, 183, 0.5);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button.danger {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+        }
+
+        button.warning {
+            background: linear-gradient(135deg, #f39c12 0%, #d68910 100%);
+            color: white;
+        }
+
+        button.success {
+            background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+            color: white;
+        }
+
+        .status-panel {
+            background: #16213e;
+            border: 2px solid #0f3460;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .status-item {
+            background: #0f3460;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-left: 4px solid #eae2b7;
+            text-align: center;
+        }
+
+        .status-label {
+            color: #bdc3c7;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .status-value {
+            color: #eae2b7;
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .alert.success {
+            background: rgba(39, 174, 96, 0.2);
+            border-left: 4px solid #27ae60;
+            color: #2ecc71;
+        }
+
+        .alert.error {
+            background: rgba(231, 76, 60, 0.2);
+            border-left: 4px solid #e74c3c;
+            color: #e74c3c;
+        }
+
+        .command-log {
+            background: #0f3460;
+            border: 1px solid #eae2b7;
+            border-radius: 6px;
+            padding: 1rem;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            color: #2ecc71;
+        }
+
+        .log-entry {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(234, 226, 183, 0.1);
+        }
+
+        .log-entry:last-child {
+            border-bottom: none;
+        }
+
+        .log-timestamp {
+            color: #bdc3c7;
+            margin-right: 1rem;
+        }
+
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .button-group.full {
+            grid-template-columns: 1fr;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .control-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .button-group {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎮 Streamer's Quest - Control Panel</h1>
+
+        <!-- STATUS PANEL -->
+        <div class="status-panel">
+            <h2 style="color: #eae2b7; margin-bottom: 1rem;">📊 Live Status</h2>
+            <div class="status-grid">
+                <div class="status-item">
+                    <div class="status-label">Active Viewers</div>
+                    <div class="status-value" id="viewerCount">0</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-label">Current Phase</div>
+                    <div class="status-value" id="gamePhase">--</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-label">Hero Health</div>
+                    <div class="status-value" id="heroHealth">100</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-label">Chapter</div>
+                    <div class="status-value" id="chapterNum">0</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ALERTS -->
+        <div class="alert success" id="successAlert"></div>
+        <div class="alert error" id="errorAlert"></div>
+
+        <!-- CONTROL GRID -->
+        <div class="control-grid">
+            <!-- GAME CONTROL -->
+            <div class="control-card">
+                <h2>🎮 Game Control</h2>
+                
+                <div class="control-group">
+                    <button class="success" onclick="executeCommand('skipVoting')">
+                        ⏭️ Skip Voting (Instant)
+                    </button>
+                </div>
+
+                <div class="control-group">
+                    <button class="warning" onclick="executeCommand('pauseGame')">
+                        ⏸️ Pause Game
+                    </button>
+                </div>
+
+                <div class="control-group">
+                    <button class="danger" onclick="executeCommand('restartGame')">
+                        🔄 Restart Game
+                    </button>
+                </div>
+
+                <div class="control-group">
+                    <label for="chapterInput">Jump to Chapter:</label>
+                    <input type="number" id="chapterInput" min="0" max="10" value="0">
+                    <button onclick="jumpToChapter()">
+                        📖 Go to Chapter
+                    </button>
+                </div>
+            </div>
+
+            <!-- HERO MANAGEMENT -->
+            <div class="control-card">
+                <h2>🧙 Hero Management</h2>
+
+                <div class="control-group">
+                    <button class="success" onclick="executeCommand('healHero')">
+                        💚 Heal Hero (+20 HP)
+                    </button>
+                </div>
+
+                <div class="control-group">
+                    <button class="success" onclick="executeCommand('restoreSupplies')">
+                        📦 Restore Supplies (+30)
+                    </button>
+                </div>
+
+                <div class="control-group">
+                    <button class="danger" onclick="executeCommand('damageHero')">
+                        ⚡ Damage Hero (-30 HP)
+                    </button>
+                </div>
+
+                <div class="control-group">
+                    <button class="warning" onclick="executeCommand('reduceSupplies')">
+                        🔥 Drain Supplies (-30)
+                    </button>
+                </div>
+
+                <div class="control-group">
+                    <label for="healthAmount">Set Health:</label>
+                    <div class="button-group">
+                        <input type="number" id="healthAmount" min="0" max="100" value="100" placeholder="HP value">
+                        <button onclick="setHealth()">Set</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BATTLE CONTROL -->
+            <div class="control-card">
+                <h2>⚔️ Battle Control</h2>
+
+                <div class="control-group">
+                    <button class="danger" onclick="executeCommand('damageEnemy')">
+                        💥 Damage Enemy (-10 HP)
+                    </button>
+                </div>
+
+                <div class="control-group">
+                    <button class="success" onclick="executeCommand('healEnemy')">
+                        🛡️ Heal Enemy (+10 HP)
+                    </button>
+                </div>
+
+                <div class="control-group">
+                    <button class="warning" onclick="executeCommand('resetBattle')">
+                        🔄 Reset Battle
+                    </button>
+                </div>
+
+                <div class="control-group">
+                    <button class="success" onclick="executeCommand('winBattle')">
+                        🏆 Win Battle (Instant)
+                    </button>
+                </div>
+
+                <div class="control-group">
+                    <label for="enemyHealth">Set Enemy Health:</label>
+                    <div class="button-group">
+                        <input type="number" id="enemyHealth" min="0" max="200" value="50">
+                        <button onclick="setEnemyHealth()">Set</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEWER MANAGEMENT -->
+            <div class="control-card">
+                <h2>👥 Viewer Management</h2>
+
+                <div class="control-group">
+                    <button onclick="showViewerStats()">
+                        📊 Show Viewer Stats
+                    </button>
+                </div>
+
+                <div class="control-group">
+                    <label for="viewerAction">Viewer Action:</label>
+                    <select id="viewerAction">
+                        <option value="none">Select Action</option>
+                        <option value="ban">🚫 Ban Spammer</option>
+                        <option value="highlight">⭐ Highlight Comment</option>
+                        <option value="reward">🎁 Give Reward</option>
+                    </select>
+                    <button onclick="executeViewerAction()">Execute</button>
+                </div>
+
+                <div class="control-group">
+                    <button onclick="broadcastMessage()">
+                        📢 Send Message to Chat
+                    </button>
+                </div>
+            </div>
+
+            <!-- DEBUG & LOGS -->
+            <div class="control-card">
+                <h2>🐛 Debug & Logs</h2>
+
+                <div class="control-group">
+                    <button onclick="fetchGameState()">
+                        🔍 Fetch Game State
+                    </button>
+                </div>
+
+                <div class="control-group">
+                    <button onclick="clearLogs()">
+                        🗑️ Clear Logs
+                    </button>
+                </div>
+
+                <div class="control-group">
+                    <button onclick="exportLogs()">
+                        💾 Export Logs
+                    </button>
+                </div>
+
+                <div style="margin-top: 1.5rem;">
+                    <label>Command Log:</label>
+                    <div class="command-log" id="commandLog">
+                        <div class="log-entry">
+                            <span class="log-timestamp">[READY]</span>
+                            Control panel initialized
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STREAMING TIPS -->
+            <div class="control-card">
+                <h2>💡 Streaming Tips</h2>
+
+                <div style="font-size: 0.95rem; line-height: 1.8; color: #bdc3c7;">
+                    <p>✅ <strong>Before Stream:</strong></p>
+                    <ul style="margin-left: 1rem; margin-bottom: 1rem;">
+                        <li>Test connection with friends</li>
+                        <li>Check all buttons work</li>
+                        <li>Read current chapter text</li>
+                        <li>Plan your game flow</li>
+                    </ul>
+
+                    <p>✅ <strong>During Stream:</strong></p>
+                    <ul style="margin-left: 1rem; margin-bottom: 1rem;">
+                        <li>Use Skip Voting for pacing</li>
+                        <li>Monitor viewer count</li>
+                        <li>Adjust difficulty if needed</li>
+                        <li>Engage with chat</li>
+                    </ul>
+
+                    <p>✅ <strong>Pro Tips:</strong></p>
+                    <ul style="margin-left: 1rem;">
+                        <li>Pause between battles for drama</li>
+                        <li>Use damage for tension</li>
+                        <li>Restart if viewers request</li>
+                        <li>Track voting trends</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000/api';
+
+        /**
+         * Execute a command on the server
+         */
+        async function executeCommand(command) {
+            try {
+                const response = await fetch(`${API_URL}/streamer-command`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ command })
+                });
+
+                if (response.ok) {
+                    showAlert(`✅ Command executed: ${command}`, 'success');
+                    addLog(`✅ Executed: ${command}`);
+                    await updateStatus();
+                } else {
+                    showAlert('❌ Command failed', 'error');
+                    addLog(`❌ Failed: ${command}`);
+                }
+            } catch (error) {
+                showAlert(`Error: ${error.message}`, 'error');
+                addLog(`❌ Error: ${error.message}`);
+            }
+        }
+
+        /**
+         * Jump to specific chapter
+         */
+        async function jumpToChapter() {
+            const chapter = parseInt(document.getElementById('chapterInput').value);
+            try {
+                const response = await fetch(`${API_URL}/streamer-command`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ command: 'jumpToChapter', chapter })
+                });
+
+                if (response.ok) {
+                    showAlert(`✅ Jumped to Chapter ${chapter}`, 'success');
+                    addLog(`✅ Jumped to Chapter ${chapter}`);
+                    await updateStatus();
+                }
+            } catch (error) {
+                showAlert(`Error: ${error.message}`, 'error');
+            }
+        }
+
+        /**
+         * Set hero health
+         */
+        async function setHealth() {
+            const health = parseInt(document.getElementById('healthAmount').value);
+            try {
+                const response = await fetch(`${API_URL}/streamer-command`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ command: 'setHealth', value: health })
+                });
+
+                if (response.ok) {
+                    showAlert(`✅ Hero health set to ${health}`, 'success');
+                    addLog(`✅ Set health to ${health}`);
+                    await updateStatus();
+                }
+            } catch (error) {
+                showAlert(`Error: ${error.message}`, 'error');
+            }
+        }
+
+        /**
+         * Set enemy health
+         */
+        async function setEnemyHealth() {
+            const health = parseInt(document.getElementById('enemyHealth').value);
+            try {
+                const response = await fetch(`${API_URL}/streamer-command`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ command: 'setEnemyHealth', value: health })
+                });
+
+                if (response.ok) {
+                    showAlert(`✅ Enemy health set to ${health}`, 'success');
+                    addLog(`✅ Set enemy health to ${health}`);
+                    await updateStatus();
+                }
+            } catch (error) {
+                showAlert(`Error: ${error.message}`, 'error');
+            }
+        }
+
+        /**
+         * Fetch and display game state
+         */
+        async function fetchGameState() {
+            try {
+                const response = await fetch(`${API_URL}/game-state`);
+                const state = await response.json();
+                console.table(state);
+                showAlert('✅ Check console (F12) for game state', 'success');
+                addLog('✅ Fetched game state');
+            } catch (error) {
+                showAlert(`Error: ${error.message}`, 'error');
+            }
+        }
+
+        /**
+         * Show viewer statistics
+         */
+        async function showViewerStats() {
+            try {
+                const response = await fetch(`${API_URL}/game-state`);
+                const state = await response.json();
+                
+                const stats = `
+Viewer Statistics:
+- Total Viewers: ${state.viewerCount}
+- Warriors: ${state.partyComposition?.warriors || 0}
+- Healers: ${state.partyComposition?.healers || 0}
+- Scouts: ${state.partyComposition?.scouts || 0}
+- Tricksters: ${state.partyComposition?.tricksters || 0}
+                `;
+                
+                showAlert(stats, 'success');
+                addLog('✅ Retrieved viewer stats');
+            } catch (error) {
+                showAlert(`Error: ${error.message}`, 'error');
+            }
+        }
+
+        /**
+         * Update status display
+         */
+        async function updateStatus() {
+            try {
+                const response = await fetch(`${API_URL}/game-state`);
+                const state = await response.json();
+                
+                document.getElementById('viewerCount').textContent = state.viewerCount || 0;
+                document.getElementById('gamePhase').textContent = state.gamePhase || '--';
+                document.getElementById('heroHealth').textContent = state.heroHealth || 100;
+                document.getElementById('chapterNum').textContent = state.chapter?.id || 0;
+            } catch (error) {
+                console.error('Failed to update status:', error);
+            }
+        }
+
+        /**
+         * Show alert message
+         */
+        function showAlert(message, type) {
+            const alert = document.getElementById(type === 'success' ? 'successAlert' : 'errorAlert');
+            alert.textContent = message;
+            alert.style.display = 'block';
+            
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 5000);
+        }
+
+        /**
+         * Add log entry
+         */
+        function addLog(message) {
+            const log = document.getElementById('commandLog');
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            
+            const time = new Date().toLocaleTimeString();
+            entry.innerHTML = `<span class="log-timestamp">[${time}]</span> ${message}`;
+            
+            log.appendChild(entry);
+            log.scrollTop = log.scrollHeight;
+            
+            // Keep only last 50 entries
+            while (log.children.length > 50) {
+                log.removeChild(log.firstChild);
+            }
+        }
+
+        /**
+         * Clear logs
+         */
+        function clearLogs() {
+            document.getElementById('commandLog').innerHTML = '';
+            addLog('✅ Logs cleared');
+        }
+
+        /**
+         * Export logs
+         */
+        function exportLogs() {
+            const logs = document.getElementById('commandLog').innerText;
+            const blob = new Blob([logs], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `streamer-quest-logs-${Date.now()}.txt`;
+            link.click();
+            addLog('✅ Logs exported');
+        }
+
+        /**
+         * Broadcast message
+         */
+        function broadcastMessage() {
+            const message = prompt('Enter message to broadcast:');
+            if (message) {
+                addLog(`📢 Broadcasted: "${message}"`);
+            }
+        }
+
+        /**
+         * Execute viewer action
+         */
+        function executeViewerAction() {
+            const action = document.getElementById('viewerAction').value;
+            if (action !== 'none') {
+                addLog(`✅ Executed: ${action}`);
+                document.getElementById('viewerAction').value = 'none';
+            }
+        }
+
+        // Update status every 5 seconds
+        setInterval(updateStatus, 5000);
+        updateStatus();
+
+        addLog('🎮 Control Panel Ready');
+    </script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  direction: rtl;
+}
+
+html {
+  direction: rtl;
+}
+
+body {
+  background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #2d1b4e 100%);
+  @apply text-white;
+  font-family: 'Arial', 'Segoe UI', sans-serif;
+  min-height: 100vh;
+}
+
+.container {
+  @apply px-4 py-8 mx-auto;
+}
+
+.game-card {
+  @apply bg-gradient-to-br from-slate-800/50 to-slate-900/50 rounded-lg p-6 hover:shadow-2xl transition-all duration-300 hover:scale-105 cursor-pointer border border-cyan-500/30 hover:border-cyan-400/60;
+  background: linear-gradient(135deg, rgba(3, 217, 255, 0.1) 0%, rgba(255, 0, 110, 0.1) 100%);
+}
+
+.btn-primary {
+  @apply bg-gradient-to-r from-cyan-500 to-cyan-600 hover:from-cyan-600 hover:to-cyan-700 text-white font-bold py-2 px-6 rounded-lg transition-all duration-300 hover:shadow-lg;
+  box-shadow: 0 0 20px rgba(0, 217, 255, 0.3);
+}
+
+.btn-primary:hover {
+  box-shadow: 0 0 30px rgba(0, 217, 255, 0.5);
+}
+
+.btn-secondary {
+  @apply bg-gradient-to-r from-pink-600 to-pink-700 hover:from-pink-700 hover:to-pink-800 text-white font-bold py-2 px-6 rounded-lg transition-all duration-300;
+  box-shadow: 0 0 20px rgba(255, 0, 110, 0.3);
+}
+
+/* Glow effects */
+.glow-cyan {
+  text-shadow: 0 0 10px rgba(0, 217, 255, 0.5);
+}
+
+.glow-pink {
+  text-shadow: 0 0 10px rgba(255, 0, 110, 0.5);
+}

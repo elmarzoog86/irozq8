@@ -1,0 +1,105 @@
+<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      @keyframes drawLine {
+        0% { stroke-dashoffset: 100; opacity: 0; }
+        50% { opacity: 1; }
+        100% { stroke-dashoffset: 0; opacity: 1; }
+      }
+      @keyframes eraseLine {
+        0% { stroke-dashoffset: 0; opacity: 1; }
+        50% { stroke-dashoffset: 100; opacity: 0.5; }
+        100% { stroke-dashoffset: 200; opacity: 0; }
+      }
+      @keyframes bounceCanvas {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-10px); }
+      }
+      @keyframes floatPen {
+        0%, 100% { transform: translateY(0px) rotate(0deg); }
+        50% { transform: translateY(-15px) rotate(5deg); }
+      }
+      @keyframes appear {
+        0% { opacity: 0; transform: scale(0); }
+        50% { opacity: 1; }
+        100% { opacity: 0; }
+      }
+      .line1 { animation: drawLine 2s ease-in-out infinite; stroke-dasharray: 100; }
+      .line2 { animation: drawLine 2s ease-in-out infinite 0.3s; stroke-dasharray: 100; }
+      .line3 { animation: drawLine 2s ease-in-out infinite 0.6s; stroke-dasharray: 100; }
+      .canvas { animation: bounceCanvas 2s ease-in-out infinite; }
+      .pen { animation: floatPen 2s ease-in-out infinite; transform-origin: center; }
+      .thought { animation: appear 2s ease-in-out infinite; }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect width="400" height="300" fill="#0a0e27" />
+
+  <!-- Canvas/Drawing Board -->
+  <g class="canvas">
+    <rect x="50" y="80" width="180" height="140" fill="#FFF" opacity="0.05" stroke="#00D9FF" stroke-width="3" rx="8" />
+    <line x1="60" y1="85" x2="220" y2="85" stroke="#00D9FF" stroke-width="1" opacity="0.3" />
+  </g>
+
+  <!-- Drawing lines -->
+  <g transform="translate(100, 120)">
+    <path class="line1" d="M 0 0 L 30 20 L 50 10 L 60 30" stroke="#FF006E" stroke-width="3" fill="none" stroke-linecap="round" />
+  </g>
+
+  <g transform="translate(100, 145)">
+    <path class="line2" d="M 0 0 L 20 -15 L 40 -5 L 50 -20" stroke="#00D9FF" stroke-width="3" fill="none" stroke-linecap="round" />
+  </g>
+
+  <g transform="translate(100, 170)">
+    <path class="line3" d="M 0 0 L 15 15 L 35 10 L 55 20" stroke="#A855F7" stroke-width="3" fill="none" stroke-linecap="round" />
+  </g>
+
+  <!-- Pen/Brush -->
+  <g class="pen" transform="translate(240, 100)">
+    <!-- Brush handle -->
+    <rect x="-4" y="0" width="8" height="30" fill="#8B4513" rx="2" />
+    <!-- Brush tip -->
+    <ellipse cx="0" cy="35" rx="6" ry="4" fill="#FF006E" />
+    <!-- Bristles -->
+    <path d="M -4 32 Q -8 35 -6 38" stroke="#FF006E" stroke-width="2" fill="none" stroke-linecap="round" />
+    <path d="M 4 32 Q 8 35 6 38" stroke="#FF006E" stroke-width="2" fill="none" stroke-linecap="round" />
+  </g>
+
+  <!-- Thought bubbles for guessing -->
+  <g class="thought" transform="translate(280, 150)">
+    <circle cx="0" cy="0" r="8" fill="#00D9FF" />
+    <circle cx="-12" cy="8" r="5" fill="#00D9FF" />
+  </g>
+
+  <g class="thought" style="animation-delay: 0.4s" transform="translate(310, 140)">
+    <circle cx="0" cy="0" r="8" fill="#FF006E" />
+    <circle cx="-12" cy="8" r="5" fill="#FF006E" />
+  </g>
+
+  <!-- Guessing icons -->
+  <g transform="translate(280, 70)">
+    <rect x="-20" y="-15" width="40" height="30" fill="none" stroke="#A855F7" stroke-width="2" rx="3" />
+    <text x="0" y="5" font-size="16" font-weight="bold" text-anchor="middle" fill="#A855F7">?</text>
+  </g>
+
+  <!-- Chat bubbles (guesses) -->
+  <g opacity="0.6">
+    <rect x="60" y="30" width="70" height="30" fill="#FF006E" opacity="0.3" rx="4" />
+    <text x="95" y="50" font-size="11" text-anchor="middle" fill="#FF006E">قطة</text>
+  </g>
+
+  <g opacity="0.6">
+    <rect x="250" y="220" width="80" height="30" fill="#00D9FF" opacity="0.3" rx="4" />
+    <text x="290" y="240" font-size="11" text-anchor="middle" fill="#00D9FF">شجرة</text>
+  </g>
+
+  <!-- Pencil marks scattered -->
+  <g opacity="0.3">
+    <line x1="30" y1="50" x2="45" y2="65" stroke="#A855F7" stroke-width="2" stroke-linecap="round" />
+    <line x1="340" y1="220" x2="360" y2="240" stroke="#FF006E" stroke-width="2" stroke-linecap="round" />
+  </g>
+
+  <!-- Title -->
+  <text x="200" y="30" font-size="18" font-weight="bold" text-anchor="middle" fill="#00D9FF">تحدي الرسم</text>
+</svg>

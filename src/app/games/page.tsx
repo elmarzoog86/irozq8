@@ -1,0 +1,196 @@
+'use client';
+
+import { useSearchParams, useRouter } from 'next/navigation';
+import { useState, Suspense } from 'react';
+import GameLayout from '@/components/GameLayout';
+import QuestionsGame from '@/components/QuestionsGame';
+import QuestionsLobby from '@/components/QuestionsLobby';
+import RouletteGame from '@/components/RouletteGame';
+import FruitsWarGame from '@/components/FruitsWarGame';
+import ChairsGame from '@/components/ChairsGame';
+import { games } from '@/data/games';
+
+function GamePageContent() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const gameId = searchParams.get('id');
+  const game = games.find(g => g.id === gameId);
+
+  const [playerCount, setPlayerCount] = useState(10);
+  const [questionsCount, setQuestionsCount] = useState(10);
+  const [gameStarted, setGameStarted] = useState(false);
+  const [players, setPlayers] = useState<Array<{id: number; name: string; score: number; eliminated: boolean}>>([]);
+
+  if (!game) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-900">
+        <div className="text-center">
+          <h1 className="text-4xl font-bold text-red-400 mb-4">لم يتم العثور على اللعبة</h1>
+          <button 
+            onClick={() => router.push('/')}
+            className="bg-gradient-to-r from-cyan-500 to-cyan-600 hover:from-cyan-600 hover:to-cyan-700 text-white font-bold py-3 px-8 rounded-lg"
+          >
+            العودة للرئيسية
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!gameStarted) {
+    // For Questions game, show the lobby directly
+    if (gameId === 'questions') {
+      return (
+        <div className="w-full h-screen" style={{ background: '#0f0f1e' }}>
+          <QuestionsLobby 
+            onStartGame={(playerCount, questionsCount) => {
+              const newPlayers = Array.from({ length: playerCount }, (_, i) => ({
+                id: i + 1,
+                name: `لاعب ${i + 1}`,
+                score: 0,
+                eliminated: false,
+              }));
+              setPlayers(newPlayers);
+              setPlayerCount(playerCount);
+              setQuestionsCount(questionsCount);
+              setGameStarted(true);
+            }}
+            onBack={() => {
+              router.push('/');
+            }}
+          />
+        </div>
+      );
+    }
+
+    return (
+      <GameLayout 
+        gameName={game.nameAr}
+        gameDescription={game.descriptionAr}
+        onBack={() => router.push('/')}
+      >
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Game Preview */}
+          <div className="lg:col-span-2">
+            <div className="rounded-lg border border-purple-500/30 overflow-hidden bg-gray-950 p-8 aspect-video flex items-center justify-center">
+              <img 
+                src={`/games/${gameId}.svg`} 
+                alt={game.nameAr}
+                className="w-full h-full object-contain"
+              />
+            </div>
+            <div className="mt-6 p-6 bg-gray-950 border border-purple-500/30 rounded-lg">
+              <h3 className="text-lg font-bold text-purple-300 mb-3">📋 قواعد اللعبة</h3>
+              <p className="text-gray-300">{game.descriptionAr}</p>
+              <p className="text-sm text-gray-400 mt-4">👥 عدد اللاعبين: {game.minPlayers}-{game.maxPlayers}</p>
+            </div>
+          </div>
+
+          {/* Pre-Game Settings */}
+          <div className="bg-gray-950 border border-purple-500/30 rounded-lg p-6">
+            {gameId !== 'questions' ? (
+              // For other games, show settings
+              <>
+                <h3 className="text-lg font-bold text-purple-300 mb-6">إعدادات البدء</h3>
+                
+                <div className="mb-6">
+                  <label className="block text-sm text-gray-400 mb-3">عدد اللاعبين</label>
+                  <input
+                    type="range"
+                    min={game.minPlayers}
+                    max={game.maxPlayers}
+                    value={playerCount}
+                    onChange={(e) => setPlayerCount(Number(e.target.value))}
+                    className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-purple-600"
+                  />
+                  <div className="flex justify-between text-sm text-gray-400 mt-2">
+                    <span>{game.minPlayers}</span>
+                    <span className="text-purple-400 font-bold">{playerCount}</span>
+                    <span>{game.maxPlayers}</span>
+                  </div>
+                </div>
+
+                <button 
+                  onClick={() => {
+                    const newPlayers = Array.from({ length: playerCount }, (_, i) => ({
+                      id: i + 1,
+                      name: `لاعب ${i + 1}`,
+                      score: 0,
+                      eliminated: false,
+                    }));
+                    setPlayers(newPlayers);
+                    setGameStarted(true);
+                  }}
+                  className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold py-3 rounded-lg mb-2"
+                >
+                  ✓ بدء اللعبة
+                </button>
+                <button 
+                  onClick={() => router.push('/')}
+                  className="w-full bg-gray-800 hover:bg-gray-700 text-white font-bold py-2 rounded-lg border border-gray-700"
+                >
+                  ← العودة
+                </button>
+              </>
+            ) : (
+              // Questions game doesn't show pre-game settings
+              null
+            )}
+          </div>
+        </div>
+      </GameLayout>
+    );
+  }
+
+  // Render appropriate game component
+  const renderGameComponent = () => {
+    const gameProps = {
+      playerCount,
+      players,
+      setPlayers,
+      onEndGame: () => {
+        setGameStarted(false);
+        router.push('/');
+      },
+    };
+
+    switch (gameId) {
+      case 'questions':
+        return <QuestionsGame {...gameProps} questionsPerRound={questionsCount} />;
+      case 'roulette':
+        return <RouletteGame {...gameProps} />;
+      case 'fruits-war':
+        return <FruitsWarGame {...gameProps} />;
+      case 'chairs':
+        return <ChairsGame {...gameProps} />;
+      default:
+        return <div className="text-center text-red-400">لعبة غير معروفة</div>;
+    }
+  };
+
+  return (
+    <GameLayout 
+      gameName={game.nameAr}
+      gameDescription={game.descriptionAr}
+      onBack={() => setGameStarted(false)}
+      players={players}
+      isGameRunning={gameStarted}
+    >
+      {renderGameComponent()}
+    </GameLayout>
+  );
+}
+
+export default function GamePage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-gray-900">
+        <div className="text-center">
+          <h1 className="text-4xl font-bold text-cyan-400">جاري التحميل...</h1>
+        </div>
+      </div>
+    }>
+      <GamePageContent />
+    </Suspense>
+  );
+}

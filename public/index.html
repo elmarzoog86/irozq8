@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Streamer's Quest - Interactive RPG</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="game-container">
+    <!-- HEADER -->
+    <header class="game-header">
+        <div class="header-content">
+            <h1 class="game-title">🎮 Streamer's Quest</h1>
+            <div class="header-info">
+                <span class="viewer-count">👥 <span id="viewerCount">0</span> مشاهد</span>
+                <span class="role-badge" id="roleBadge">دور: -</span>
+                <a href="streamer-control.html" target="_blank" style="color: #ffd700; text-decoration: none; margin-right: 15px; font-weight: bold;">🎛️ لوحة التحكم</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN GAME AREA -->
+    <main class="game-main">
+        <!-- VIDEO BACKGROUND -->
+        <div class="background-layer" id="backgroundLayer"></div>
+
+        <!-- HERO STATS -->
+        <aside class="hero-stats">
+            <div class="stat-card">
+                <h3>🧙 البطل</h3>
+                <div class="stat-bar">
+                    <div class="stat-label">الصحة</div>
+                    <div class="stat-progress">
+                        <div class="stat-fill health-fill" id="healthBar" style="width: 100%"></div>
+                    </div>
+                    <div class="stat-value" id="healthValue">100/100</div>
+                </div>
+                <div class="stat-bar">
+                    <div class="stat-label">الموارد</div>
+                    <div class="stat-progress">
+                        <div class="stat-fill supplies-fill" id="suppliesBar" style="width: 100%"></div>
+                    </div>
+                    <div class="stat-value" id="suppliesValue">50/100</div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <h3>⚔️ الفريق</h3>
+                <div class="party-stat">
+                    <span>🛡️ محاربون: <strong id="warriors">0</strong></span>
+                </div>
+                <div class="party-stat">
+                    <span>💚 معالجون: <strong id="healers">0</strong></span>
+                </div>
+                <div class="party-stat">
+                    <span>🔍 كشافة: <strong id="scouts">0</strong></span>
+                </div>
+                <div class="party-stat">
+                    <span>🎭 خدّاعون: <strong id="tricksters">0</strong></span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- STORY PANEL -->
+        <section class="story-panel">
+            <!-- CHAPTER TITLE -->
+            <div class="chapter-header">
+                <h2 id="chapterTitle">الفصل 1</h2>
+                <p class="chapter-subtitle" id="chapterNum">الفصل: 0</p>
+            </div>
+
+            <!-- STORY TEXT WITH TYPEWRITER EFFECT -->
+            <div class="story-content">
+                <p id="storyText" class="story-text"></p>
+            </div>
+
+            <!-- LOADING SPINNER -->
+            <div class="loading-spinner" id="loadingSpinner" style="display: none;">
+                <div class="spinner"></div>
+                <p>جاري معالجة الاختيار...</p>
+            </div>
+
+            <!-- CHOICES SECTION -->
+            <div class="choices-container" id="choicesContainer"></div>
+
+            <!-- BATTLE SECTION (hidden by default) -->
+            <div class="battle-section" id="battleSection" style="display: none;">
+                <div class="battle-stats">
+                    <div class="fighter-card hero">
+                        <h3>🧙 البطل</h3>
+                        <div class="battle-health">
+                            <div class="health-bar-battle">
+                                <div id="heroHealthBattle" class="health-fill-battle" style="width: 100%"></div>
+                            </div>
+                            <span id="heroHealthText">100/100</span>
+                        </div>
+                    </div>
+
+                    <div class="vs-divider">VS</div>
+
+                    <div class="fighter-card enemy">
+                        <h3 id="enemyName">👹 العدو</h3>
+                        <div class="battle-health">
+                            <div class="health-bar-battle enemy">
+                                <div id="enemyHealthBattle" class="health-fill-battle" style="width: 100%"></div>
+                            </div>
+                            <span id="enemyHealthText">50/50</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="battle-actions">
+                    <button class="battle-btn attack-btn" onclick="battleAction('attack')">
+                        ⚔️ هجوم
+                    </button>
+                    <button class="battle-btn defend-btn" onclick="battleAction('defend')">
+                        🛡️ دفاع
+                    </button>
+                    <button class="battle-btn special-btn" onclick="battleAction('special')">
+                        ✨ مهارة خاصة
+                    </button>
+                </div>
+
+                <div class="battle-log" id="battleLog"></div>
+            </div>
+
+            <!-- MINI-GAME SECTION (hidden by default) -->
+            <div class="minigame-section" id="minigameSection" style="display: none;">
+                <div class="minigame-container">
+                    <h3 id="minigameTitle">لغز الثعلب الماكر</h3>
+                    <p id="minigameContent"></p>
+                    <div class="minigame-buttons" id="minigameButtons"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VOTING PANEL -->
+        <aside class="voting-panel">
+            <div class="vote-card">
+                <h3>🗳️ التصويت الحي</h3>
+                <div class="voting-status" id="votingStatus">
+                    <p class="status-text">انتظر بداية الاختيارات...</p>
+                </div>
+                <div class="vote-results" id="voteResults"></div>
+                <div class="voting-timer">
+                    <div class="timer-circle">
+                        <span id="votingTimer">--</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PARTY COMPOSITION -->
+            <div class="party-card">
+                <h3>👥 الفريق النشط</h3>
+                <div id="partyList" class="party-list">
+                    <!-- Viewers will be listed here -->
+                </div>
+            </div>
+        </aside>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="game-footer">
+        <p>Streamer's Quest v1.0 - أطلق العنان لمغامرتك! 🚀</p>
+    </footer>
+
+    <!-- CONNECTION STATUS -->
+    <div class="connection-indicator" id="connectionStatus" title="حالة الاتصال">
+        <div class="status-dot disconnected"></div>
+    </div>
+
+    <script src="client.js"></script>
+    <script src="chat-integration.js"></script>
+</body>
+</html>

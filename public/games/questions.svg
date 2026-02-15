@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+  <defs>
+    <style>
+      @keyframes float {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-10px); }
+      }
+      @keyframes rotate {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+      @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.6; }
+      }
+      .question { animation: float 2s ease-in-out infinite; }
+      .bubble { animation: pulse 2s ease-in-out infinite; }
+    </style>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#6D28D9;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#EC4899;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="400" height="300" fill="url(#bgGrad)"/>
+  
+  <!-- Question Mark Circle 1 -->
+  <circle cx="80" cy="80" r="30" fill="none" stroke="#00D9FF" stroke-width="2" class="bubble" opacity="0.8"/>
+  <text x="80" y="92" font-size="40" font-weight="bold" text-anchor="middle" fill="#00D9FF" class="question">?</text>
+  
+  <!-- Question Mark Circle 2 -->
+  <circle cx="200" cy="150" r="40" fill="none" stroke="#FF006E" stroke-width="2" class="bubble"/>
+  <text x="200" y="168" font-size="50" font-weight="bold" text-anchor="middle" fill="#FF006E" class="question">?</text>
+  
+  <!-- Question Mark Circle 3 -->
+  <circle cx="320" cy="100" r="25" fill="none" stroke="#A855F7" stroke-width="2" class="bubble" opacity="0.7"/>
+  <text x="320" y="110" font-size="32" font-weight="bold" text-anchor="middle" fill="#A855F7" class="question">?</text>
+  
+  <!-- Brain Icon -->
+  <g class="question" transform="translate(200, 240)">
+    <circle cx="0" cy="0" r="8" fill="#00D9FF"/>
+    <circle cx="-12" cy="-5" r="6" fill="#00D9FF"/>
+    <circle cx="12" cy="-5" r="6" fill="#00D9FF"/>
+    <circle cx="-8" cy="8" r="5" fill="#00D9FF"/>
+    <circle cx="8" cy="8" r="5" fill="#00D9FF"/>
+  </g>
+  
+  <!-- Connecting Lines -->
+  <line x1="80" y1="80" x2="160" y2="130" stroke="#00D9FF" stroke-width="2" opacity="0.3"/>
+  <line x1="320" y1="100" x2="240" y2="140" stroke="#A855F7" stroke-width="2" opacity="0.3"/>
+</svg>

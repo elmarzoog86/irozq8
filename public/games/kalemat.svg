@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+  <defs>
+    <style>
+      @keyframes typewriter {
+        0% { width: 0; }
+        50% { width: 100%; }
+        100% { width: 100%; }
+      }
+      @keyframes blink {
+        0%, 49%, 100% { opacity: 1; }
+        50%, 99% { opacity: 0; }
+      }
+      @keyframes float {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-5px); }
+      }
+      .word { animation: typewriter 2s steps(20) infinite; overflow: hidden; }
+      .cursor { animation: blink 1s infinite; }
+      .letter { animation: float 0.8s ease-in-out infinite; }
+    </style>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#6D28D9;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#EC4899;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="400" height="300" fill="url(#bgGrad)"/>
+  
+  <!-- Letter Bank at Top -->
+  <g>
+    <!-- Box background -->
+    <rect x="50" y="30" width="300" height="60" fill="rgba(0, 217, 255, 0.1)" stroke="#00D9FF" stroke-width="2" rx="8"/>
+    
+    <!-- Letters -->
+    <g transform="translate(70, 50)" class="letter" style="animation-delay: 0s;">
+      <circle cx="0" cy="0" r="8" fill="#FF006E"/>
+      <text x="0" y="4" text-anchor="middle" font-size="12" fill="#FFFFFF" font-weight="bold">أ</text>
+    </g>
+    
+    <g transform="translate(110, 50)" class="letter" style="animation-delay: 0.1s;">
+      <circle cx="0" cy="0" r="8" fill="#00D9FF"/>
+      <text x="0" y="4" text-anchor="middle" font-size="12" fill="#1a1a2e" font-weight="bold">ل</text>
+    </g>
+    
+    <g transform="translate(150, 50)" class="letter" style="animation-delay: 0.2s;">
+      <circle cx="0" cy="0" r="8" fill="#A855F7"/>
+      <text x="0" y="4" text-anchor="middle" font-size="12" fill="#FFFFFF" font-weight="bold">ع</text>
+    </g>
+    
+    <g transform="translate(190, 50)" class="letter" style="animation-delay: 0.3s;">
+      <circle cx="0" cy="0" r="8" fill="#FF006E"/>
+      <text x="0" y="4" text-anchor="middle" font-size="12" fill="#FFFFFF" font-weight="bold">ب</text>
+    </g>
+    
+    <g transform="translate(230, 50)" class="letter" style="animation-delay: 0.4s;">
+      <circle cx="0" cy="0" r="8" fill="#00D9FF"/>
+      <text x="0" y="4" text-anchor="middle" font-size="12" fill="#1a1a2e" font-weight="bold">ة</text>
+    </g>
+    
+    <g transform="translate(270, 50)" class="letter" style="animation-delay: 0.5s;">
+      <circle cx="0" cy="0" r="8" fill="#A855F7"/>
+      <text x="0" y="4" text-anchor="middle" font-size="12" fill="#FFFFFF" font-weight="bold">ك</text>
+    </g>
+    
+    <g transform="translate(310, 50)" class="letter" style="animation-delay: 0.6s;">
+      <circle cx="0" cy="0" r="8" fill="#FF006E"/>
+      <text x="0" y="4" text-anchor="middle" font-size="12" fill="#FFFFFF" font-weight="bold">ل</text>
+    </g>
+  </g>
+  
+  <!-- Word Display Area -->
+  <g>
+    <!-- Display box -->
+    <rect x="80" y="140" width="240" height="80" fill="rgba(255, 0, 110, 0.1)" stroke="#FF006E" stroke-width="2" rx="8"/>
+    
+    <!-- Typed word -->
+    <text x="200" y="185" text-anchor="middle" font-size="32" fill="#00D9FF" font-weight="bold" font-family="monospace">ك</text>
+    <text x="220" y="185" text-anchor="start" font-size="32" fill="#00D9FF" font-weight="bold" font-family="monospace">ل</text>
+    <text x="240" y="185" text-anchor="start" font-size="32" fill="#00D9FF" font-weight="bold" font-family="monospace">م</text>
+    <text x="260" y="185" text-anchor="start" font-size="32" fill="#A855F7" font-weight="bold" font-family="monospace" opacity="0.5">ة</text>
+    <text x="280" y="185" text-anchor="start" font-size="32" fill="#FFFFFF" font-weight="bold" font-family="monospace" class="cursor" opacity="0.8">|</text>
+  </g>
+  
+  <!-- Score -->
+  <text x="200" y="280" text-anchor="middle" font-size="16" fill="#FFFFFF" opacity="0.7">⭐ البحث عن الكلمات ⭐</text>
+</svg>

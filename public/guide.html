@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>دليل Streamer's Quest</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            color: #ecf0f1;
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 3px solid #ffd700;
+            padding-bottom: 20px;
+        }
+        
+        h1 {
+            font-size: 3em;
+            color: #ffd700;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+        }
+        
+        .subtitle {
+            font-size: 1.2em;
+            color: #bdc3c7;
+        }
+        
+        .sections {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .card {
+            background: rgba(0, 0, 0, 0.4);
+            border-left: 4px solid #ffd700;
+            padding: 20px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            background: rgba(0, 0, 0, 0.6);
+            transform: translateX(-5px);
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+        }
+        
+        .card h2 {
+            color: #ffd700;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+        
+        .card p {
+            margin-bottom: 10px;
+            color: #ecf0f1;
+        }
+        
+        .steps {
+            background: rgba(50, 50, 100, 0.3);
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        
+        .step {
+            display: flex;
+            gap: 10px;
+            margin: 10px 0;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 5px;
+        }
+        
+        .step-number {
+            background: #ffd700;
+            color: #1a1a2e;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        
+        .step-content {
+            flex: 1;
+        }
+        
+        .role-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+        
+        .role-card {
+            background: rgba(50, 50, 100, 0.4);
+            padding: 15px;
+            border-radius: 5px;
+            border: 2px solid #ffd700;
+        }
+        
+        .role-name {
+            font-size: 1.3em;
+            color: #ffd700;
+            margin-bottom: 10px;
+        }
+        
+        .action-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .action-btn {
+            background: rgba(255, 215, 0, 0.1);
+            border: 2px solid #ffd700;
+            color: #ffd700;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .action-btn:hover {
+            background: #ffd700;
+            color: #1a1a2e;
+        }
+        
+        .chapter {
+            background: rgba(100, 50, 50, 0.2);
+            border: 2px solid #ff4444;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        
+        .chapter-title {
+            font-size: 1.2em;
+            color: #ff4444;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        
+        .chapter-choices {
+            margin: 10px 0 0 20px;
+        }
+        
+        .choice {
+            padding: 8px;
+            margin: 5px 0;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 3px;
+            border-right: 3px solid #ff4444;
+        }
+        
+        .ending {
+            background: rgba(100, 100, 50, 0.2);
+            border: 2px solid #ffd700;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        
+        .ending-title {
+            font-size: 1.2em;
+            color: #ffd700;
+            margin-bottom: 10px;
+        }
+        
+        .tips {
+            background: rgba(50, 100, 50, 0.2);
+            border-right: 4px solid #44ff44;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        
+        .tips strong {
+            color: #44ff44;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 2px solid #ffd700;
+            color: #bdc3c7;
+        }
+        
+        .link-button {
+            display: inline-block;
+            background: #ffd700;
+            color: #1a1a2e;
+            padding: 15px 30px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            margin: 10px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .link-button:hover {
+            background: #ffed4e;
+            transform: scale(1.05);
+        }
+        
+        .warning {
+            background: rgba(255, 100, 100, 0.2);
+            border: 2px solid #ff4444;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+        }
+        
+        .warning strong {
+            color: #ff4444;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎮 Streamer's Quest</h1>
+            <p class="subtitle">دليل شامل للعب مع متابعيك</p>
+        </header>
+        
+        <!-- البدء السريع -->
+        <div class="sections">
+            <div class="card">
+                <h2>🚀 البدء السريع</h2>
+                <div class="steps">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">افتح Power Shell في مجلد المشروع</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">اكتب: <code>node public/server.js</code></div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">افتح المتصفح على <code>localhost:3000</code></div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <div class="step-content">شارك الرابط مع متابعيك</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">5</div>
+                        <div class="step-content">ابدأ اللعبة! 🎉</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- الأدوار -->
+            <div class="card">
+                <h2>👥 الأدوار الأربع</h2>
+                <div class="role-grid">
+                    <div class="role-card">
+                        <div class="role-name">🛡️ محارب</div>
+                        <p>قوة عالية، هجوم قوي</p>
+                    </div>
+                    <div class="role-card">
+                        <div class="role-name">💚 شافي</div>
+                        <p>شفاء عالي، حماية</p>
+                    </div>
+                    <div class="role-card">
+                        <div class="role-name">🕵️ كشاف</div>
+                        <p>تسلل، سرعة</p>
+                    </div>
+                    <div class="role-card">
+                        <div class="role-name">🎭 خادع</div>
+                        <p>سحر، خدع</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- أزرار المعارك -->
+            <div class="card">
+                <h2>⚔️ أزرار المعارك</h2>
+                <div class="action-buttons">
+                    <div class="action-btn">💥 هجوم عادي</div>
+                    <div class="action-btn">⚔️ ضربة قوية</div>
+                    <div class="action-btn">🛡️ دفاع</div>
+                    <div class="action-btn">💚 شفاء</div>
+                    <div class="action-btn">🔥 سحر</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- الفصول -->
+        <div class="card" style="grid-column: 1/-1;">
+            <h2>📖 جريان اللعبة (25-35 دقيقة)</h2>
+            
+            <div class="chapter">
+                <div class="chapter-title">الفصل 0️⃣: البدايات الغامضة</div>
+                <p>تستيقظ في حانة غامضة. حكيم قديم يعرض عليك مهمة خطيرة!</p>
+                <div class="chapter-choices">
+                    <div class="choice">✅ أقبل المهمة</div>
+                    <div class="choice">❌ أرفض وأغادر</div>
+                    <div class="choice">❓ اسأل المزيد</div>
+                </div>
+            </div>
+            
+            <div class="chapter">
+                <div class="chapter-title">الفصل 1️⃣: الطريق يبدأ</div>
+                <p>اختر معدات تساعدك في الرحلة:</p>
+                <div class="chapter-choices">
+                    <div class="choice">⚔️ سيف أسطوري قوي</div>
+                    <div class="choice">🧪 5 جرعات علاج</div>
+                    <div class="choice">🗺️ خريطة سحرية</div>
+                </div>
+            </div>
+            
+            <div class="chapter">
+                <div class="chapter-title">الفصل 2️⃣: مواجهة الثعلب</div>
+                <p>❓ لغز: من يتحدث بدون فم ويسمع بدون آذان؟</p>
+                <div class="chapter-choices">
+                    <div class="choice">🎤 صدى الصوت ✅ صحيح!</div>
+                    <div class="choice">💨 الريح ❌ خطأ!</div>
+                    <div class="choice">⚔️ قاتل مباشرة</div>
+                </div>
+            </div>
+            
+            <div class="chapter">
+                <div class="chapter-title">الفصل 3️⃣: القرية المسحورة</div>
+                <p>قرية محتاجة لمساعدتك! هناك وحش يهاجمهم!</p>
+                <div class="chapter-choices">
+                    <div class="choice">🤝 ساعد القرية (معركة + مكافآت)</div>
+                    <div class="choice">🚶 استمر بدون مساعدة</div>
+                    <div class="choice">💬 تفاوض مع الوحش</div>
+                </div>
+            </div>
+            
+            <div class="chapter">
+                <div class="chapter-title">الفصل 4️⃣: أسوار القلعة</div>
+                <p>ثلاثة حراس يحمون قلعة سيد الظلام! اختر طريقتك:</p>
+                <div class="chapter-choices">
+                    <div class="choice">🤫 تسلل بحذر (الكشاف)</div>
+                    <div class="choice">⚔️ هجوم مباشر (المحارب)</div>
+                    <div class="choice">🔥 هجوم سحري (الساحر)</div>
+                </div>
+            </div>
+            
+            <div class="chapter">
+                <div class="chapter-title">الفصل 5️⃣: عرش الظلام</div>
+                <p>⚔️ معركة نهائية ضد سيد الظلام! (صحته: 150)</p>
+                <div class="chapter-choices">
+                    <div class="choice">⚔️ معركة نهائية حامية!</div>
+                    <div class="choice">💫 ضحّ بنفسك</div>
+                    <div class="choice">💬 حاول التفاوض</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- النهايات -->
+        <div class="sections">
+            <div class="ending">
+                <div class="ending-title">✨ النهاية الجيدة - الانتصار</div>
+                <p>هزمت سيد الظلام بضربة أخيرة قوية!</p>
+                <p>كريستال النور يرتفع في الهواء!</p>
+                <p>🎉 اللعنة مكسورة! مملكة إلدوريا محررة!</p>
+            </div>
+            
+            <div class="ending">
+                <div class="ending-title">💫 النهاية البطولية - التضحية</div>
+                <p>ضحيت بحياتك من أجل إنقاذ العالم!</p>
+                <p>في لحظة من الضياء الأبدي، تختفي الظلمة!</p>
+                <p>👑 سيتم الاحتفال بك كقديس خالد!</p>
+            </div>
+            
+            <div class="ending">
+                <div class="ending-title">❌ النهاية الحزينة - الرفض</div>
+                <p>تركت الحانة دون قبول المهمة.</p>
+                <p>بينما تغادر، تبدأ الظلام بالزحف.</p>
+                <p>بعد أسابيع... المملكة سقطت! 😔</p>
+            </div>
+        </div>
+        
+        <!-- نصائح البث -->
+        <div class="card" style="grid-column: 1/-1;">
+            <h2>💡 نصائح للبث الحي</h2>
+            
+            <div class="tips">
+                <strong>قبل البث:</strong>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li>اختبر اللعبة مرة سراً</li>
+                    <li>تأكد من الاتصال</li>
+                    <li>جهز قائمة بأسماء المتابعين</li>
+                    <li>انسخ رابط اللعبة</li>
+                </ul>
+            </div>
+            
+            <div class="tips">
+                <strong>أثناء البث:</strong>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li>قل: "ادخلوا على localhost:3000"</li>
+                    <li>انتظر حتى يدخل الجميع</li>
+                    <li>عرّف الأدوار: "أنت محارب، أنت شافي..."</li>
+                    <li>قل: "لدينا 5 ثوان للاختيار!"</li>
+                    <li>تفاعل مع الأحداث بدراما</li>
+                    <li>اقرأ تعليقات المتابعين</li>
+                </ul>
+            </div>
+            
+            <div class="tips">
+                <strong>بعد البث:</strong>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li>شكر المتابعين على اللعب</li>
+                    <li>اسأل: "هل أعجبتكم؟"</li>
+                    <li>قل: "نلتقي غداً لمغامرة جديدة!"</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- تحذير -->
+        <div class="warning">
+            <strong>⚠️ تذكر:</strong> إذا لم تعمل الأزرار، حدّث الصفحة (Ctrl+R) أو أعد تشغيل السيرفر!
+        </div>
+        
+        <!-- الأزرار الرئيسية -->
+        <div style="text-align: center; margin-top: 40px;">
+            <a href="http://localhost:3000" class="link-button">🎮 لعب الآن</a>
+            <a href="control-panel.html" class="link-button">🎛️ لوحة التحكم</a>
+        </div>
+        
+        <footer>
+            <p>🚀 استمتع باللعبة مع متابعيك!</p>
+            <p>Streamer's Quest v1.0 - Made with ❤️ for Streamers</p>
+        </footer>
+    </div>
+</body>
+</html>
