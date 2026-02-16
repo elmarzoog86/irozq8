@@ -9,9 +9,11 @@ interface GameLayoutProps {
   onBack: () => void;
   players?: Array<{id: number; name: string; score: number; eliminated: boolean}>;
   isGameRunning?: boolean;
+  onChatMessage?: (playerIndex: number, playerName: string, message: string) => void;
+  showLeaderboard?: boolean;
 }
 
-export default function GameLayout({ gameName, gameDescription, children, onBack, players = [], isGameRunning = false }: GameLayoutProps) {
+export default function GameLayout({ gameName, gameDescription, children, onBack, players = [], isGameRunning = false, onChatMessage, showLeaderboard = false }: GameLayoutProps) {
   const [questionsCount, setQuestionsCount] = useState(10);
   const [showSettings, setShowSettings] = useState(false);
   const [chatMessages, setChatMessages] = useState<Array<{id: number; user: string; message: string}>>([
@@ -21,6 +23,14 @@ export default function GameLayout({ gameName, gameDescription, children, onBack
 
   const handleSendMessage = () => {
     if (newMessage.trim()) {
+      // During game, send to game component as answer
+      if (isGameRunning && onChatMessage && players.length > 0) {
+        // Find "أنت" player (should be first player/streamer)
+        const playerIndex = 0; // First player is typically the streamer
+        const playerName = players[playerIndex]?.name || 'أنت';
+        onChatMessage(playerIndex, playerName, newMessage);
+      }
+
       setChatMessages([...chatMessages, {
         id: chatMessages.length + 1,
         user: 'أنت',
@@ -104,8 +114,8 @@ export default function GameLayout({ gameName, gameDescription, children, onBack
       {/* Right Sidebar - Settings/Leaderboard */}
       <div className="w-80 bg-gray-950 border-l border-purple-500/30 overflow-y-auto">
         <div className="p-6">
-          {isGameRunning ? (
-            // Leaderboard when game is running
+          {isGameRunning && showLeaderboard ? (
+            // Leaderboard only when there's activity
             <>
               <h3 className="text-lg font-bold text-purple-300 mb-6">🏆 لوحة النتائج</h3>
               <div className="space-y-3">
@@ -133,6 +143,11 @@ export default function GameLayout({ gameName, gameDescription, children, onBack
                   ))}
               </div>
             </>
+          ) : isGameRunning ? (
+            // Empty state during game when no activity
+            <div className="text-center py-12">
+              <div className="text-gray-500 text-sm">في انتظار إجابات...</div>
+            </div>
           ) : (
             // Settings when game is not running
             <>

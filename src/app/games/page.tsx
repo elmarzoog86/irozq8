@@ -1,9 +1,9 @@
 'use client';
 
 import { useSearchParams, useRouter } from 'next/navigation';
-import { useState, Suspense } from 'react';
+import { useState, Suspense, useRef } from 'react';
 import GameLayout from '@/components/GameLayout';
-import QuestionsGame from '@/components/QuestionsGame';
+import QuestionsGame, { type QuestionsGameHandle } from '@/components/QuestionsGame';
 import QuestionsLobby from '@/components/QuestionsLobby';
 import RouletteGame from '@/components/RouletteGame';
 import FruitsWarGame from '@/components/FruitsWarGame';
@@ -20,6 +20,18 @@ function GamePageContent() {
   const [questionsCount, setQuestionsCount] = useState(10);
   const [gameStarted, setGameStarted] = useState(false);
   const [players, setPlayers] = useState<Array<{id: number; name: string; score: number; eliminated: boolean}>>([]);
+  const [showLeaderboard, setShowLeaderboard] = useState(false);
+  const questionsGameRef = useRef<QuestionsGameHandle>(null);
+
+  const handleLayoutChatMessage = (playerIndex: number, playerName: string, message: string) => {
+    if (questionsGameRef.current) {
+      questionsGameRef.current.handleChatAnswer(playerIndex, playerName, message);
+    }
+  };
+
+  const handleAnswerSubmitted = (hasAnswered: boolean) => {
+    setShowLeaderboard(hasAnswered);
+  };
 
   if (!game) {
     return (
@@ -156,7 +168,12 @@ function GamePageContent() {
 
     switch (gameId) {
       case 'questions':
-        return <QuestionsGame {...gameProps} questionsPerRound={questionsCount} />;
+        return <QuestionsGame 
+          ref={questionsGameRef}
+          {...gameProps} 
+          questionsPerRound={questionsCount}
+          onAnswerSubmitted={handleAnswerSubmitted}
+        />;
       case 'roulette':
         return <RouletteGame {...gameProps} />;
       case 'fruits-war':
@@ -175,6 +192,8 @@ function GamePageContent() {
       onBack={() => setGameStarted(false)}
       players={players}
       isGameRunning={gameStarted}
+      onChatMessage={gameId === 'questions' ? handleLayoutChatMessage : undefined}
+      showLeaderboard={gameId === 'questions' ? showLeaderboard : false}
     >
       {renderGameComponent()}
     </GameLayout>
