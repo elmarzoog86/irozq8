@@ -20,7 +20,7 @@ function GamePageContent() {
   const [questionsCount, setQuestionsCount] = useState(10);
   const [gameStarted, setGameStarted] = useState(false);
   const [players, setPlayers] = useState<Array<{id: number; name: string; score: number; eliminated: boolean}>>([]);
-  const [showLeaderboard, setShowLeaderboard] = useState(false);
+  const [playersAnswering, setPlayersAnswering] = useState<number[]>([]);
   const questionsGameRef = useRef<QuestionsGameHandle>(null);
 
   const handleLayoutChatMessage = (playerIndex: number, playerName: string, message: string) => {
@@ -29,8 +29,13 @@ function GamePageContent() {
     }
   };
 
-  const handleAnswerSubmitted = (hasAnswered: boolean) => {
-    setShowLeaderboard(hasAnswered);
+  const handleAnswerSubmitted = () => {
+    // Leaderboard now stays visible throughout the entire game
+    // No need to hide/show based on answers
+  };
+
+  const handlePlayersAnswering = (playerIds: number[]) => {
+    setPlayersAnswering(playerIds);
   };
 
   if (!game) {
@@ -173,6 +178,7 @@ function GamePageContent() {
           {...gameProps} 
           questionsPerRound={questionsCount}
           onAnswerSubmitted={handleAnswerSubmitted}
+          onPlayersAnswering={handlePlayersAnswering}
         />;
       case 'roulette':
         return <RouletteGame {...gameProps} />;
@@ -193,7 +199,7 @@ function GamePageContent() {
       players={players}
       isGameRunning={gameStarted}
       onChatMessage={gameId === 'questions' ? handleLayoutChatMessage : undefined}
-      showLeaderboard={gameId === 'questions' ? showLeaderboard : false}
+      playersAnswering={gameId === 'questions' ? playersAnswering : []}
     >
       {renderGameComponent()}
     </GameLayout>

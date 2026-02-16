@@ -10,10 +10,10 @@ interface GameLayoutProps {
   players?: Array<{id: number; name: string; score: number; eliminated: boolean}>;
   isGameRunning?: boolean;
   onChatMessage?: (playerIndex: number, playerName: string, message: string) => void;
-  showLeaderboard?: boolean;
+  playersAnswering?: number[];
 }
 
-export default function GameLayout({ gameName, gameDescription, children, onBack, players = [], isGameRunning = false, onChatMessage, showLeaderboard = false }: GameLayoutProps) {
+export default function GameLayout({ gameName, gameDescription, children, onBack, players = [], isGameRunning = false, onChatMessage, playersAnswering = [] }: GameLayoutProps) {
   const [questionsCount, setQuestionsCount] = useState(10);
   const [showSettings, setShowSettings] = useState(false);
   const [chatMessages, setChatMessages] = useState<Array<{id: number; user: string; message: string}>>([
@@ -114,40 +114,44 @@ export default function GameLayout({ gameName, gameDescription, children, onBack
       {/* Right Sidebar - Settings/Leaderboard */}
       <div className="w-80 bg-gray-950 border-l border-purple-500/30 overflow-y-auto">
         <div className="p-6">
-          {isGameRunning && showLeaderboard ? (
-            // Leaderboard only when there's activity
+          {isGameRunning ? (
+            // Leaderboard persists throughout the game - show only players who answered current question
             <>
               <h3 className="text-lg font-bold text-purple-300 mb-6">🏆 لوحة النتائج</h3>
               <div className="space-y-3">
-                {[...players]
-                  .sort((a, b) => b.score - a.score)
-                  .map((player, index) => (
-                    <div
-                      key={player.id}
-                      className="p-4 bg-gradient-to-r from-cyan-600/30 to-pink-600/30 rounded-lg border-2 border-cyan-500"
-                    >
-                      <div className="flex justify-between items-center mb-2">
-                        <div className="flex items-center gap-2">
-                          {index === 0 && <span className="text-2xl">🥇</span>}
-                          {index === 1 && <span className="text-2xl">🥈</span>}
-                          {index === 2 && <span className="text-2xl">🥉</span>}
-                          {index > 2 && <span className="text-xl">#{index + 1}</span>}
-                          <span className="font-bold text-cyan-300">{player.name}</span>
+                {playersAnswering.length > 0 ? (
+                  <>
+                    {[...players]
+                      .filter(player => playersAnswering.includes(player.id))
+                      .sort((a, b) => b.score - a.score)
+                      .map((player, index) => (
+                        <div
+                          key={player.id}
+                          className="p-4 bg-gradient-to-r from-cyan-600/30 to-pink-600/30 rounded-lg border-2 border-cyan-500"
+                        >
+                          <div className="flex justify-between items-center mb-2">
+                            <div className="flex items-center gap-2">
+                              {index === 0 && <span className="text-2xl">🥇</span>}
+                              {index === 1 && <span className="text-2xl">🥈</span>}
+                              {index === 2 && <span className="text-2xl">🥉</span>}
+                              {index > 2 && <span className="text-xl">#{index + 1}</span>}
+                              <span className="font-bold text-cyan-300">{player.name}</span>
+                            </div>
+                          </div>
+                          <div className="flex justify-between items-center">
+                            <span className="text-xs text-gray-400">النقاط:</span>
+                            <span className="text-2xl font-bold text-pink-400">{player.score}</span>
+                          </div>
                         </div>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-xs text-gray-400">النقاط:</span>
-                        <span className="text-2xl font-bold text-pink-400">{player.score}</span>
-                      </div>
-                    </div>
-                  ))}
+                      ))}
+                  </>
+                ) : (
+                  <div className="text-center py-12">
+                    <div className="text-gray-500 text-sm">في انتظار إجابات...</div>
+                  </div>
+                )}
               </div>
             </>
-          ) : isGameRunning ? (
-            // Empty state during game when no activity
-            <div className="text-center py-12">
-              <div className="text-gray-500 text-sm">في انتظار إجابات...</div>
-            </div>
           ) : (
             // Settings when game is not running
             <>

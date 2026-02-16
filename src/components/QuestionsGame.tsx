@@ -10,6 +10,7 @@ interface QuestionsGameProps {
   questionsPerRound: number;
   onEndGame: () => void;
   onAnswerSubmitted?: (hasAnswered: boolean) => void;
+  onPlayersAnswering?: (playerIds: number[]) => void;
 }
 
 export interface QuestionsGameHandle {
@@ -22,6 +23,7 @@ const QuestionsGame = forwardRef<QuestionsGameHandle, QuestionsGameProps>(({
   questionsPerRound,
   onEndGame,
   onAnswerSubmitted,
+  onPlayersAnswering,
 }: QuestionsGameProps, ref) => {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -44,6 +46,17 @@ const QuestionsGame = forwardRef<QuestionsGameHandle, QuestionsGameProps>(({
       onAnswerSubmitted(answered);
     }
   }, [answered, onAnswerSubmitted]);
+
+  // Notify parent of which players answered this question
+  useEffect(() => {
+    if (onPlayersAnswering) {
+      const answeredPlayerIds = Object.keys(playerAnswers).map(key => {
+        const playerIndex = parseInt(key);
+        return players[playerIndex]?.id;
+      }).filter(id => id !== undefined);
+      onPlayersAnswering(answeredPlayerIds);
+    }
+  }, [playerAnswers, onPlayersAnswering, players]);
 
   // Timer countdown
   useEffect(() => {
@@ -112,7 +125,9 @@ const QuestionsGame = forwardRef<QuestionsGameHandle, QuestionsGameProps>(({
       if (playerAnswers[playerIndex]) return;
 
       const isCorrect = answerIndex === currentQuestion.correctAnswer;
-      const points = isCorrect ? Math.max(10, 15 - (15 - timeLeft)) : 0;
+      // New scoring: max 86 points, faster = more points
+      // Formula: If correct, give 86 - (seconds elapsed) = 86 - (15 - timeLeft)
+      const points = isCorrect ? Math.max(1, 86 - (15 - timeLeft)) : 0;
 
       // Record the answer
       const updatedAnswers = { ...playerAnswers, [playerIndex]: answerIndex };
