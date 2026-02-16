@@ -4,7 +4,7 @@ import React, { useState, useRef, useEffect } from 'react';
 
 interface ChairsGameProps {
   playerCount: number;
-  players: Array<{id: number; name: string; score: number; eliminated: boolean}>;
+  players: Array<{id: number; name: string; score: number; eliminated: boolean; joined: boolean}>;
   setPlayers: (players: any[]) => void;
   onEndGame: () => void;
 }

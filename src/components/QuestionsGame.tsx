@@ -5,12 +5,10 @@ import { Question, getRandomQuestions } from '@/data/questions';
 
 interface QuestionsGameProps {
   playerCount: number;
-  players: Array<{id: number; name: string; score: number; eliminated: boolean}>;
+  players: Array<{id: number; name: string; score: number; eliminated: boolean; joined: boolean}>;
   setPlayers: (players: any[]) => void;
   questionsPerRound: number;
   onEndGame: () => void;
-  onAnswerSubmitted?: (hasAnswered: boolean) => void;
-  onPlayersAnswering?: (playerIds: number[]) => void;
 }
 
 export interface QuestionsGameHandle {
@@ -22,14 +20,12 @@ const QuestionsGame = forwardRef<QuestionsGameHandle, QuestionsGameProps>(({
   setPlayers,
   questionsPerRound,
   onEndGame,
-  onAnswerSubmitted,
-  onPlayersAnswering,
 }: QuestionsGameProps, ref) => {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [timeLeft, setTimeLeft] = useState(15);
   const [answered, setAnswered] = useState(false);
-  const [playerAnswers, setPlayerAnswers] = useState<{[key: number]: number}>({});
+  const [playerAnswers, setPlayerAnswers] = useState<{[key: number]: {answerIndex: number; timeLeft: number}}>({});
   const [gameOver, setGameOver] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const [chatMessages, setChatMessages] = useState<Array<{player: string; answer: string; correct: boolean}>>([]);
@@ -40,34 +36,32 @@ const QuestionsGame = forwardRef<QuestionsGameHandle, QuestionsGameProps>(({
     setQuestions(qs);
   }, [questionsPerRound]);
 
-  // Notify parent when answer is submitted
-  useEffect(() => {
-    if (onAnswerSubmitted) {
-      onAnswerSubmitted(answered);
-    }
-  }, [answered, onAnswerSubmitted]);
-
-  // Notify parent of which players answered this question
-  useEffect(() => {
-    if (onPlayersAnswering) {
-      const answeredPlayerIds = Object.keys(playerAnswers).map(key => {
-        const playerIndex = parseInt(key);
-        return players[playerIndex]?.id;
-      }).filter(id => id !== undefined);
-      onPlayersAnswering(answeredPlayerIds);
-    }
-  }, [playerAnswers, onPlayersAnswering, players]);
-
-  // Timer countdown
+  // Initialize questions based on questionsPerRound
   useEffect(() => {
     if (!questions.length || gameOver) return;
 
     const timer = setInterval(() => {
       setTimeLeft((prev) => {
         if (prev <= 1) {
-          // Timer expired - show results
+          // Timer expired - award points to players who answered correctly
           setAnswered(true);
           setShowResults(true);
+          
+          // Award points now that timer has ended
+          const updatedPlayers = [...players];
+          Object.entries(playerAnswers).forEach(([playerIndexStr, answerData]) => {
+            const playerIndex = parseInt(playerIndexStr);
+            const answerIndex = answerData.answerIndex;
+            const timeLeftWhenAnswered = answerData.timeLeft;
+            const isCorrect = answerIndex === questions[currentQuestionIndex].correctAnswer;
+            // Award points only if correct: max 86 points
+            // Scoring: 86 at start (15s left), drops 3 points per second
+            // Formula: 86 - (seconds elapsed * 3) = 86 - ((15 - timeLeftWhenAnswered) * 3)
+            const points = isCorrect ? Math.max(0, 86 - ((15 - timeLeftWhenAnswered) * 3)) : 0;
+            updatedPlayers[playerIndex].score += points;
+          });
+          setPlayers(updatedPlayers);
+          
           setTimeout(() => {
             const nextIndex = currentQuestionIndex + 1;
             if (nextIndex < questions.length) {
@@ -88,7 +82,7 @@ const QuestionsGame = forwardRef<QuestionsGameHandle, QuestionsGameProps>(({
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [questions.length, gameOver, currentQuestionIndex, answered]);
+  }, [questions.length, gameOver, currentQuestionIndex, answered, playerAnswers]);
 
   useImperativeHandle(ref, () => ({
     handleChatAnswer: (playerIndex: number, playerName: string, answer: string) => {
@@ -125,20 +119,17 @@ const QuestionsGame = forwardRef<QuestionsGameHandle, QuestionsGameProps>(({
       if (playerAnswers[playerIndex]) return;
 
       const isCorrect = answerIndex === currentQuestion.correctAnswer;
-      // New scoring: max 86 points, faster = more points
-      // Formula: If correct, give 86 - (seconds elapsed) = 86 - (15 - timeLeft)
-      const points = isCorrect ? Math.max(1, 86 - (15 - timeLeft)) : 0;
 
-      // Record the answer
-      const updatedAnswers = { ...playerAnswers, [playerIndex]: answerIndex };
+      // Record the answer with the current timeLeft WITHOUT awarding points yet
+      const updatedAnswers = { ...playerAnswers, [playerIndex]: {answerIndex, timeLeft} };
       setPlayerAnswers(updatedAnswers);
 
-      // Award points
+      // Mark player as joined when they answer
       const updatedPlayers = [...players];
-      updatedPlayers[playerIndex].score += points;
+      updatedPlayers[playerIndex].joined = true;
       setPlayers(updatedPlayers);
 
-      // Add to chat with the actual option text
+      // Add to chat with the actual option text (show hourglass, not checkmark)
       const newMessage = { 
         player: playerName, 
         answer: currentQuestion.options[answerIndex], 
@@ -241,7 +232,7 @@ const QuestionsGame = forwardRef<QuestionsGameHandle, QuestionsGameProps>(({
                     bgColor = 'bg-green-600/70';
                     borderColor = 'border-green-400';
                     textColor = 'text-green-100';
-                  } else if (playerAnswers[0] === index && index !== currentQuestion.correctAnswer) {
+                  } else if (playerAnswers[0]?.answerIndex === index && index !== currentQuestion.correctAnswer) {
                     bgColor = 'bg-red-600/70';
                     borderColor = 'border-red-400';
                     textColor = 'text-red-100';
@@ -263,7 +254,7 @@ const QuestionsGame = forwardRef<QuestionsGameHandle, QuestionsGameProps>(({
           {/* Show Result Message */}
           {showResults && (
             <div className="text-center p-6 bg-slate-800/80 rounded-lg border-2 border-cyan-500 mb-8">
-              {playerAnswers[0] === currentQuestion.correctAnswer ? (
+              {playerAnswers[0]?.answerIndex === currentQuestion.correctAnswer ? (
                 <div className="text-2xl font-bold text-green-400">✅ إجابة صحيحة!</div>
               ) : (
                 <div>

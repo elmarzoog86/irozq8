@@ -9,6 +9,7 @@ interface Player {
   name: string;
   score: number;
   eliminated: boolean;
+  joined: boolean;
   lives?: number;
 }
 

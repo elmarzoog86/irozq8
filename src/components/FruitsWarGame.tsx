@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 interface FruitsWarGameProps {
   playerCount: number;
-  players: Array<{id: number; name: string; score: number; eliminated: boolean; fruit?: string}>;
+  players: Array<{id: number; name: string; score: number; eliminated: boolean; joined: boolean; fruit?: string}>;
   setPlayers: (players: any[]) => void;
   onEndGame: () => void;
 }

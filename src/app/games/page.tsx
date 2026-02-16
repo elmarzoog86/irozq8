@@ -19,23 +19,13 @@ function GamePageContent() {
   const [playerCount, setPlayerCount] = useState(10);
   const [questionsCount, setQuestionsCount] = useState(10);
   const [gameStarted, setGameStarted] = useState(false);
-  const [players, setPlayers] = useState<Array<{id: number; name: string; score: number; eliminated: boolean}>>([]);
-  const [playersAnswering, setPlayersAnswering] = useState<number[]>([]);
+  const [players, setPlayers] = useState<Array<{id: number; name: string; score: number; eliminated: boolean; joined: boolean}>>([]);
   const questionsGameRef = useRef<QuestionsGameHandle>(null);
 
   const handleLayoutChatMessage = (playerIndex: number, playerName: string, message: string) => {
     if (questionsGameRef.current) {
       questionsGameRef.current.handleChatAnswer(playerIndex, playerName, message);
     }
-  };
-
-  const handleAnswerSubmitted = () => {
-    // Leaderboard now stays visible throughout the entire game
-    // No need to hide/show based on answers
-  };
-
-  const handlePlayersAnswering = (playerIds: number[]) => {
-    setPlayersAnswering(playerIds);
   };
 
   if (!game) {
@@ -66,6 +56,7 @@ function GamePageContent() {
                 name: `لاعب ${i + 1}`,
                 score: 0,
                 eliminated: false,
+                joined: false, // Initially not joined
               }));
               setPlayers(newPlayers);
               setPlayerCount(playerCount);
@@ -134,6 +125,7 @@ function GamePageContent() {
                       name: `لاعب ${i + 1}`,
                       score: 0,
                       eliminated: false,
+                      joined: false,
                     }));
                     setPlayers(newPlayers);
                     setGameStarted(true);
@@ -177,8 +169,6 @@ function GamePageContent() {
           ref={questionsGameRef}
           {...gameProps} 
           questionsPerRound={questionsCount}
-          onAnswerSubmitted={handleAnswerSubmitted}
-          onPlayersAnswering={handlePlayersAnswering}
         />;
       case 'roulette':
         return <RouletteGame {...gameProps} />;
@@ -199,7 +189,6 @@ function GamePageContent() {
       players={players}
       isGameRunning={gameStarted}
       onChatMessage={gameId === 'questions' ? handleLayoutChatMessage : undefined}
-      playersAnswering={gameId === 'questions' ? playersAnswering : []}
     >
       {renderGameComponent()}
     </GameLayout>
