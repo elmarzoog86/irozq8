@@ -105,13 +105,13 @@ function DashboardContent() {
   }
 
   return (
-    <div style={{background: 'linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #2d1b4e 100%)'}} className="min-h-screen">
+    <div style={{background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%)'}} className="min-h-screen">
       <Header />
 
       <main className="container mx-auto px-4 py-12">
         {/* Welcome Section */}
         <div className="mb-12 text-center">
-          <h1 className="text-5xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-cyan-400 via-pink-500 to-purple-500 bg-clip-text text-transparent">
+          <h1 className="text-5xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-cyan-400 via-pink-500 to-amber-500 bg-clip-text text-transparent">
             🎮 لوحة تحكم المذيع
           </h1>
           <p className="text-xl text-cyan-300/70">مرحباً {user.displayName} 👋</p>
@@ -186,12 +186,12 @@ function DashboardContent() {
         </div>
 
         {/* Chat Integration */}
-        <div className="rounded-lg border-2 border-purple-500/50 p-6" style={{background: 'linear-gradient(135deg, rgba(128, 0, 255, 0.1) 0%, rgba(0, 217, 255, 0.1) 100%)'}}>
-          <h3 className="text-2xl font-bold text-purple-400 mb-6">💬 اتصال Twitch Chat</h3>
+        <div className="rounded-lg border-2 border-cyan-500/50 p-6" style={{background: 'linear-gradient(135deg, rgba(0, 217, 255, 0.1) 0%, rgba(255, 0, 110, 0.1) 100%)'}}>
+          <h3 className="text-2xl font-bold text-cyan-400 mb-6">💬 اتصال Twitch Chat</h3>
 
           <div className="grid md:grid-cols-2 gap-6">
             {/* Chat Status */}
-            <div className="p-4 bg-slate-800 rounded-lg border-2 border-purple-500/30">
+            <div className="p-4 bg-slate-800 rounded-lg border-2 border-cyan-500/30">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-4 h-4 bg-green-500 rounded-full animate-pulse"></div>
                 <span className="text-cyan-300 font-bold">متصل بـ Twitch Chat</span>
@@ -200,8 +200,8 @@ function DashboardContent() {
             </div>
 
             {/* Features */}
-            <div className="p-4 bg-slate-800 rounded-lg border-2 border-purple-500/30">
-              <h4 className="text-purple-300 font-bold mb-3">المميزات:</h4>
+            <div className="p-4 bg-slate-800 rounded-lg border-2 border-cyan-500/30">
+              <h4 className="text-cyan-300 font-bold mb-3">المميزات:</h4>
               <ul className="text-cyan-300/70 text-sm space-y-1">
                 <li>✓ قراءة الرسائل من الشات</li>
                 <li>✓ إرسال إعلانات للعبة</li>
@@ -225,10 +225,10 @@ function DashboardContent() {
             <p className="text-3xl font-bold text-pink-400">{gameRunning ? '🟢 جاري' : '⚪ متوقفة'}</p>
           </div>
 
-          <div className="rounded-lg p-6 bg-gradient-to-br from-purple-900/30 to-purple-900/50 border-2 border-purple-500/50 text-center">
+          <div className="rounded-lg p-6 bg-gradient-to-br from-amber-900/30 to-amber-900/50 border-2 border-amber-500/50 text-center">
             <div className="text-4xl mb-2">⏱️</div>
-            <p className="text-purple-300/70">وقت الجلسة</p>
-            <p className="text-3xl font-bold text-purple-400">جارية</p>
+            <p className="text-amber-300/70">وقت الجلسة</p>
+            <p className="text-3xl font-bold text-amber-400">جارية</p>
           </div>
         </div>
       </main>
@@ -239,7 +239,7 @@ function DashboardContent() {
 export default function TwitchDashboard() {
   return (
     <Suspense fallback={
-      <div style={{background: 'linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #2d1b4e 100%)'}} className="min-h-screen flex items-center justify-center">
+      <div style={{background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%)'}} className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-4xl font-bold text-cyan-400">جاري التحميل...</h1>
         </div>

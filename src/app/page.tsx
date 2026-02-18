@@ -113,7 +113,7 @@ function HomeContent() {
   // If user is logged in and game is running, show dashboard with game
   if (user && gameRunning && selectedGame && sessionId) {
     return (
-      <div style={{background: 'linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #2d1b4e 100%)'}} className="min-h-screen">
+      <div style={{background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%)'}} className="min-h-screen">
         <Header />
         <DashboardGameView 
           user={user}
@@ -128,21 +128,21 @@ function HomeContent() {
   }
 
   return (
-    <div style={{background: 'linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #2d1b4e 100%)'}} className="min-h-screen">
+    <div style={{background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%)'}} className="min-h-screen">
       <Header />
       <main className="container mx-auto px-4 py-12">
         {/* Streamer Login Banner - Only show if not logged in AND no session in URL AND not loading */}
         {!user && !loading && !sessionId && (
-          <div className="mb-8 rounded-lg border-2 border-purple-500/50 p-6 text-center" style={{background: 'linear-gradient(135deg, rgba(168, 85, 247, 0.1) 0%, rgba(0, 217, 255, 0.1) 100%)'}}>
+          <div className="mb-8 rounded-lg border-2 border-cyan-500/50 p-6 text-center" style={{background: 'linear-gradient(135deg, rgba(0, 217, 255, 0.1) 0%, rgba(255, 0, 110, 0.1) 100%)'}}>
             <div className="flex flex-col md:flex-row items-center justify-center gap-4">
               <div className="flex-1">
-                <h3 className="text-xl font-bold text-purple-300 mb-2">🎮 هل أنت مذيع؟</h3>
-                <p className="text-purple-300/70">استخدم لوحة التحكم الكاملة للتحكم بالألعاب والتفاعل مع جمهورك على Twitch</p>
+                <h3 className="text-xl font-bold text-cyan-300 mb-2">🎮 هل أنت مذيع؟</h3>
+                <p className="text-cyan-300/70">استخدم لوحة التحكم الكاملة للتحكم بالألعاب والتفاعل مع جمهورك على Twitch</p>
               </div>
               <a 
                 href="/twitch/login"
-                className="px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold rounded-lg transition-all duration-300 whitespace-nowrap"
-                style={{boxShadow: '0 0 15px rgba(168, 85, 247, 0.4)'}}
+                className="px-6 py-3 bg-gradient-to-r from-cyan-600 to-pink-600 hover:from-cyan-700 hover:to-pink-700 text-white font-bold rounded-lg transition-all duration-300 whitespace-nowrap"
+                style={{boxShadow: '0 0 15px rgba(0, 217, 255, 0.4)'}}
               >
                 دخول Twitch
               </a>

@@ -59,7 +59,7 @@ function TwitchLoginContent() {
   };
 
   return (
-    <div style={{background: 'linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #2d1b4e 100%)'}} className="min-h-screen flex flex-col">
+    <div style={{background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%)'}} className="min-h-screen flex flex-col">
       <Header />
 
       <main className="flex-1 flex items-center justify-center px-4 py-12">
@@ -99,9 +99,9 @@ function TwitchLoginContent() {
             <button
               onClick={handleTwitchLogin}
               disabled={loading}
-              className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 disabled:from-slate-600 disabled:to-slate-600 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 mb-4"
+              className="w-full bg-gradient-to-r from-cyan-600 to-pink-600 hover:from-cyan-700 hover:to-pink-700 disabled:from-slate-600 disabled:to-slate-600 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 mb-4"
               style={{
-                boxShadow: '0 0 20px rgba(168, 85, 247, 0.5)',
+                boxShadow: '0 0 20px rgba(0, 217, 255, 0.5)',
                 ...(loading && {boxShadow: 'none'})
               }}
             >
@@ -153,12 +153,12 @@ function TwitchLoginContent() {
             </div>
 
             {/* Feature 3 */}
-            <div className="rounded-lg border-2 border-purple-500/30 p-4 bg-slate-900/30">
+            <div className="rounded-lg border-2 border-cyan-500/30 p-4 bg-slate-900/30">
               <div className="flex gap-3">
                 <span className="text-2xl">📊</span>
                 <div>
-                  <h3 className="text-purple-300 font-bold">إدارة سهلة</h3>
-                  <p className="text-purple-300/60 text-sm">لوحة تحكم موحدة لكل شيء</p>
+                  <h3 className="text-cyan-300 font-bold">إدارة سهلة</h3>
+                  <p className="text-cyan-300/60 text-sm">لوحة تحكم موحدة لكل شيء</p>
                 </div>
               </div>
             </div>
@@ -179,7 +179,7 @@ function TwitchLoginContent() {
 export default function TwitchLogin() {
   return (
     <Suspense fallback={
-      <div style={{background: 'linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #2d1b4e 100%)'}} className="min-h-screen flex items-center justify-center">
+      <div style={{background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%)'}} className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <p className="text-2xl text-cyan-300">جاري التحميل...</p>
         </div>

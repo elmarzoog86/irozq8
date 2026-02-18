@@ -98,7 +98,7 @@ function GameSelectionContent() {
 
   if (loading) {
     return (
-      <div style={{ background: 'linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #2d1b4e 100%)' }} className="min-h-screen flex items-center justify-center">
+      <div style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%)' }} className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="text-6xl mb-4 animate-bounce">🎮</div>
           <p className="text-2xl text-cyan-300 font-bold">جاري التحميل...</p>
@@ -108,7 +108,7 @@ function GameSelectionContent() {
   }
 
   return (
-    <div style={{ background: 'linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #2d1b4e 100%)' }} className="min-h-screen">
+    <div style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%)' }} className="min-h-screen">
       <Header />
 
       <main className="container mx-auto px-4 py-12">
@@ -192,7 +192,7 @@ function GameSelectionContent() {
 export default function GameSelection() {
   return (
     <Suspense fallback={
-      <div style={{ background: 'linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #2d1b4e 100%)' }} className="min-h-screen flex items-center justify-center">
+      <div style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%)' }} className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-4xl font-bold text-cyan-400">جاري التحميل...</h1>
         </div>
