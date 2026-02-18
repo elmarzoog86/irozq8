@@ -24,15 +24,31 @@ function GamePageContent() {
   const [players, setPlayers] = useState<Array<{id: number; name: string; score: number; eliminated: boolean; joined: boolean; emoji?: string}>>([]);
   const [consoleLogs, setConsoleLogs] = useState<Array<{id: string; message: string; type: 'join' | 'leave' | 'system' | 'action'; timestamp: string}>>([]);
   const [chatMessages, setChatMessages] = useState<Array<{username: string; message: string; timestamp: string}>>([]);
+  const [usernameToIndex, setUsernameToIndex] = useState<Map<string, number>>(new Map());
   const questionsGameRef = useRef<QuestionsGameHandle>(null);
   const fruitWarVotingRef = useRef<{handleChatVote: (fruitIndex: number) => void} | null>(null);
 
   // Memoize the onAnswer callback to prevent unnecessary re-connections
   const handleChatAnswer = useCallback((playerIndex: number, username: string, answer: string) => {
-    if (questionsGameRef.current) {
-      questionsGameRef.current.handleChatAnswer(playerIndex, username, answer);
+    // Auto-assign player index if not provided and username not seen before
+    let actualPlayerIndex = playerIndex;
+    if (playerIndex === 0 || playerIndex === undefined) {
+      // Find if we've seen this username before
+      const mapCopy = new Map(usernameToIndex);
+      if (!mapCopy.has(username)) {
+        // Assign next available index
+        actualPlayerIndex = mapCopy.size;
+        mapCopy.set(username, actualPlayerIndex);
+        setUsernameToIndex(mapCopy);
+      } else {
+        actualPlayerIndex = mapCopy.get(username) || 0;
+      }
     }
-  }, []);
+    
+    if (questionsGameRef.current) {
+      questionsGameRef.current.handleChatAnswer(actualPlayerIndex, username, answer);
+    }
+  }, [usernameToIndex]);
 
   // Handle all chat messages - display in chat panel
   const handleChatMessage = useCallback((username: string, message: string) => {
