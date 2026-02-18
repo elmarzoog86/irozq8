@@ -13,6 +13,7 @@ interface FruitsWarModeSelectorProps {
 export default function FruitsWarModeSelector({
   players,
   onModeSelect,
+  onEndGame,
 }: FruitsWarModeSelectorProps) {
   const [selectedMode, setSelectedMode] = useState<'roulette' | 'voting' | null>(null);
 
@@ -28,6 +29,16 @@ export default function FruitsWarModeSelector({
 
   return (
     <div className="w-screen h-screen flex flex-col fixed inset-0" dir="rtl" style={{ background: '#0f0f1e' }}>
+      {/* Back Button */}
+      <div className="absolute top-4 left-4 z-50">
+        <button
+          onClick={onEndGame}
+          className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-6 rounded-lg transition-colors flex items-center gap-2"
+        >
+          ← العودة
+        </button>
+      </div>
+
       {/* Header with Players */}
       <div className="flex-1 flex overflow-hidden">
         {/* Left Sidebar - Player Names List */}
