@@ -52,8 +52,8 @@ export default function QuestionsLobby({ onStartGame, onBack }: QuestionsLobbyPr
   return (
     <div className="w-full h-full flex" dir="rtl" style={{ background: '#0f0f1e' }}>
       {/* LEFT SECTION - System Log (سجل النظام) */}
-      <div className="w-80 flex flex-col border-r border-purple-500/20 bg-black/40">
-        <div className="px-4 py-3 border-b border-purple-500/20">
+      <div className="w-80 flex flex-col border-r border-cyan-500/20 bg-black/40">
+        <div className="px-4 py-3 border-b border-cyan-500/20">
           <h3 className="text-sm font-bold text-cyan-300">سجل النظام</h3>
         </div>
         
@@ -76,7 +76,7 @@ export default function QuestionsLobby({ onStartGame, onBack }: QuestionsLobbyPr
         </div>
 
         {/* Chat Input */}
-        <div className="px-3 py-3 border-t border-purple-500/20">
+        <div className="px-3 py-3 border-t border-cyan-500/20">
           <div className="flex gap-2">
             <input
               type="text"
@@ -104,10 +104,10 @@ export default function QuestionsLobby({ onStartGame, onBack }: QuestionsLobbyPr
           <h1 className="text-3xl font-bold text-white mb-2 text-center">في انتظار اللاعبين</h1>
           <p className="text-cyan-300 text-sm mb-8 text-center max-w-md">اضغط للعبة وكن السريع في الإجابة!</p>
 
-          <div className="bg-purple-600/30 border border-purple-500/50 rounded-lg p-6 max-w-md w-full text-center">
+          <div className="bg-cyan-600/30 border border-cyan-500/50 rounded-lg p-6 max-w-md w-full text-center">
             <h3 className="text-cyan-300 font-bold mb-3">خطوات الانضمام إلى اللعبة</h3>
-            <div className="bg-purple-700/30 rounded px-4 py-3">
-              <p className="text-purple-300 text-sm font-bold">1</p>
+            <div className="bg-cyan-700/30 rounded px-4 py-3">
+              <p className="text-cyan-300 text-sm font-bold">1</p>
               <p className="text-gray-300 text-xs mt-2">أي شخص في الشات يمكنه الإجابة مباشرة</p>
             </div>
           </div>
@@ -115,11 +115,11 @@ export default function QuestionsLobby({ onStartGame, onBack }: QuestionsLobbyPr
       </div>
 
       {/* RIGHT SECTION - Settings */}
-      <div className="w-96 flex flex-col border-l border-purple-500/20 bg-black/40 p-4 space-y-4 overflow-y-auto">
+      <div className="w-96 flex flex-col border-l border-cyan-500/20 bg-black/40 p-4 space-y-4 overflow-y-auto">
         
         {/* Header with Tabs */}
         <div className="flex gap-2 mb-4">
-          <button className="flex-1 bg-purple-600 text-white py-2 px-4 rounded font-bold text-sm">
+          <button className="flex-1 bg-cyan-600 text-white py-2 px-4 rounded font-bold text-sm">
             إعدادات اللعبة
           </button>
         </div>
@@ -143,7 +143,7 @@ export default function QuestionsLobby({ onStartGame, onBack }: QuestionsLobbyPr
                 onClick={() => setQuestionsCount(count)}
                 className={`py-2 rounded font-bold text-sm transition-all ${
                   questionsCount === count
-                    ? 'bg-purple-600 text-white border-2 border-purple-400'
+                    ? 'bg-cyan-600 text-white border-2 border-cyan-400'
                     : 'bg-gray-800 text-gray-300 border-2 border-gray-700 hover:bg-gray-700'
                 }`}
               >
@@ -154,10 +154,10 @@ export default function QuestionsLobby({ onStartGame, onBack }: QuestionsLobbyPr
         </div>
 
         {/* Divider */}
-        <div className="border-t border-purple-500/20 my-2"></div>
+        <div className="border-t border-cyan-500/20 my-2"></div>
 
         {/* Action Buttons */}
-        <div className="space-y-2 mt-auto pt-4 border-t border-purple-500/20">
+        <div className="space-y-2 mt-auto pt-4 border-t border-cyan-500/20">
           <button
             onClick={handleStartGame}
             className="w-full py-3 px-4 rounded-lg font-bold transition-all text-sm bg-green-600 hover:bg-green-700 text-white shadow-lg"
