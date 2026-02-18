@@ -119,14 +119,8 @@ function GamePageContent() {
 
     // For Fruits War game, start immediately without settings
     if (gameId === 'fruits-war') {
-      const newPlayers = Array.from({ length: 10 }, (_, i) => ({
-        id: i + 1,
-        name: `لاعب ${i + 1}`,
-        score: 0,
-        eliminated: false,
-        joined: false,
-      }));
-      setPlayers(newPlayers);
+      // Start with empty players array - only add when they join via chat
+      setPlayers([]);
       setGameStarted(true);
       // Return nothing to let it render the game on next render
       return null;
