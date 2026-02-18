@@ -161,12 +161,12 @@ const FruitsWarVotingGame = forwardRef<
   // Show waiting screen when no game is started
   if (gamePhase === 'waiting') {
     return (
-      <div className="w-screen h-screen flex flex-col fixed inset-0 bg-gradient-to-b from-slate-950 via-purple-950 to-slate-950" dir="rtl">
+      <div className="w-screen h-screen flex flex-col fixed inset-0 bg-slate-950" dir="rtl">
         {/* Back Button */}
         <div className="absolute top-4 left-4 z-50">
           <button
             onClick={onEndGame}
-            className="bg-gradient-to-r from-pink-600 to-pink-700 hover:from-pink-500 hover:to-pink-600 text-white font-bold py-2 px-6 rounded-lg transition-colors flex items-center gap-2 shadow-lg"
+            className="bg-gradient-to-r from-pink-600 to-pink-700 hover:from-pink-500 hover:to-pink-600 text-white font-bold py-2 px-6 rounded-lg transition-colors flex items-center gap-2 shadow-lg shadow-pink-500/50"
           >
             ← العودة
           </button>
@@ -174,10 +174,10 @@ const FruitsWarVotingGame = forwardRef<
 
         <div className="flex-1 flex flex-col items-center justify-center p-8 relative">
           <div className="text-center relative z-10">
-            <h1 className="text-5xl font-bold bg-gradient-to-r from-cyan-300 via-pink-300 to-purple-300 bg-clip-text text-transparent mb-8">حرب الفواكه - تصويت</h1>
+            <h1 className="text-5xl font-bold text-cyan-400 mb-8">حرب الفواكه - تصويت</h1>
             <div className="mb-12">
-              <h2 className="text-3xl font-bold text-cyan-400 mb-6">المشاركون</h2>
-              <div className="bg-purple-950/40 border-2 border-cyan-500/50 rounded-lg p-8 max-w-2xl mx-auto">
+              <h2 className="text-3xl font-bold text-pink-400 mb-6">المشاركون</h2>
+              <div className="bg-slate-800 border-2 border-pink-500 rounded-lg p-8 max-w-2xl mx-auto shadow-lg shadow-pink-500/20">
                 {joinedPlayers.length > 0 ? (
                   <div className="grid grid-cols-2 gap-4">
                     {joinedPlayers.map((player) => (
@@ -188,7 +188,7 @@ const FruitsWarVotingGame = forwardRef<
                     ))}
                   </div>
                 ) : (
-                  <p className="text-xl text-purple-300">في انتظار المشاركين...</p>
+                  <p className="text-xl text-slate-300">في انتظار المشاركين...</p>
                 )}
               </div>
             </div>
@@ -209,11 +209,11 @@ const FruitsWarVotingGame = forwardRef<
   // Show winner screen when game finished
   if (gamePhase === 'finished' || remainingPlayers === 1) {
     return (
-      <div className="w-screen h-screen flex flex-col fixed inset-0 bg-gradient-to-b from-slate-950 via-purple-950 to-slate-950" dir="rtl">
+      <div className="w-screen h-screen flex flex-col fixed inset-0 bg-slate-950" dir="rtl">
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center">
-            <h1 className="text-6xl font-bold bg-gradient-to-r from-amber-400 to-yellow-300 bg-clip-text text-transparent mb-4">🏆 الفائز! 🏆</h1>
-            <p className="text-4xl font-bold text-cyan-300 mb-8">{joinedPlayers[0]?.name}</p>
+            <h1 className="text-6xl font-bold text-amber-400 mb-4">🏆 الفائز! 🏆</h1>
+            <p className="text-4xl font-bold text-cyan-400 mb-8">{joinedPlayers[0]?.name}</p>
             <p className="text-2xl text-pink-400 mb-8">{joinedPlayers[0]?.fruit}</p>
             <button
               onClick={onEndGame}
@@ -228,27 +228,27 @@ const FruitsWarVotingGame = forwardRef<
   }
 
   return (
-    <div className="w-screen h-screen flex flex-col fixed inset-0 bg-gradient-to-b from-slate-950 via-purple-950 to-slate-950" dir="rtl">
+    <div className="w-screen h-screen flex flex-col fixed inset-0 bg-slate-950" dir="rtl">
       {/* Back Button */}
       <div className="absolute top-4 left-4 z-50">
         <button
           onClick={onEndGame}
-          className="bg-gradient-to-r from-pink-600 to-pink-700 hover:from-pink-500 hover:to-pink-600 text-white font-bold py-2 px-6 rounded-lg transition-colors flex items-center gap-2 shadow-lg"
+          className="bg-gradient-to-r from-pink-600 to-pink-700 hover:from-pink-500 hover:to-pink-600 text-white font-bold py-2 px-6 rounded-lg transition-colors flex items-center gap-2 shadow-lg shadow-pink-500/50"
         >
           ← العودة
         </button>
       </div>
 
       {/* Header */}
-      <div className="bg-gradient-to-r from-purple-900/50 to-slate-950/50 border-b-2 border-cyan-500/50 p-6">
+      <div className="bg-slate-900 border-b-2 border-cyan-500 p-6 shadow-lg">
         <div className="flex justify-between items-center max-w-full">
           <div className="text-left">
             <p className="text-cyan-400 text-lg font-bold">الجولة #{roundNumber}</p>
             <p className="text-pink-300 text-sm">لاعبين متبقيين: {remainingPlayers}</p>
           </div>
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-cyan-300 via-pink-300 to-purple-300 bg-clip-text text-transparent flex-1 text-center">حرب الفواكه - تصويت</h1>
+          <h1 className="text-4xl font-bold text-cyan-400 flex-1 text-center">حرب الفواكه - تصويت</h1>
           <div className="text-right">
-            <p className="text-cyan-400 text-lg font-bold">
+            <p className="text-pink-400 text-lg font-bold">
               {gamePhase === 'voting' ? `⏱️ ${timeLeft}s` : gamePhase === 'results' ? '📊 النتائج' : '❌ الإقصاء'}
             </p>
           </div>
@@ -258,11 +258,11 @@ const FruitsWarVotingGame = forwardRef<
       {/* Main Content */}
       <div className="flex-1 flex overflow-hidden">
         {/* Left Sidebar - Vote Counter */}
-        <div className="w-80 bg-gradient-to-b from-purple-950/50 to-slate-950/50 border-l-2 border-cyan-500/30 p-6 overflow-y-auto">
-          <h2 className="text-2xl font-bold text-cyan-400 mb-6 text-center">الأصوات</h2>
+        <div className="w-80 bg-slate-900 border-l-2 border-pink-500 p-6 overflow-y-auto shadow-lg shadow-pink-500/20">
+          <h2 className="text-2xl font-bold text-pink-400 mb-6 text-center">الأصوات</h2>
           <div className="text-cyan-300 text-center mb-6 text-sm">
             <p className="mb-2">🎮 أكتب !join للدخول</p>
-            <p className="text-xs text-purple-300">صوّت برقم الفاكهة 1-{joinedPlayers.length}</p>
+            <p className="text-xs text-slate-300">صوّت برقم الفاكهة 1-{joinedPlayers.length}</p>
           </div>
           <div className="space-y-3">
             {joinedPlayers.map((player) => (
@@ -271,7 +271,7 @@ const FruitsWarVotingGame = forwardRef<
                 className={`p-4 rounded-lg border-2 transition-all ${
                   player.id === mostVotedId
                     ? 'border-red-500 bg-red-900/40 shadow-lg shadow-red-500/50'
-                    : 'border-cyan-500/30 bg-purple-900/20'
+                    : 'border-slate-700 bg-slate-800'
                 }`}
               >
                 <div className="flex items-center justify-between">
@@ -289,9 +289,9 @@ const FruitsWarVotingGame = forwardRef<
         </div>
 
         {/* Main Game Area */}
-        <div className="flex-1 flex flex-col items-center justify-center p-8 relative">
+        <div className="flex-1 flex flex-col items-center justify-center p-8 relative bg-slate-950">
           {/* Decorative background */}
-          <div className="absolute inset-0 opacity-5">
+          <div className="absolute inset-0 opacity-10">
             <div className="text-8xl text-cyan-400 absolute top-10 left-10">🏮</div>
             <div className="text-8xl text-pink-400 absolute top-10 right-10">🏮</div>
             <div className="text-8xl text-amber-400 absolute bottom-10 left-10">⭐</div>
@@ -300,20 +300,20 @@ const FruitsWarVotingGame = forwardRef<
 
           {gamePhase === 'voting' && (
             <div className="text-center relative z-10">
-              <h2 className="text-5xl font-bold text-cyan-300 mb-12">صوّت للإقصاء!</h2>
+              <h2 className="text-5xl font-bold text-cyan-400 mb-12">صوّت للإقصاء!</h2>
               <div className="grid grid-cols-3 gap-6 mb-12">
                 {joinedPlayers.map((player) => (
                   <div
                     key={player.id}
                     onClick={() => handleVote(player.id)}
-                    className="p-6 rounded-2xl border-2 border-cyan-500/50 bg-gradient-to-br from-cyan-600/20 to-pink-600/20 cursor-pointer hover:border-pink-500 hover:from-cyan-600/30 hover:to-pink-600/30 transition-all transform hover:scale-110"
+                    className="p-6 rounded-2xl border-2 border-slate-700 bg-slate-800 cursor-pointer hover:border-cyan-500 hover:bg-slate-700 transition-all transform hover:scale-110"
                   >
                     <div className="text-7xl mb-4">{player.fruit}</div>
-                    <p className="text-cyan-300 font-bold text-lg">{player.name}</p>
+                    <p className="text-cyan-400 font-bold text-lg">{player.name}</p>
                   </div>
                 ))}
               </div>
-              <p className="text-purple-300 text-lg">اكتب في الشات: !vote {Math.floor(Math.random() * joinedPlayers.length) + 1}</p>
+              <p className="text-slate-300 text-lg">اكتب في الشات: !vote {Math.floor(Math.random() * joinedPlayers.length) + 1}</p>
             </div>
           )}
 

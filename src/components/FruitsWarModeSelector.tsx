@@ -28,12 +28,12 @@ export default function FruitsWarModeSelector({
   };
 
   return (
-    <div className="w-screen h-screen flex flex-col fixed inset-0 bg-gradient-to-b from-slate-950 via-purple-950 to-slate-950" dir="rtl">
+    <div className="w-screen h-screen flex flex-col fixed inset-0 bg-slate-950" dir="rtl">
       {/* Back Button */}
       <div className="absolute top-4 left-4 z-50">
         <button
           onClick={onEndGame}
-          className="bg-gradient-to-r from-pink-600 to-pink-700 hover:from-pink-500 hover:to-pink-600 text-white font-bold py-2 px-6 rounded-lg transition-colors flex items-center gap-2 shadow-lg"
+          className="bg-gradient-to-r from-pink-600 to-pink-700 hover:from-pink-500 hover:to-pink-600 text-white font-bold py-2 px-6 rounded-lg transition-colors flex items-center gap-2 shadow-lg shadow-pink-500/50"
         >
           ← العودة
         </button>
@@ -42,24 +42,24 @@ export default function FruitsWarModeSelector({
       {/* Header with Players */}
       <div className="flex-1 flex overflow-hidden">
         {/* Left Sidebar - Player Names List */}
-        <div className="w-96 bg-gradient-to-b from-purple-950/50 to-slate-950/50 border-l-2 border-cyan-500/30 p-8 overflow-y-auto flex flex-col items-center justify-center">
-          <h2 className="text-4xl font-bold bg-gradient-to-r from-cyan-300 via-pink-300 to-purple-300 bg-clip-text text-transparent mb-12">حرب الفواكه</h2>
+        <div className="w-96 bg-slate-900 border-l-2 border-pink-500 p-8 overflow-y-auto flex flex-col items-center justify-center shadow-lg shadow-pink-500/20">
+          <h2 className="text-4xl font-bold text-pink-400 mb-12">حرب الفواكه</h2>
           <div className="text-cyan-400 text-center mb-12 text-lg font-semibold">
             <p className="mb-4">🎮 أكتب !join في الشات للدخول</p>
-            <p className="text-sm text-purple-300">أو اضغط الزر أدناه</p>
+            <p className="text-sm text-pink-300">أو اضغط الزر أدناه</p>
           </div>
           <div className="space-y-3 w-full">
             {joinedPlayers.length > 0 ? (
               joinedPlayers.map((player) => (
                 <div
                   key={player.id}
-                  className="p-4 rounded-lg border-2 border-cyan-500/50 bg-gradient-to-r from-cyan-600/20 to-pink-600/20 text-center animate-pulse hover:animate-none transition-all"
+                  className="p-4 rounded-lg border-2 border-pink-500 bg-pink-600/30 text-center animate-pulse hover:animate-none transition-all"
                 >
-                  <div className="font-bold text-cyan-300">{player.name}</div>
+                  <div className="font-bold text-pink-100">{player.name}</div>
                 </div>
               ))
             ) : (
-              <div className="text-center text-purple-400 py-12">
+              <div className="text-center text-cyan-400 py-12">
                 في انتظار المشاركين...
               </div>
             )}
@@ -69,7 +69,7 @@ export default function FruitsWarModeSelector({
         {/* Main Game Area - Mode Selector */}
         <div className="flex-1 flex flex-col items-center justify-center p-8 relative">
           {/* Decorative background */}
-          <div className="absolute inset-0 opacity-5">
+          <div className="absolute inset-0 opacity-10">
             <div className="text-8xl text-cyan-400 absolute top-10 left-10">🏮</div>
             <div className="text-8xl text-pink-400 absolute top-10 right-10">🏮</div>
             <div className="text-8xl text-amber-400 absolute bottom-10 left-10">⭐</div>
@@ -77,8 +77,8 @@ export default function FruitsWarModeSelector({
           </div>
 
           {/* Title */}
-          <h1 className="text-5xl font-bold bg-gradient-to-r from-cyan-300 via-pink-300 to-purple-300 bg-clip-text text-transparent mb-4 relative z-10 text-center">حرب الفواكه</h1>
-          <p className="text-2xl text-cyan-400 mb-16 relative z-10 text-center font-semibold">اختر طريقة اللعب</p>
+          <h1 className="text-5xl font-bold text-cyan-400 mb-4 relative z-10 text-center">حرب الفواكه</h1>
+          <p className="text-2xl text-pink-400 mb-16 relative z-10 text-center font-semibold">اختر طريقة اللعب</p>
 
           {/* Mode Selection Cards */}
           <div className="grid grid-cols-2 gap-8 max-w-4xl relative z-10">
@@ -87,16 +87,16 @@ export default function FruitsWarModeSelector({
               onClick={() => handleModeSelect('roulette')}
               className={`p-8 rounded-2xl border-2 cursor-pointer transition-all transform hover:scale-105 ${
                 selectedMode === 'roulette'
-                  ? 'border-cyan-400 bg-cyan-600/30 shadow-lg shadow-cyan-500/50'
-                  : 'border-purple-500/50 bg-purple-900/20 hover:border-cyan-500/70 hover:bg-purple-900/40'
+                  ? 'border-cyan-400 bg-cyan-600/40 shadow-lg shadow-cyan-500/60'
+                  : 'border-slate-700 bg-slate-800 hover:border-cyan-500 hover:bg-slate-700'
               }`}
             >
               <div className="text-6xl mb-4 text-center">🎡</div>
-              <h2 className="text-3xl font-bold text-cyan-300 mb-4 text-center">روليت</h2>
-              <div className="text-cyan-300 text-center space-y-2">
+              <h2 className="text-3xl font-bold text-cyan-400 mb-4 text-center">روليت</h2>
+              <div className="text-slate-300 text-center space-y-2">
                 <p className="mb-4">يتم اختيار لاعب عشوائياً من الروليت</p>
-                <div className="bg-black/50 rounded p-4 text-sm border border-cyan-500/30">
-                  <p className="font-bold text-pink-400 mb-2">كيفية اللعب:</p>
+                <div className="bg-slate-900 rounded p-4 text-sm border border-cyan-500/30">
+                  <p className="font-bold text-cyan-400 mb-2">كيفية اللعب:</p>
                   <ul className="text-left space-y-1">
                     <li>✓ تدوير الروليت</li>
                     <li>✓ اختيار فاكهة للإقصاء</li>
@@ -111,15 +111,15 @@ export default function FruitsWarModeSelector({
               onClick={() => handleModeSelect('voting')}
               className={`p-8 rounded-2xl border-2 cursor-pointer transition-all transform hover:scale-105 ${
                 selectedMode === 'voting'
-                  ? 'border-pink-400 bg-pink-600/30 shadow-lg shadow-pink-500/50'
-                  : 'border-purple-500/50 bg-purple-900/20 hover:border-pink-500/70 hover:bg-purple-900/40'
+                  ? 'border-pink-400 bg-pink-600/40 shadow-lg shadow-pink-500/60'
+                  : 'border-slate-700 bg-slate-800 hover:border-pink-500 hover:bg-slate-700'
               }`}
             >
               <div className="text-6xl mb-4 text-center">🗳️</div>
-              <h2 className="text-3xl font-bold text-pink-300 mb-4 text-center">تصويت</h2>
-              <div className="text-pink-300 text-center space-y-2">
+              <h2 className="text-3xl font-bold text-pink-400 mb-4 text-center">تصويت</h2>
+              <div className="text-slate-300 text-center space-y-2">
                 <p className="mb-4">التصويت من قبل الشات للإقصاء</p>
-                <div className="bg-black/50 rounded p-4 text-sm border border-pink-500/30">
+                <div className="bg-slate-900 rounded p-4 text-sm border border-pink-500/30">
                   <p className="font-bold text-pink-400 mb-2">كيفية اللعب:</p>
                   <ul className="text-left space-y-1">
                     <li>✓ عرض جميع اللاعبين/الفواكه</li>
