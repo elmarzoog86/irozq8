@@ -99,9 +99,9 @@ export default function GameLayout({
           <div className="flex items-center gap-4">
             <button 
               onClick={onBack}
-              className="text-cyan-400 hover:text-cyan-300 text-sm flex items-center gap-2"
+              className="bg-red-600 hover:bg-red-700 text-white font-bold px-4 py-2 rounded flex items-center gap-2 transition-all"
             >
-              ← العودة
+              ← الخروج
             </button>
             <div>
               <h1 className="text-2xl font-bold text-transparent bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text">{gameName}</h1>

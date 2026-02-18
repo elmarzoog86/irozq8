@@ -34,6 +34,16 @@ function GamePageContent() {
     }
   }, []);
 
+  // Handle all chat messages - display in chat panel
+  const handleChatMessage = useCallback((username: string, message: string) => {
+    const timestamp = new Date().toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    setChatMessages(prevMessages => [...prevMessages, {
+      username,
+      message,
+      timestamp,
+    }]);
+  }, []);
+
   // Handle chat join for Fruits War
   const handleChatJoin = useCallback((username: string) => {
     const timestamp = new Date().toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
@@ -78,6 +88,7 @@ function GamePageContent() {
     sessionId: sessionId || '',
     enabled: gameStarted && gameId === 'questions',
     onAnswer: handleChatAnswer,
+    onMessage: handleChatMessage,
   });
 
   // Connect to Twitch chat for Fruits War
@@ -86,6 +97,7 @@ function GamePageContent() {
     enabled: gameStarted && gameId === 'fruits-war',
     onJoin: handleChatJoin,
     onVote: handleChatVote,
+    onMessage: handleChatMessage,
   });
 
   // Debug state display
