@@ -1,19 +1,21 @@
 'use client';
 
 import { useSearchParams, useRouter } from 'next/navigation';
-import { useState, Suspense, useRef } from 'react';
+import { useState, Suspense, useRef, useCallback } from 'react';
 import GameLayout from '@/components/GameLayout';
 import QuestionsGame, { type QuestionsGameHandle } from '@/components/QuestionsGame';
 import QuestionsLobby from '@/components/QuestionsLobby';
 import RouletteGame from '@/components/RouletteGame';
 import FruitsWarGame from '@/components/FruitsWarGame';
 import ChairsGame from '@/components/ChairsGame';
+import { useTwitchChat } from '@/hooks/useTwitchChat';
 import { games } from '@/data/games';
 
 function GamePageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const gameId = searchParams.get('id');
+  const sessionId = searchParams.get('session');
   const game = games.find(g => g.id === gameId);
 
   const [playerCount, setPlayerCount] = useState(10);
@@ -21,6 +23,23 @@ function GamePageContent() {
   const [gameStarted, setGameStarted] = useState(false);
   const [players, setPlayers] = useState<Array<{id: number; name: string; score: number; eliminated: boolean; joined: boolean}>>([]);
   const questionsGameRef = useRef<QuestionsGameHandle>(null);
+
+  // Memoize the onAnswer callback to prevent unnecessary re-connections
+  const handleChatAnswer = useCallback((playerIndex: number, username: string, answer: string) => {
+    if (questionsGameRef.current) {
+      questionsGameRef.current.handleChatAnswer(playerIndex, username, answer);
+    }
+  }, []);
+
+  // Connect to Twitch chat when game is running
+  useTwitchChat({
+    sessionId: sessionId || '',
+    enabled: gameStarted && gameId === 'questions',
+    onAnswer: handleChatAnswer,
+  });
+
+  // Debug state display
+  const debugStatus = `📊 Session: ${sessionId ? '✅' : '❌'} | Game: ${gameId} ${gameId === 'questions' ? '✅' : '❌'} | Started: ${gameStarted ? '✅' : '❌'} | Enabled: ${gameStarted && gameId === 'questions' ? '✅' : '❌'}`;
 
   const handleLayoutChatMessage = (playerIndex: number, playerName: string, message: string) => {
     if (questionsGameRef.current) {
@@ -69,6 +88,21 @@ function GamePageContent() {
           />
         </div>
       );
+    }
+
+    // For Fruits War game, start immediately without settings
+    if (gameId === 'fruits-war') {
+      const newPlayers = Array.from({ length: 10 }, (_, i) => ({
+        id: i + 1,
+        name: `لاعب ${i + 1}`,
+        score: 0,
+        eliminated: false,
+        joined: false,
+      }));
+      setPlayers(newPlayers);
+      setGameStarted(true);
+      // Return nothing to let it render the game on next render
+      return null;
     }
 
     return (
@@ -159,7 +193,12 @@ function GamePageContent() {
       setPlayers,
       onEndGame: () => {
         setGameStarted(false);
-        router.push('/');
+        // Navigate back to home while preserving session
+        if (sessionId) {
+          router.push(`/?session=${sessionId}`);
+        } else {
+          router.push('/');
+        }
       },
     };
 
@@ -182,16 +221,21 @@ function GamePageContent() {
   };
 
   return (
-    <GameLayout 
-      gameName={game.nameAr}
-      gameDescription={game.descriptionAr}
-      onBack={() => setGameStarted(false)}
-      players={players}
-      isGameRunning={gameStarted}
-      onChatMessage={gameId === 'questions' ? handleLayoutChatMessage : undefined}
-    >
-      {renderGameComponent()}
-    </GameLayout>
+    <>
+      <div className="fixed top-1 left-1 text-xs text-gray-400 bg-gray-800 bg-opacity-75 p-2 rounded z-50 max-w-xs font-mono">
+        {debugStatus}
+      </div>
+      <GameLayout 
+        gameName={game.nameAr}
+        gameDescription={game.descriptionAr}
+        onBack={() => setGameStarted(false)}
+        players={players}
+        isGameRunning={gameStarted}
+        onChatMessage={gameId === 'questions' ? handleLayoutChatMessage : undefined}
+      >
+        {renderGameComponent()}
+      </GameLayout>
+    </>
   );
 }
 

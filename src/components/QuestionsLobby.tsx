@@ -17,7 +17,6 @@ interface QuestionsLobbyProps {
 
 export default function QuestionsLobby({ onStartGame, onBack }: QuestionsLobbyProps) {
   const [questionsCount, setQuestionsCount] = useState(10);
-  const [joinMode, setJoinMode] = useState<'join-only' | 'open' | 'teams' | 'whitelist'>('open');
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
     { id: 1, type: 'system', user: 'System', message: 'في انتظار اللاعبين...', timestamp: new Date() },
     { id: 2, type: 'system', user: 'System', message: 'اللعبة: سؤال و جواب', timestamp: new Date() },
@@ -99,37 +98,20 @@ export default function QuestionsLobby({ onStartGame, onBack }: QuestionsLobbyPr
 
       {/* CENTER SECTION - Waiting Area */}
       <div className="flex-1 flex flex-col items-center justify-center" style={{ background: 'linear-gradient(135deg, #1a0a2e 0%, #16213e 100%)' }}>
-        {joinMode === 'open' ? (
-          // Open to Everyone Mode
-          <>
-            <div className="mb-6 text-7xl animate-bounce">👥</div>
-            <h1 className="text-3xl font-bold text-white mb-2 text-center">في انتظار اللاعبين</h1>
-            <p className="text-cyan-300 text-sm mb-8 text-center max-w-md">اضغط للعبة وكن السريع في الإجابة!</p>
+        {/* Open to Everyone Mode */}
+        <>
+          <div className="mb-6 text-7xl animate-bounce">👥</div>
+          <h1 className="text-3xl font-bold text-white mb-2 text-center">في انتظار اللاعبين</h1>
+          <p className="text-cyan-300 text-sm mb-8 text-center max-w-md">اضغط للعبة وكن السريع في الإجابة!</p>
 
-            <div className="bg-purple-600/30 border border-purple-500/50 rounded-lg p-6 max-w-md w-full text-center">
-              <h3 className="text-cyan-300 font-bold mb-3">خطوات الانضمام إلى اللعبة</h3>
-              <div className="bg-purple-700/30 rounded px-4 py-3">
-                <p className="text-purple-300 text-sm font-bold">1</p>
-                <p className="text-gray-300 text-xs mt-2">أي شخص في الشات يمكنه الإجابة مباشرة</p>
-              </div>
+          <div className="bg-purple-600/30 border border-purple-500/50 rounded-lg p-6 max-w-md w-full text-center">
+            <h3 className="text-cyan-300 font-bold mb-3">خطوات الانضمام إلى اللعبة</h3>
+            <div className="bg-purple-700/30 rounded px-4 py-3">
+              <p className="text-purple-300 text-sm font-bold">1</p>
+              <p className="text-gray-300 text-xs mt-2">أي شخص في الشات يمكنه الإجابة مباشرة</p>
             </div>
-          </>
-        ) : (
-          // Join Only Mode
-          <>
-            <div className="mb-6 text-7xl animate-bounce">🔐</div>
-            <h1 className="text-3xl font-bold text-white mb-2 text-center">Join فقط</h1>
-            <p className="text-cyan-300 text-sm mb-8 text-center max-w-md">فقط الذين استخدموا اتفاقية الإدارة</p>
-
-            <div className="bg-purple-600/30 border border-purple-500/50 rounded-lg p-6 max-w-md w-full text-center">
-              <h3 className="text-cyan-300 font-bold mb-3">خطوات الانضمام إلى اللعبة</h3>
-              <div className="bg-purple-700/30 rounded px-4 py-3">
-                <p className="text-purple-300 text-sm font-bold">1</p>
-                <p className="text-gray-300 text-xs mt-2">استخدام رمز الانضمام المخصص</p>
-              </div>
-            </div>
-          </>
-        )}
+          </div>
+        </>
       </div>
 
       {/* RIGHT SECTION - Settings */}
@@ -173,57 +155,6 @@ export default function QuestionsLobby({ onStartGame, onBack }: QuestionsLobbyPr
 
         {/* Divider */}
         <div className="border-t border-purple-500/20 my-2"></div>
-
-        {/* Join Mode Settings */}
-        <div>
-          <h3 className="text-sm font-bold text-purple-300 mb-3">طريقة دخول اللعبة</h3>
-          <div className="space-y-2">
-            {/* Join Only */}
-            <button
-              onClick={() => setJoinMode('join-only')}
-              className={`w-full text-right px-3 py-2 rounded-lg border transition-all text-sm ${
-                joinMode === 'join-only'
-                  ? 'bg-purple-600 border-purple-400 text-white'
-                  : 'bg-gray-800/50 border-gray-600 text-gray-300 hover:bg-gray-700'
-              }`}
-            >
-              <div className="flex items-center justify-end gap-2">
-                {joinMode === 'join-only' && <span className="text-lg">✓</span>}
-                <div>
-                  <p className="font-bold">Join فقط</p>
-                  <p className="text-xs text-gray-400">فقط الذين استخدموا اتفاقية الإدارة</p>
-                </div>
-              </div>
-            </button>
-
-            {/* Open to Everyone */}
-            <button
-              onClick={() => setJoinMode('open')}
-              className={`w-full text-right px-3 py-2 rounded-lg border transition-all text-sm ${
-                joinMode === 'open'
-                  ? 'bg-purple-600 border-purple-400 text-white'
-                  : 'bg-gray-800/50 border-gray-600 text-gray-300 hover:bg-gray-700'
-              }`}
-            >
-              <div className="flex items-center justify-end gap-2">
-                {joinMode === 'open' && <span className="text-lg">✓</span>}
-                <div>
-                  <p className="font-bold">مفتوح للجميع</p>
-                  <p className="text-xs text-gray-400">أي شخص بيشات يشترك في اللعبة</p>
-                </div>
-              </div>
-            </button>
-          </div>
-        </div>
-
-        {/* Divider */}
-        <div className="border-t border-purple-500/20 my-2"></div>
-
-        {/* Bottom Info */}
-        <div className="text-xs text-gray-500 text-right space-y-1">
-          <p>الانتقال للسؤال التالي</p>
-          <p>أكثر الخاسرين والفائز</p>
-        </div>
 
         {/* Action Buttons */}
         <div className="space-y-2 mt-auto pt-4 border-t border-purple-500/20">

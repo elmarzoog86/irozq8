@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useImperativeHandle, forwardRef } from 'react';
+import { useState, useEffect, useImperativeHandle, forwardRef, useRef } from 'react';
 import { Question, getRandomQuestions } from '@/data/questions';
 
 interface QuestionsGameProps {
@@ -29,6 +29,10 @@ const QuestionsGame = forwardRef<QuestionsGameHandle, QuestionsGameProps>(({
   const [gameOver, setGameOver] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const [chatMessages, setChatMessages] = useState<Array<{player: string; answer: string; correct: boolean}>>([]);
+  const pointsAwardedRef = useRef(false);
+  const playerAnswersRef = useRef<{[key: number]: {answerIndex: number; timeLeft: number}}>({});
+  const inTransitionRef = useRef(false);
+  const currentQuestionIndexRef = useRef(0);
 
   // Initialize questions based on questionsPerRound
   useEffect(() => {
@@ -36,45 +40,29 @@ const QuestionsGame = forwardRef<QuestionsGameHandle, QuestionsGameProps>(({
     setQuestions(qs);
   }, [questionsPerRound]);
 
-  // Initialize questions based on questionsPerRound
+  // Reset state when question changes
   useEffect(() => {
-    if (!questions.length || gameOver) return;
+    if (!questions.length) return;
+    
+    currentQuestionIndexRef.current = currentQuestionIndex;
+    setTimeLeft(15);
+    setAnswered(false);
+    setShowResults(false);
+    setPlayerAnswers({});
+    setChatMessages([]);
+    pointsAwardedRef.current = false;
+    playerAnswersRef.current = {};
+    inTransitionRef.current = false;
+  }, [currentQuestionIndex, questions.length]);
+
+  // Timer countdown effect
+  useEffect(() => {
+    if (!questions.length || gameOver || timeLeft <= 0) return;
 
     const timer = setInterval(() => {
       setTimeLeft((prev) => {
         if (prev <= 1) {
-          // Timer expired - award points to players who answered correctly
           setAnswered(true);
-          setShowResults(true);
-          
-          // Award points now that timer has ended
-          const updatedPlayers = [...players];
-          Object.entries(playerAnswers).forEach(([playerIndexStr, answerData]) => {
-            const playerIndex = parseInt(playerIndexStr);
-            const answerIndex = answerData.answerIndex;
-            const timeLeftWhenAnswered = answerData.timeLeft;
-            const isCorrect = answerIndex === questions[currentQuestionIndex].correctAnswer;
-            // Award points only if correct: max 86 points
-            // Scoring: 86 at start (15s left), drops 3 points per second
-            // Formula: 86 - (seconds elapsed * 3) = 86 - ((15 - timeLeftWhenAnswered) * 3)
-            const points = isCorrect ? Math.max(0, 86 - ((15 - timeLeftWhenAnswered) * 3)) : 0;
-            updatedPlayers[playerIndex].score += points;
-          });
-          setPlayers(updatedPlayers);
-          
-          setTimeout(() => {
-            const nextIndex = currentQuestionIndex + 1;
-            if (nextIndex < questions.length) {
-              setCurrentQuestionIndex(nextIndex);
-              setTimeLeft(15);
-              setAnswered(false);
-              setShowResults(false);
-              setPlayerAnswers({});
-              setChatMessages([]);
-            } else {
-              setGameOver(true);
-            }
-          }, 3000);
           return 0;
         }
         return prev - 1;
@@ -82,7 +70,43 @@ const QuestionsGame = forwardRef<QuestionsGameHandle, QuestionsGameProps>(({
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [questions.length, gameOver, currentQuestionIndex, answered, playerAnswers]);
+  }, [questions.length, gameOver, timeLeft]);
+
+  // Award points when time runs out
+  useEffect(() => {
+    if (!questions.length || gameOver || timeLeft > 0 || !answered) return;
+
+    // Only award points once per question
+    if (pointsAwardedRef.current || inTransitionRef.current) return;
+    pointsAwardedRef.current = true;
+    inTransitionRef.current = true;
+
+    // Award points now that timer has ended
+    const updatedPlayers = [...players];
+    Object.entries(playerAnswersRef.current).forEach(([playerIndexStr, answerData]) => {
+      const playerIndex = parseInt(playerIndexStr);
+      const answerIndex = answerData.answerIndex;
+      const timeLeftWhenAnswered = answerData.timeLeft;
+      // Use ref to get the correct current question index without dependency
+      const isCorrect = answerIndex === questions[currentQuestionIndexRef.current].correctAnswer;
+      // Award points only if correct: max 86 points
+      // Scoring: 86 at start (15s left), drops 3 points per second
+      // Formula: 86 - (seconds elapsed * 3) = 86 - ((15 - timeLeftWhenAnswered) * 3)
+      const points = isCorrect ? Math.max(0, 86 - ((15 - timeLeftWhenAnswered) * 3)) : 0;
+      updatedPlayers[playerIndex].score += points;
+    });
+    setPlayers(updatedPlayers);
+    setShowResults(true);
+
+    setTimeout(() => {
+      const nextIndex = currentQuestionIndexRef.current + 1;
+      if (nextIndex < questions.length) {
+        setCurrentQuestionIndex(nextIndex);
+      } else {
+        setGameOver(true);
+      }
+    }, 3000);
+  }, [timeLeft, answered, questions.length, gameOver, players]);
 
   useImperativeHandle(ref, () => ({
     handleChatAnswer: (playerIndex: number, playerName: string, answer: string) => {
@@ -100,17 +124,17 @@ const QuestionsGame = forwardRef<QuestionsGameHandle, QuestionsGameProps>(({
       (opt) => opt.toLowerCase().trim() === answer.toLowerCase().trim()
     );
 
-    // Also check by letter (أ, ب, ج, د) or number (A, B, C, D)
+    // Also check by number (1, 2, 3, 4)
     if (answerIndex === -1) {
-      const letterMap: {[key: string]: number} = {
-        'أ': 0, 'a': 0, 'ا': 0,
-        'ب': 1, 'b': 1,
-        'ج': 2, 'c': 2, 'ت': 2,
-        'د': 3, 'd': 3,
+      const numberMap: {[key: string]: number} = {
+        '1': 0,
+        '2': 1,
+        '3': 2,
+        '4': 3,
       };
-      const firstChar = answer.toLowerCase().trim()[0];
-      if (letterMap[firstChar] !== undefined) {
-        answerIndex = letterMap[firstChar];
+      const firstChar = answer.trim()[0];
+      if (numberMap[firstChar] !== undefined) {
+        answerIndex = numberMap[firstChar];
       }
     }
 
@@ -123,10 +147,12 @@ const QuestionsGame = forwardRef<QuestionsGameHandle, QuestionsGameProps>(({
       // Record the answer with the current timeLeft WITHOUT awarding points yet
       const updatedAnswers = { ...playerAnswers, [playerIndex]: {answerIndex, timeLeft} };
       setPlayerAnswers(updatedAnswers);
+      playerAnswersRef.current = updatedAnswers;
 
-      // Mark player as joined when they answer
+      // Mark player as joined and update their name when they answer
       const updatedPlayers = [...players];
       updatedPlayers[playerIndex].joined = true;
+      updatedPlayers[playerIndex].name = playerName; // Update with actual chat username
       setPlayers(updatedPlayers);
 
       // Add to chat with the actual option text (show hourglass, not checkmark)
@@ -214,10 +240,10 @@ const QuestionsGame = forwardRef<QuestionsGameHandle, QuestionsGameProps>(({
                 </div>
               )}
             </div>
-            <p className="text-gray-400 text-sm mt-2">الدردشة: اكتب إحدى الخيارات (أ، ب، ج، د) أو اسم الخيار</p>
+            <p className="text-gray-400 text-sm mt-2">الدردشة: اكتب رقم الخيار (1، 2، 3، 4) أو اسم الخيار</p>
           </div>
 
-          {/* Answer Options Display (always visible but visual feedback only after timer) */}
+          {/* Answer Options Display - always visible so viewers can choose */}
           <div className="mb-8">
             <p className="text-cyan-300 mb-3 font-bold">الخيارات:</p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -226,7 +252,7 @@ const QuestionsGame = forwardRef<QuestionsGameHandle, QuestionsGameProps>(({
                 let borderColor = 'border-slate-500';
                 let textColor = 'text-white';
 
-                // Only show correct/wrong colors after timer expires or answer submitted
+                // Show correct/wrong colors after timer expires
                 if (showResults) {
                   if (index === currentQuestion.correctAnswer) {
                     bgColor = 'bg-green-600/70';
@@ -244,7 +270,7 @@ const QuestionsGame = forwardRef<QuestionsGameHandle, QuestionsGameProps>(({
                     key={index}
                     className={`p-4 rounded-lg border-2 transition-all font-bold text-lg ${bgColor} ${borderColor} ${textColor}`}
                   >
-                    {String.fromCharCode(65 + index)}. {option}
+                    {index + 1}. {option}
                   </div>
                 );
               })}
@@ -273,9 +299,10 @@ const QuestionsGame = forwardRef<QuestionsGameHandle, QuestionsGameProps>(({
         <div className="text-center py-12">
           <h2 className="text-4xl font-bold text-cyan-300 mb-8">🏆 انتهت اللعبة! 🏆</h2>
 
-          {/* Final Rankings */}
+          {/* Final Rankings - Only show players who answered */}
           <div className="space-y-4 mb-8">
             {[...players]
+              .filter(player => player.joined) // Only show players who answered
               .sort((a, b) => b.score - a.score)
               .map((player, index) => (
                 <div

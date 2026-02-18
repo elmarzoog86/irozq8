@@ -16,6 +16,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ar" dir="rtl">
+      <head>
+        {/* No longer loading tmi.js in browser - using server-side proxy with SSE instead */}
+      </head>
       <body className="bg-gradient-to-br from-slate-900 to-slate-800 text-white font-sans">
         {children}
       </body>

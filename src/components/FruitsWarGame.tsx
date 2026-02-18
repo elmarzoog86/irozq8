@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 
 interface FruitsWarGameProps {
   playerCount: number;
@@ -9,159 +9,178 @@ interface FruitsWarGameProps {
   onEndGame: () => void;
 }
 
-const fruits = ['🍎', '🍌', '🍇', '🍓', '🍊', '🍋', '🥝', '🍉', '🍈', '🍑'];
-
 export default function FruitsWarGame({
-  playerCount,
   players,
   setPlayers,
-  onEndGame,
 }: FruitsWarGameProps) {
-  const [gameStarted, setGameStarted] = useState(false);
-  const [gameActive, setGameActive] = useState(false);
+  const [isSpinning, setIsSpinning] = useState(false);
+  const [rotation, setRotation] = useState(0);
+  const [selectedPlayer, setSelectedPlayer] = useState<{id: number; name: string; eliminated: boolean} | null>(null);
+  const wheelRef = useRef<HTMLDivElement>(null);
 
-  // Assign fruits to players
-  const handleStartGame = () => {
-    const updatedPlayers = [...players].map((player, index) => ({
-      ...player,
-      fruit: fruits[index % fruits.length],
-    }));
-    setPlayers(updatedPlayers);
-    setGameStarted(true);
-    setGameActive(true);
+  // Get only joined players
+  const joinedPlayers = players.filter(p => p.joined);
+
+  // Spin the wheel
+  const handleSpin = () => {
+    if (isSpinning || joinedPlayers.length === 0) return;
+
+    setIsSpinning(true);
+    setSelectedPlayer(null);
+
+    const spins = 5 + Math.random() * 3; // 5-8 full rotations
+    const randomIndex = Math.floor(Math.random() * joinedPlayers.length);
+    const sliceDegree = 360 / joinedPlayers.length;
+    const newRotation = rotation + 360 * spins + randomIndex * sliceDegree;
+
+    setRotation(newRotation);
+
+    // After spin completes, show selected player
+    setTimeout(() => {
+      const selected = joinedPlayers[randomIndex];
+      setSelectedPlayer({
+        id: selected.id,
+        name: selected.name,
+        eliminated: selected.eliminated,
+      });
+      setIsSpinning(false);
+    }, 3000);
   };
 
-  // Handle player elimination
-  const handleEliminatePlayer = (playerId: number) => {
-    const updatedPlayers = [...players];
-    const playerIndex = updatedPlayers.findIndex(p => p.id === playerId);
-    if (playerIndex >= 0 && !updatedPlayers[playerIndex].eliminated) {
-      updatedPlayers[playerIndex].eliminated = true;
-      updatedPlayers[playerIndex].score -= 5;
-      setPlayers(updatedPlayers);
+  const handleEliminateSelected = () => {
+    if (!selectedPlayer) return;
 
-      // Check if game should end
-      const remaining = updatedPlayers.filter(p => !p.eliminated).length;
-      if (remaining <= 1) {
-        setGameActive(false);
-      }
+    const updatedPlayers = [...players];
+    const playerIndex = updatedPlayers.findIndex(p => p.id === selectedPlayer.id);
+    if (playerIndex >= 0) {
+      updatedPlayers[playerIndex].eliminated = true;
+      updatedPlayers[playerIndex].score += 5;
+      setPlayers(updatedPlayers);
+      setSelectedPlayer(null);
     }
   };
 
-  const activePlayers = players.filter(p => !p.eliminated);
-
   return (
-    <div className="w-full">
-      {!gameStarted ? (
-        <div className="text-center py-12">
-          <h2 className="text-4xl font-bold text-cyan-300 mb-8">🍎 حرب الفواكه 🍎</h2>
-          <p className="text-xl text-cyan-200 mb-8">
-            تم تعيين فاكهة لكل لاعب. انقر على اللاعبين لاستبعادهم!
-          </p>
-          
-          {/* Preview of assigned fruits */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-12">
-            {players.map((player, index) => (
-              <div
-                key={player.id}
-                className="p-6 rounded-lg border-2 border-cyan-500 bg-cyan-900/20"
-              >
-                <div className="text-5xl mb-3">{fruits[index % fruits.length]}</div>
-                <div className="font-bold text-cyan-300">{player.name}</div>
-              </div>
-            ))}
+    <div className="w-screen h-screen flex flex-col fixed inset-0" dir="rtl" style={{background: '#0f0f1e'}}>
+      {/* Game Screen with Wheel and Players - Main Lobby */}
+      <div className="flex-1 flex overflow-hidden">
+        {/* Left Sidebar - Player Names List */}
+        <div className="w-96 bg-gradient-to-b from-purple-950 to-black border-l-2 border-purple-500/30 p-8 overflow-y-auto flex flex-col items-center justify-center">
+          <h2 className="text-4xl font-bold text-purple-400 mb-12">حرب الفواكه</h2>
+          <div className="text-cyan-300 text-center mb-12 text-lg">
+            <p>أكتب !join للدخول</p>
           </div>
-
-          <button
-            onClick={handleStartGame}
-            className="bg-gradient-to-r from-cyan-500 to-cyan-600 hover:from-cyan-600 hover:to-cyan-700 text-white font-bold py-4 px-12 rounded-lg text-lg"
-            style={{boxShadow: '0 0 20px rgba(0, 217, 255, 0.4)'}}
-          >
-            ▶️ ابدأ اللعبة
-          </button>
-        </div>
-      ) : gameActive ? (
-        <div>
-          <div className="text-center mb-8">
-            <div className="text-2xl font-bold text-cyan-300 mb-4">
-              🍎 تنافس من أجل البقاء! 🍎
-            </div>
-            <div className="text-lg text-cyan-200">
-              اللاعبون المتبقيون: {activePlayers.length}/{playerCount}
-            </div>
-          </div>
-
-          {/* Game Arena - Click players to eliminate */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-12">
-            {players.map((player) => (
-              <div
-                key={player.id}
-                onClick={() => !player.eliminated && handleEliminatePlayer(player.id)}
-                className={`p-6 rounded-lg border-2 text-center transition-all cursor-pointer transform hover:scale-105 ${
-                  player.eliminated
-                    ? 'border-red-500 opacity-50 bg-red-900/20 cursor-not-allowed'
-                    : 'border-cyan-500 bg-cyan-900/20 hover:bg-cyan-800/30 hover:shadow-lg hover:shadow-cyan-500/50'
-                }`}
-              >
-                <div className="text-6xl mb-3 transform hover:scale-110 transition-transform">
-                  {player.fruit}
-                </div>
-                <div className="font-bold text-cyan-300 mb-2">{player.name}</div>
-                <div className="text-xl font-bold text-pink-400 mb-3">{player.score} نقاط</div>
-                {player.eliminated ? (
-                  <div className="text-red-400 font-bold">مستبعد ❌</div>
-                ) : (
-                  <div className="text-cyan-300 text-sm">انقر للاستبعاد</div>
-                )}
-              </div>
-            ))}
-          </div>
-
-          <div className="text-center">
-            <button
-              onClick={() => {
-                setGameActive(false);
-              }}
-              className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-bold py-3 px-8 rounded-lg"
-            >
-              ⏹️ إنهاء اللعبة
-            </button>
-          </div>
-        </div>
-      ) : (
-        <div className="text-center py-12">
-          <h2 className="text-4xl font-bold text-cyan-300 mb-8">🏆 انتهت اللعبة! 🏆</h2>
-
-          {/* Final Rankings */}
-          <div className="space-y-4 mb-8">
-            {[...players]
-              .sort((a, b) => b.score - a.score)
-              .map((player, index) => (
+          <div className="space-y-3 w-full">
+            {joinedPlayers.length > 0 ? (
+              joinedPlayers.map((player) => (
                 <div
                   key={player.id}
-                  className="p-4 bg-gradient-to-r from-cyan-600/30 to-pink-600/30 rounded-lg border-2 border-cyan-500"
+                  className="p-4 rounded-lg border-2 border-purple-500/30 bg-purple-900/20 text-center"
                 >
-                  <div className="flex justify-between items-center">
-                    <div className="text-xl font-bold text-cyan-300 flex items-center gap-2">
-                      {index === 0 && '🥇'}
-                      {index === 1 && '🥈'}
-                      {index === 2 && '🥉'}
-                      {player.fruit} {player.name}
-                    </div>
-                    <div className="text-3xl font-bold text-pink-400">{player.score}</div>
-                  </div>
+                  <div className="font-bold text-cyan-300">{player.name}</div>
                 </div>
-              ))}
+              ))
+            ) : (
+              <div className="text-center text-purple-400 py-12">
+                في انتظار المشاركين...
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Main Game Area - Wheel */}
+        <div className="flex-1 flex flex-col items-center justify-center p-8 relative">
+          {/* Decorative background */}
+          <div className="absolute inset-0 opacity-5">
+            <div className="text-8xl text-purple-500 absolute top-10 left-10">🏮</div>
+            <div className="text-8xl text-purple-500 absolute top-10 right-10">🏮</div>
+            <div className="text-8xl text-purple-500 absolute bottom-10 left-10">⭐</div>
+            <div className="text-8xl text-purple-500 absolute bottom-10 right-10">⭐</div>
           </div>
 
-          <button
-            onClick={onEndGame}
-            className="bg-gradient-to-r from-cyan-500 to-cyan-600 hover:from-cyan-600 hover:to-cyan-700 text-white font-bold py-3 px-8 rounded-lg"
-          >
-            ← العودة للألعاب
-          </button>
+          {/* Title */}
+          <h1 className="text-5xl font-bold text-purple-300 mb-12 relative z-10">حرب الفواكه</h1>
+
+          {/* Wheel Container */}
+          <div className="relative w-96 h-96 mb-12 z-10">
+            {/* Pointer at top */}
+            <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-2 z-20">
+              <div className="w-0 h-0 border-l-4 border-r-4 border-t-8 border-l-transparent border-r-transparent border-t-white"></div>
+            </div>
+
+            {/* Wheel */}
+            <div
+              ref={wheelRef}
+              className="w-full h-full rounded-full border-8 border-purple-500/50 relative overflow-hidden transition-transform"
+              style={{
+                transform: `rotate(${rotation}deg)`,
+                transitionDuration: isSpinning ? '3s' : '0s',
+                transitionTimingFunction: isSpinning ? 'cubic-bezier(0.25, 0.46, 0.45, 0.94)' : 'linear',
+                background: 'conic-gradient(from 0deg, #ec4899, #a855f7, #ec4899, #a855f7, #ec4899, #a855f7, #ec4899, #a855f7)',
+              }}
+            >
+              {/* Center Circle */}
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="w-24 h-24 rounded-full bg-black border-4 border-purple-400 flex items-center justify-center">
+                  <span className="text-2xl font-bold text-purple-300">لف</span>
+                </div>
+              </div>
+
+              {/* Player Names */}
+              {players.map((player) => {
+                const angle = (360 / players.length) * players.indexOf(player) + (360 / players.length) / 2;
+                const distance = 120;
+                const x = Math.cos((angle - 90) * (Math.PI / 180)) * distance;
+                const y = Math.sin((angle - 90) * (Math.PI / 180)) * distance;
+
+                return (
+                  <div
+                    key={player.id}
+                    className="absolute text-white font-bold text-sm"
+                    style={{
+                      left: '50%',
+                      top: '50%',
+                      transform: `translate(calc(-50% + ${x}px), calc(-50% + ${y}px)) rotate(${angle}deg)`,
+                    }}
+                  >
+                    {player.name}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Controls */}
+          <div className="flex flex-col items-center gap-4 z-10">
+            <button
+              onClick={handleSpin}
+              disabled={isSpinning || players.filter(p => !p.eliminated).length === 0}
+              className={`font-bold py-4 px-16 rounded-lg text-xl transition-all ${
+                isSpinning || players.filter(p => !p.eliminated).length === 0
+                  ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
+                  : 'bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700 text-white cursor-pointer shadow-lg shadow-pink-500/50'
+              }`}
+            >
+              {isSpinning ? '⏳ يدور...' : '🎡 ابدأ الدوران'}
+            </button>
+
+            {selectedPlayer && !selectedPlayer.eliminated && (
+              <button
+                onClick={handleEliminateSelected}
+                className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-bold py-3 px-8 rounded-lg"
+              >
+                ❌ استبعد {selectedPlayer.name}
+              </button>
+            )}
+
+            {selectedPlayer && selectedPlayer.eliminated && (
+              <div className="text-red-400 text-lg font-bold">
+                تم استبعاد {selectedPlayer.name}
+              </div>
+            )}
+          </div>
         </div>
-      )}
+      </div>
     </div>
   );
 }

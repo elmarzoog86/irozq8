@@ -7,6 +7,7 @@ interface GameCardProps {
   game: Game;
   isSelected: boolean;
   onSelect: () => void;
+  sessionId?: string;
 }
 
 // Map game IDs to their SVG images
@@ -26,13 +27,16 @@ const gameImages: { [key: string]: string } = {
   'masaqil': '/games/masaqil.svg',
 };
 
-export default function GameCard({ game, isSelected, onSelect }: GameCardProps) {
+export default function GameCard({ game, isSelected, onSelect, sessionId }: GameCardProps) {
   const gameImage = game.image || gameImages[game.id] || '/games/questions.svg';
   const router = useRouter();
 
   const handlePlayNow = (e: React.MouseEvent) => {
     e.stopPropagation();
-    router.push(`/games?id=${game.id}`);
+    const url = sessionId 
+      ? `/games?id=${game.id}&session=${sessionId}`
+      : `/games?id=${game.id}`;
+    router.push(url);
   };
   
   return (

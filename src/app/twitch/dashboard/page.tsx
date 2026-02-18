@@ -16,12 +16,15 @@ function DashboardContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const sessionId = searchParams.get('session');
+  const gameParam = searchParams.get('game');
 
   const [user, setUser] = useState<TwitchUser | null>(null);
   const [loading, setLoading] = useState(true);
   const [gameRunning, setGameRunning] = useState(false);
-  const [selectedGame, setSelectedGame] = useState('questions');
-  const [playerCount] = useState(0);
+  const [selectedGame, setSelectedGame] = useState(gameParam || 'questions');
+  const [playerCount, setPlayerCount] = useState(0);
+  const [_gameSessionId, setGameSessionId] = useState<string | null>(null);
+  const [_error, setError] = useState('');
 
   useEffect(() => {
     if (!sessionId) {
@@ -31,16 +34,28 @@ function DashboardContent() {
 
     // Fetch user info
     fetchUserInfo();
-  }, [sessionId]);
+    
+    // If game is selected from URL, start the game
+    if (gameParam) {
+      setTimeout(() => {
+        setGameRunning(true);
+        setPlayerCount(0);
+        setGameSessionId(`session_${Date.now()}`);
+      }, 500);
+    }
+  }, [sessionId, gameParam]);
 
   const fetchUserInfo = async () => {
     try {
-      const response = await fetch(`/api/twitch/auth?action=user&session=${sessionId}`);
+      console.log('Fetching user info for session:', sessionId);
+      const response = await fetch(`/api/twitch/session?action=user&session=${sessionId}`);
       const data = await response.json();
 
+      console.log('User info response:', data);
       if (data.success) {
         setUser(data.user);
       } else {
+        console.error('Failed to get user:', data.error);
         router.push('/');
       }
     } catch (error) {
@@ -52,16 +67,20 @@ function DashboardContent() {
   };
 
   const handleLogout = async () => {
-    await fetch(`/api/twitch/auth?action=logout&session=${sessionId}`);
+    await fetch(`/api/twitch/session?action=logout&session=${sessionId}`);
     router.push('/');
   };
 
   const handleStartGame = () => {
     setGameRunning(true);
+    setPlayerCount(0);
+    setGameSessionId(`session_${Date.now()}`);
+    setError('');
   };
 
   const handleEndGame = () => {
     setGameRunning(false);
+    setGameSessionId(null);
   };
 
   if (loading) {
@@ -109,7 +128,6 @@ function DashboardContent() {
               />
               <h2 className="text-2xl font-bold text-cyan-300 mb-2">{user.displayName}</h2>
               <p className="text-cyan-300/70 mb-4">@{user.login}</p>
-              <p className="text-cyan-300/60 text-sm mb-6">{user.email}</p>
               <button
                 onClick={handleLogout}
                 className="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-bold py-2 px-4 rounded-lg transition-all duration-300"

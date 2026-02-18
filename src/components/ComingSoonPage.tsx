@@ -16,71 +16,49 @@ export default function ComingSoonPage() {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 text-center px-6">
+      <div className="relative z-10 text-center px-6 w-full">
+        {/* Video Container */}
+        <div className="mb-8 max-w-4xl mx-auto">
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="w-full rounded-xl shadow-2xl border-2 border-cyan-400/50"
+            style={{ maxHeight: '70vh', objectFit: 'cover' }}
+          >
+            <source src="/videos/rozq8_3.webm" type="video/webm" />
+            Your browser does not support the video tag.
+          </video>
+        </div>
+
         <div className="mb-8">
-          <div className="text-8xl font-bold mb-4">
+          <div className="text-6xl md:text-7xl font-bold mb-4">
             <span className="bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
               جوله
             </span>
           </div>
-          <p className="text-2xl font-bold text-cyan-300 mb-2">
+          <p className="text-xl md:text-2xl font-bold text-cyan-300 mb-2">
             منصة الألعاب التفاعلية العربية
           </p>
         </div>
 
-        <h1 className="text-5xl md:text-6xl font-bold text-white mb-6">
+        <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
           قريباً جداً 🚀
         </h1>
 
-        <p className="text-xl text-cyan-200/80 mb-8 max-w-2xl mx-auto leading-relaxed">
+        <p className="text-lg text-cyan-200/80 mb-8 max-w-2xl mx-auto leading-relaxed">
           نحن نعمل على شيء مذهل! منصة ألعاب تفاعلية حديثة مع تجربة لا تُنسى.
           استعد لتجربة الألعاب بطريقة جديدة تماماً.
         </p>
 
-        {/* Features Preview */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 max-w-4xl mx-auto">
-          <div className="p-6 rounded-lg border-2 border-cyan-500/50 bg-cyan-900/10 backdrop-blur">
-            <div className="text-4xl mb-3">🎮</div>
-            <h3 className="text-lg font-bold text-cyan-300 mb-2">ألعاب متنوعة</h3>
-            <p className="text-cyan-200/70 text-sm">تجربة ألعاب تفاعلية مثيرة وممتعة</p>
-          </div>
-
-          <div className="p-6 rounded-lg border-2 border-purple-500/50 bg-purple-900/10 backdrop-blur">
-            <div className="text-4xl mb-3">👥</div>
-            <h3 className="text-lg font-bold text-purple-300 mb-2">لاعبون متعددون</h3>
-            <p className="text-purple-200/70 text-sm">العب مع أصدقائك وأهلك في نفس الوقت</p>
-          </div>
-
-          <div className="p-6 rounded-lg border-2 border-pink-500/50 bg-pink-900/10 backdrop-blur">
-            <div className="text-4xl mb-3">🎯</div>
-            <h3 className="text-lg font-bold text-pink-300 mb-2">بدون تعقيدات</h3>
-            <p className="text-pink-200/70 text-sm">واجهة سهلة وبسيطة تناسب الجميع</p>
-          </div>
-        </div>
-
         {/* Countdown or notification */}
-        <div className="mb-12 p-6 rounded-lg border-2 border-cyan-400/50 bg-cyan-900/20 backdrop-blur">
+        <div className="mb-12 p-6 rounded-lg border-2 border-cyan-400/50 bg-cyan-900/20 backdrop-blur max-w-2xl mx-auto">
           <p className="text-cyan-300 text-sm mb-2">نحن نستعد لإطلاق النسخة الأولى</p>
           <p className="text-2xl font-bold text-white">
             ابقَ متابعاً معنا 👀
           </p>
         </div>
-
-        {/* CTA Button - Optional email signup or social */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <a
-            href="/"
-            className="px-8 py-4 rounded-lg bg-gradient-to-r from-cyan-500 to-cyan-600 hover:from-cyan-600 hover:to-cyan-700 text-white font-bold text-lg transition-all duration-300 transform hover:scale-105"
-            style={{ boxShadow: '0 0 30px rgba(0, 217, 255, 0.4)' }}
-          >
-            العودة للرئيسية
-          </a>
-        </div>
-
-        {/* Footer message */}
-        <p className="text-cyan-300/50 mt-12 text-sm">
-          آخر تحديث: {new Date().toLocaleDateString('ar-SA')}
-        </p>
       </div>
     </div>
   );

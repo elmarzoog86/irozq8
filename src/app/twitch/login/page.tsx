@@ -1,21 +1,53 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Header from '@/components/Header';
 
-export default function TwitchLogin() {
+function TwitchLoginContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    // Check for error from callback
+    const errorParam = searchParams.get('error');
+    if (errorParam) {
+      setError(`خطأ في تسجيل الدخول: ${errorParam}`);
+    }
+  }, [searchParams]);
 
   const handleTwitchLogin = async () => {
     setLoading(true);
     setError('');
 
     try {
-      // Redirect to OAuth login
-      window.location.href = '/api/twitch/auth?action=login';
+      // Generate state for CSRF protection
+      const state = Math.random().toString(36).substring(7);
+      
+      // Store state in session storage
+      if (typeof window !== 'undefined') {
+        sessionStorage.setItem('twitch_oauth_state', state);
+      }
+
+      const TWITCH_CLIENT_ID = process.env.NEXT_PUBLIC_TWITCH_CLIENT_ID;
+      
+      if (!TWITCH_CLIENT_ID) {
+        setError('خطأ: لم يتم تكوين عميل Twitch بشكل صحيح');
+        setLoading(false);
+        return;
+      }
+
+      const authUrl = new URL('https://id.twitch.tv/oauth2/authorize');
+      authUrl.searchParams.append('client_id', TWITCH_CLIENT_ID);
+      authUrl.searchParams.append('redirect_uri', window.location.origin + '/api/twitch/callback');
+      authUrl.searchParams.append('response_type', 'code');
+      authUrl.searchParams.append('scope', 'user:read:email user:read:chat chat:read analytics:read:extensions');
+      authUrl.searchParams.append('state', state);
+
+      // Redirect to Twitch OAuth
+      window.location.href = authUrl.toString();
     } catch (err) {
       setError('حدث خطأ أثناء محاولة تسجيل الدخول. يرجى المحاولة مرة أخرى.');
       setLoading(false);
@@ -141,5 +173,19 @@ export default function TwitchLogin() {
         </div>
       </main>
     </div>
+  );
+}
+
+export default function TwitchLogin() {
+  return (
+    <Suspense fallback={
+      <div style={{background: 'linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #2d1b4e 100%)'}} className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-2xl text-cyan-300">جاري التحميل...</p>
+        </div>
+      </div>
+    }>
+      <TwitchLoginContent />
+    </Suspense>
   );
 }
