@@ -23,6 +23,7 @@ export default function FruitsWarGame({
   const [rotation, setRotation] = useState(0);
   const [selectedPlayer, setSelectedPlayer] = useState<{id: number; name: string; eliminated: boolean} | null>(null);
   const wheelRef = useRef<HTMLDivElement>(null);
+  const votingGameRef = useRef<{handleChatVote: (fruitIndex: number) => void} | null>(null);
 
   // Get only joined players
   const joinedPlayers = players.filter(p => p.joined);
@@ -83,6 +84,7 @@ export default function FruitsWarGame({
   if (gameMode === 'voting') {
     return (
       <FruitsWarVotingGame
+        ref={votingGameRef}
         players={players}
         setPlayers={setPlayers}
         onEndGame={onEndGame}

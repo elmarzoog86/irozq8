@@ -7,6 +7,7 @@ interface UseTwitchChatOptions {
   onAnswer?: (playerIndex: number, username: string, answer: string) => void;
   onMessage?: (username: string, message: string) => void;
   onJoin?: (username: string) => void;
+  onVote?: (voteData: { playerIndex: number; username: string }) => void;
   enabled?: boolean;
 }
 
@@ -21,6 +22,7 @@ export function useTwitchChat({
   onAnswer,
   onMessage,
   onJoin,
+  onVote,
   enabled = true,
 }: UseTwitchChatOptions) {
   const hasInitialized = useRef(false);
@@ -31,6 +33,7 @@ export function useTwitchChat({
   const memoizedOnAnswer = useCallback(onAnswer || (() => {}), [onAnswer]);
   const memoizedOnMessage = useCallback(onMessage || (() => {}), [onMessage]);
   const memoizedOnJoin = useCallback(onJoin || (() => {}), [onJoin]);
+  const memoizedOnVote = useCallback(onVote || (() => {}), [onVote]);
 
   useEffect(() => {
     console.log(`🎣 [HOOK] useTwitchChat called - enabled: ${enabled}, sessionId: ${sessionId ? 'present' : 'missing'}`);
@@ -120,6 +123,14 @@ export function useTwitchChat({
                 memoizedOnJoin(data.username);
               }
 
+              // Check for voting command (e.g., "!vote 1", "vote 2", "1", "2", etc.)
+              const voteMatch = message.match(/^(?:!vote\s+)?(\d+)$/);
+              if (voteMatch) {
+                const playerIndex = parseInt(voteMatch[1], 10) - 1;  // Convert to 0-based index
+                console.log(`🗳️  [HOOK-EVENT] Vote command from ${data.username}: ${voteMatch[1]}`);
+                memoizedOnVote({playerIndex, username: data.username});
+              }
+
               // Parse as potential game answer
               // This is a simple implementation - customize based on your game logic
               if (memoizedOnAnswer) {
@@ -179,7 +190,7 @@ export function useTwitchChat({
 
       hasInitialized.current = false;
     };
-  }, [sessionId, enabled, memoizedOnAnswer, memoizedOnMessage, memoizedOnJoin]);
+  }, [sessionId, enabled, memoizedOnAnswer, memoizedOnMessage, memoizedOnJoin, memoizedOnVote]);
 
   return {
     isConnected: eventSourceRef.current !== null,

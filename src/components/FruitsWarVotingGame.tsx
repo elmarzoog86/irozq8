@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useImperativeHandle, forwardRef } from 'react';
 
 interface FruitsWarVotingGameProps {
   players: Array<{ id: number; name: string; score: number; eliminated: boolean; joined: boolean; fruit?: string }>;
@@ -10,11 +10,14 @@ interface FruitsWarVotingGameProps {
 
 const FRUITS = ['🍎', '🍊', '🍋', '🍌', '🍉', '🍓', '🫐', '🍒', '🍑', '🥝', '🍍', '🥭', '🍅', '🥒', '🌽'];
 
-export default function FruitsWarVotingGame({
+const FruitsWarVotingGame = forwardRef<
+  { handleChatVote: (fruitIndex: number) => void },
+  FruitsWarVotingGameProps
+>(({
   players,
   setPlayers,
   onEndGame,
-}: FruitsWarVotingGameProps) {
+}, ref) => {
   const [votes, setVotes] = useState<Map<number, number>>(new Map());
   const [roundNumber, setRoundNumber] = useState(1);
   const [timeLeft, setTimeLeft] = useState(30);
@@ -22,6 +25,19 @@ export default function FruitsWarVotingGame({
 
   const joinedPlayers = players.filter(p => p.joined && !p.eliminated);
   const remainingPlayers = joinedPlayers.length;
+
+  // Expose chat vote handler through ref
+  useImperativeHandle(ref, () => ({
+    handleChatVote: (fruitIndex: number) => {
+      if (gamePhase !== 'voting') return;
+      if (fruitIndex < 0 || fruitIndex >= joinedPlayers.length) return;
+
+      const targetPlayer = joinedPlayers[fruitIndex];
+      if (targetPlayer) {
+        handleVote(targetPlayer.id);
+      }
+    },
+  }), [gamePhase, joinedPlayers]);
 
   // Assign fruits to players if not already assigned
   useEffect(() => {
@@ -181,6 +197,10 @@ export default function FruitsWarVotingGame({
         {/* Left Sidebar - Vote Counter */}
         <div className="w-80 bg-gradient-to-b from-purple-950 to-black border-l-2 border-purple-500/30 p-6 overflow-y-auto">
           <h2 className="text-2xl font-bold text-purple-400 mb-6 text-center">الأصوات</h2>
+          <div className="text-cyan-300 text-center mb-6 text-sm">
+            <p className="mb-2">🎮 أكتب !join للدخول</p>
+            <p className="text-xs text-purple-300">صوّت برقم الفاكهة 1-{joinedPlayers.length}</p>
+          </div>
           <div className="space-y-3">
             {joinedPlayers.map((player) => (
               <div
@@ -246,7 +266,7 @@ export default function FruitsWarVotingGame({
           {gamePhase === 'elimination' && mostVotedPlayer && (
             <div className="text-center relative z-10">
               <h2 className="text-5xl font-bold text-red-500 mb-8 animate-pulse">تم الإقصاء!</h2>
-              <div className="text-9xl mb-8 opacity-50">{mostVotedPlayer.fruit}</div>
+              <div className="text-9xl mb-8">{mostVotedPlayer.fruit}</div>
               <p className="text-3xl font-bold text-red-300">{mostVotedPlayer.name}</p>
             </div>
           )}
@@ -254,4 +274,8 @@ export default function FruitsWarVotingGame({
       </div>
     </div>
   );
-}
+});
+
+FruitsWarVotingGame.displayName = 'FruitsWarVotingGame';
+
+export default FruitsWarVotingGame;

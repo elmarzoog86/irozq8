@@ -23,6 +23,7 @@ function GamePageContent() {
   const [gameStarted, setGameStarted] = useState(false);
   const [players, setPlayers] = useState<Array<{id: number; name: string; score: number; eliminated: boolean; joined: boolean}>>([]);
   const questionsGameRef = useRef<QuestionsGameHandle>(null);
+  const fruitWarVotingRef = useRef<{handleChatVote: (fruitIndex: number) => void} | null>(null);
 
   // Memoize the onAnswer callback to prevent unnecessary re-connections
   const handleChatAnswer = useCallback((playerIndex: number, username: string, answer: string) => {
@@ -51,6 +52,13 @@ function GamePageContent() {
     });
   }, []);
 
+  // Handle chat voting for Fruits War voting game
+  const handleChatVote = useCallback((voteData: {playerIndex: number; username: string}) => {
+    if (fruitWarVotingRef.current) {
+      fruitWarVotingRef.current.handleChatVote(voteData.playerIndex);
+    }
+  }, []);
+
   // Connect to Twitch chat when game is running
   useTwitchChat({
     sessionId: sessionId || '',
@@ -63,6 +71,7 @@ function GamePageContent() {
     sessionId: sessionId || '',
     enabled: gameStarted && gameId === 'fruits-war',
     onJoin: handleChatJoin,
+    onVote: handleChatVote,
   });
 
   // Debug state display
