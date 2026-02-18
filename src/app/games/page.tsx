@@ -21,7 +21,9 @@ function GamePageContent() {
   const [playerCount, setPlayerCount] = useState(10);
   const [questionsCount, setQuestionsCount] = useState(10);
   const [gameStarted, setGameStarted] = useState(false);
-  const [players, setPlayers] = useState<Array<{id: number; name: string; score: number; eliminated: boolean; joined: boolean}>>([]);
+  const [players, setPlayers] = useState<Array<{id: number; name: string; score: number; eliminated: boolean; joined: boolean; emoji?: string}>>([]);
+  const [consoleLogs, setConsoleLogs] = useState<Array<{id: string; message: string; type: 'join' | 'leave' | 'system' | 'action'; timestamp: string}>>([]);
+  const [chatMessages, setChatMessages] = useState<Array<{username: string; message: string; timestamp: string}>>([]);
   const questionsGameRef = useRef<QuestionsGameHandle>(null);
   const fruitWarVotingRef = useRef<{handleChatVote: (fruitIndex: number) => void} | null>(null);
 
@@ -34,19 +36,31 @@ function GamePageContent() {
 
   // Handle chat join for Fruits War
   const handleChatJoin = useCallback((username: string) => {
+    const timestamp = new Date().toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    
     setPlayers(prevPlayers => {
       // Check if player already joined
       const alreadyExists = prevPlayers.some(p => p.name === username);
       if (alreadyExists) return prevPlayers;
 
-      // Find a non-joined player or create a new one
+      // Create a new player with random emoji
+      const emojis = ['🍎', '🍊', '🍋', '🍌', '🍉', '🍇', '🍓', '🍒', '🥝', '🥑'];
       const newPlayer = {
         id: prevPlayers.length + 1,
         name: username,
         score: 0,
         eliminated: false,
-        joined: true, // Mark as joined via chat
+        joined: true,
+        emoji: emojis[(prevPlayers.length) % emojis.length],
       };
+
+      // Add to console log
+      setConsoleLogs(prevLogs => [...prevLogs, {
+        id: `join-${Date.now()}`,
+        message: `${username} انضم إلى اللعبة`,
+        type: 'join',
+        timestamp,
+      }]);
 
       return [...prevPlayers, newPlayer];
     });
@@ -76,12 +90,6 @@ function GamePageContent() {
 
   // Debug state display
   const debugStatus = `📊 Session: ${sessionId ? '✅' : '❌'} | Game: ${gameId} ${gameId === 'questions' ? '✅' : '❌'} | Started: ${gameStarted ? '✅' : '❌'} | Enabled: ${gameStarted && gameId === 'questions' ? '✅' : '❌'}`;
-
-  const handleLayoutChatMessage = (playerIndex: number, playerName: string, message: string) => {
-    if (questionsGameRef.current) {
-      questionsGameRef.current.handleChatAnswer(playerIndex, playerName, message);
-    }
-  };
 
   if (!game) {
     return (
@@ -260,8 +268,8 @@ function GamePageContent() {
         gameDescription={game.descriptionAr}
         onBack={() => setGameStarted(false)}
         players={players}
-        isGameRunning={gameStarted}
-        onChatMessage={gameId === 'questions' ? handleLayoutChatMessage : undefined}
+        consoleLogs={consoleLogs}
+        chatMessages={chatMessages}
       >
         {renderGameComponent()}
       </GameLayout>
