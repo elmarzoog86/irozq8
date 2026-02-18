@@ -20,8 +20,8 @@ const FruitsWarVotingGame = forwardRef<
 }, ref) => {
   const [votes, setVotes] = useState<Map<number, number>>(new Map());
   const [roundNumber, setRoundNumber] = useState(1);
-  const [timeLeft, setTimeLeft] = useState(30);
-  const [gamePhase, setGamePhase] = useState<'voting' | 'results' | 'elimination'>('voting');
+  const [timeLeft, setTimeLeft] = useState(60);
+  const [gamePhase, setGamePhase] = useState<'waiting' | 'voting' | 'results' | 'elimination' | 'finished'>('waiting');
 
   const joinedPlayers = players.filter(p => p.joined && !p.eliminated);
   const remainingPlayers = joinedPlayers.length;
@@ -64,6 +64,13 @@ const FruitsWarVotingGame = forwardRef<
       setGamePhase('results');
     }
   }, [timeLeft, gamePhase]);
+
+  // Start voting round
+  const handleStartRound = () => {
+    setVotes(new Map());
+    setTimeLeft(60);
+    setGamePhase('voting');
+  };
 
   // Results display timer
   useEffect(() => {
@@ -120,9 +127,16 @@ const FruitsWarVotingGame = forwardRef<
 
     // Reset for next round
     setVotes(new Map());
-    setTimeLeft(30);
+    setTimeLeft(60);
     setRoundNumber(roundNumber + 1);
-    setGamePhase('voting');
+    
+    // Check if game should end
+    const remainingAfterElimination = players.filter(p => p.joined && !p.eliminated && p.id !== mostVotedId).length;
+    if (remainingAfterElimination === 1) {
+      setGamePhase('finished');
+    } else {
+      setGamePhase('voting');
+    }
   };
 
   // Handle elimination phase
@@ -144,7 +158,56 @@ const FruitsWarVotingGame = forwardRef<
   const mostVotedId = getMostVoted();
   const mostVotedPlayer = joinedPlayers.find(p => p.id === mostVotedId);
 
-  if (remainingPlayers === 1) {
+  // Show waiting screen when no game is started
+  if (gamePhase === 'waiting') {
+    return (
+      <div className="w-screen h-screen flex flex-col fixed inset-0" dir="rtl" style={{ background: '#0f0f1e' }}>
+        {/* Back Button */}
+        <div className="absolute top-4 left-4 z-50">
+          <button
+            onClick={onEndGame}
+            className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-6 rounded-lg transition-colors flex items-center gap-2"
+          >
+            ← العودة
+          </button>
+        </div>
+
+        <div className="flex-1 flex flex-col items-center justify-center p-8 relative">
+          <div className="text-center relative z-10">
+            <h1 className="text-5xl font-bold text-purple-300 mb-8">حرب الفواكه - تصويت</h1>
+            <div className="mb-12">
+              <h2 className="text-3xl font-bold text-cyan-300 mb-6">المشاركون</h2>
+              <div className="bg-purple-900/40 border-2 border-purple-500/50 rounded-lg p-8 max-w-2xl mx-auto">
+                {joinedPlayers.length > 0 ? (
+                  <div className="grid grid-cols-2 gap-4">
+                    {joinedPlayers.map((player) => (
+                      <div key={player.id} className="text-center">
+                        <div className="text-5xl mb-2">{player.fruit}</div>
+                        <p className="text-xl text-cyan-300">{player.name}</p>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-xl text-purple-300">في انتظار المشاركين...</p>
+                )}
+              </div>
+            </div>
+            <p className="text-lg text-purple-300 mb-6">أكتب !join في الشات للدخول</p>
+            <button
+              onClick={handleStartRound}
+              disabled={joinedPlayers.length < 2}
+              className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-4 px-12 rounded-lg text-xl transition-all"
+            >
+              {joinedPlayers.length < 2 ? '⏳ انتظر 2 لاعبين على الأقل' : '✓ ابدأ الجولة'}
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Show winner screen when game finished
+  if (gamePhase === 'finished' || remainingPlayers === 1) {
     return (
       <div className="w-screen h-screen flex flex-col fixed inset-0" dir="rtl" style={{ background: '#0f0f1e' }}>
         <div className="flex-1 flex items-center justify-center">
