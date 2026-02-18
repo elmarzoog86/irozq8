@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'فوازير روز',
-  description: 'منصة ألعاب تفاعلية مصممة خصيصاً للبثوث المباشرة في العالم العربي',
+  title: 'iRozQ8 - Interactive Games Platform',
+  description: 'An interactive games platform designed for live streaming and online entertainment',
   icons: {
     icon: '/favicon.ico',
   },

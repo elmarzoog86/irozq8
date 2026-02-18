@@ -35,28 +35,28 @@ export default function ComingSoonPage() {
         <div className="mb-8">
           <div className="text-6xl md:text-7xl font-bold mb-4">
             <span className="bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-              جوله
+              iRozQ8
             </span>
           </div>
           <p className="text-xl md:text-2xl font-bold text-cyan-300 mb-2">
-            منصة الألعاب التفاعلية العربية
+            Interactive Games Platform
           </p>
         </div>
 
         <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
-          قريباً جداً 🚀
+          Coming Soon 🚀
         </h1>
 
         <p className="text-lg text-cyan-200/80 mb-8 max-w-2xl mx-auto leading-relaxed">
-          نحن نعمل على شيء مذهل! منصة ألعاب تفاعلية حديثة مع تجربة لا تُنسى.
-          استعد لتجربة الألعاب بطريقة جديدة تماماً.
+          We&apos;re working on something amazing! A modern interactive gaming platform with an unforgettable experience.
+          Get ready to play games in a completely new way.
         </p>
 
         {/* Countdown or notification */}
         <div className="mb-12 p-6 rounded-lg border-2 border-cyan-400/50 bg-cyan-900/20 backdrop-blur max-w-2xl mx-auto">
-          <p className="text-cyan-300 text-sm mb-2">نحن نستعد لإطلاق النسخة الأولى</p>
+          <p className="text-cyan-300 text-sm mb-2">We&apos;re preparing to launch</p>
           <p className="text-2xl font-bold text-white">
-            ابقَ متابعاً معنا 👀
+            Stay Tuned 👀
           </p>
         </div>
       </div>
