@@ -2,62 +2,52 @@
 
 export default function ComingSoonPage() {
   return (
-    <div
-      style={{
-        background: 'linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #2d1b4e 100%)',
-      }}
-      className="min-h-screen flex items-center justify-center relative overflow-hidden"
-    >
-      {/* Animated background elements */}
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute top-20 left-20 w-72 h-72 bg-cyan-400 rounded-full mix-blend-multiply filter blur-3xl animate-pulse"></div>
-        <div className="absolute top-40 right-20 w-72 h-72 bg-purple-400 rounded-full mix-blend-multiply filter blur-3xl animate-pulse delay-2000"></div>
-        <div className="absolute bottom-20 left-1/2 w-72 h-72 bg-pink-400 rounded-full mix-blend-multiply filter blur-3xl animate-pulse delay-4000"></div>
-      </div>
+    <div className="relative w-full h-screen overflow-hidden">
+      {/* Full Screen Video Background */}
+      <video
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="absolute inset-0 w-full h-full object-cover"
+      >
+        <source src="/videos/rozq8_3.webm" type="video/webm" />
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 to-slate-800" />
+      </video>
 
-      {/* Content */}
-      <div className="relative z-10 text-center px-6 w-full">
-        {/* Video Container */}
-        <div className="mb-8 max-w-4xl mx-auto">
-          <video
-            autoPlay
-            loop
-            muted
-            playsInline
-            className="w-full rounded-xl shadow-2xl border-2 border-cyan-400/50"
-            style={{ maxHeight: '70vh', objectFit: 'cover' }}
-          >
-            <source src="/videos/rozq8_3.webm" type="video/webm" />
-            Your browser does not support the video tag.
-          </video>
-        </div>
+      {/* Dark Overlay for text readability */}
+      <div className="absolute inset-0 bg-black/40"></div>
 
-        <div className="mb-8">
-          <div className="text-6xl md:text-7xl font-bold mb-4">
-            <span className="bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-              iRozQ8
-            </span>
+      {/* Content Overlay */}
+      <div className="relative z-10 w-full h-full flex flex-col items-center justify-center px-6">
+        <div className="text-center">
+          <div className="mb-8">
+            <div className="text-6xl md:text-7xl lg:text-8xl font-bold mb-4">
+              <span className="bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+                iRozQ8
+              </span>
+            </div>
+            <p className="text-xl md:text-2xl lg:text-3xl font-bold text-cyan-300 mb-4">
+              Interactive Games Platform
+            </p>
           </div>
-          <p className="text-xl md:text-2xl font-bold text-cyan-300 mb-2">
-            Interactive Games Platform
+
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">
+            Coming Soon 🚀
+          </h1>
+
+          <p className="text-lg md:text-xl text-cyan-200/90 mb-8 max-w-2xl mx-auto leading-relaxed">
+            We&apos;re working on something amazing! A modern interactive gaming platform with an unforgettable experience.
+            Get ready to play games in a completely new way.
           </p>
-        </div>
 
-        <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
-          Coming Soon 🚀
-        </h1>
-
-        <p className="text-lg text-cyan-200/80 mb-8 max-w-2xl mx-auto leading-relaxed">
-          We&apos;re working on something amazing! A modern interactive gaming platform with an unforgettable experience.
-          Get ready to play games in a completely new way.
-        </p>
-
-        {/* Countdown or notification */}
-        <div className="mb-12 p-6 rounded-lg border-2 border-cyan-400/50 bg-cyan-900/20 backdrop-blur max-w-2xl mx-auto">
-          <p className="text-cyan-300 text-sm mb-2">We&apos;re preparing to launch</p>
-          <p className="text-2xl font-bold text-white">
-            Stay Tuned 👀
-          </p>
+          {/* Call to Action */}
+          <div className="p-6 rounded-lg border-2 border-cyan-400/50 bg-cyan-900/30 backdrop-blur max-w-2xl mx-auto">
+            <p className="text-cyan-300 text-sm mb-2">We&apos;re preparing to launch</p>
+            <p className="text-2xl font-bold text-white">
+              Stay Tuned 👀
+            </p>
+          </div>
         </div>
       </div>
     </div>
