@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, useRef } from 'react';
+import FruitsWarModeSelector from './FruitsWarModeSelector';
+import FruitsWarVotingGame from './FruitsWarVotingGame';
 
 interface FruitsWarGameProps {
   playerCount: number;
@@ -12,7 +14,9 @@ interface FruitsWarGameProps {
 export default function FruitsWarGame({
   players,
   setPlayers,
+  onEndGame,
 }: FruitsWarGameProps) {
+  const [gameMode, setGameMode] = useState<'roulette' | 'voting' | null>(null);
   const [isSpinning, setIsSpinning] = useState(false);
   const [rotation, setRotation] = useState(0);
   const [selectedPlayer, setSelectedPlayer] = useState<{id: number; name: string; eliminated: boolean} | null>(null);
@@ -60,6 +64,30 @@ export default function FruitsWarGame({
     }
   };
 
+  // Show mode selector if no mode selected yet
+  if (!gameMode) {
+    return (
+      <FruitsWarModeSelector
+        players={players}
+        setPlayers={setPlayers}
+        onModeSelect={setGameMode}
+        onEndGame={onEndGame}
+      />
+    );
+  }
+
+  // Show voting game if voting mode selected
+  if (gameMode === 'voting') {
+    return (
+      <FruitsWarVotingGame
+        players={players}
+        setPlayers={setPlayers}
+        onEndGame={onEndGame}
+      />
+    );
+  }
+
+  // Roulette mode (original implementation)
   return (
     <div className="w-screen h-screen flex flex-col fixed inset-0" dir="rtl" style={{background: '#0f0f1e'}}>
       {/* Game Screen with Wheel and Players - Main Lobby */}
@@ -99,7 +127,7 @@ export default function FruitsWarGame({
           </div>
 
           {/* Title */}
-          <h1 className="text-5xl font-bold text-purple-300 mb-12 relative z-10">حرب الفواكه</h1>
+          <h1 className="text-5xl font-bold text-purple-300 mb-12 relative z-10">حرب الفواكه - روليت</h1>
 
           {/* Wheel Container */}
           <div className="relative w-96 h-96 mb-12 z-10">
