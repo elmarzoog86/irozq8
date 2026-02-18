@@ -94,13 +94,71 @@ export function useTwitchChat({
           throw new Error(`Failed to start chat connection: ${startData.error}`);
         }
 
-        // Step 3: Wait a moment for the server to be ready, then connect to SSE stream
+        // Step 3: Wait a moment for the server to be ready, then connect to SSE stream with retry logic
         console.log(`⏳ [HOOK] Waiting for server to be ready...`);
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise(resolve => setTimeout(resolve, 2000));
         
         console.log(`🔌 [HOOK] Connecting to SSE stream for channel: ${channelName}`);
         
-        const eventSource = new EventSource(`/api/twitch/chat?channel=${encodeURIComponent(channelName)}`);
+        // Retry logic for SSE connection
+        let eventSource: EventSource | null = null;
+        let retryCount = 0;
+        const maxRetries = 5;
+
+        const connectSSE = () => {
+          return new Promise<EventSource>((resolve, reject) => {
+            try {
+              const es = new EventSource(`/api/twitch/chat?channel=${encodeURIComponent(channelName)}`);
+              
+              // Set up timeout to detect connection failures
+              const timeout = setTimeout(() => {
+                es.close();
+                reject(new Error('SSE connection timeout'));
+              }, 5000);
+
+              es.addEventListener('open', () => {
+                clearTimeout(timeout);
+                console.log(`✅ [HOOK] SSE connection opened for channel: ${channelName}`);
+                resolve(es);
+              });
+
+              es.addEventListener('error', (error: any) => {
+                clearTimeout(timeout);
+                console.error(`❌ [HOOK] SSE connection error:`, error);
+                es.close();
+                reject(error);
+              });
+            } catch (error) {
+              console.error(`❌ [HOOK] Failed to create EventSource:`, error);
+              reject(error);
+            }
+          });
+        };
+
+        // Retry loop
+        while (retryCount < maxRetries) {
+          try {
+            eventSource = await connectSSE();
+            console.log(`✅ [HOOK] Successfully connected to SSE after ${retryCount} retries`);
+            break;
+          } catch (error) {
+            retryCount++;
+            console.warn(`⚠️  [HOOK] SSE connection attempt ${retryCount}/${maxRetries} failed:`, error);
+            
+            if (retryCount < maxRetries) {
+              const delay = Math.pow(2, retryCount) * 500; // exponential backoff
+              console.log(`⏳ [HOOK] Retrying in ${delay}ms...`);
+              await new Promise(resolve => setTimeout(resolve, delay));
+            } else {
+              throw new Error(`Failed to connect to SSE after ${maxRetries} attempts`);
+            }
+          }
+        }
+
+        if (!eventSource) {
+          throw new Error('Failed to establish SSE connection');
+        }
+
         eventSourceRef.current = eventSource;
 
         eventSource.addEventListener('message', (event) => {
