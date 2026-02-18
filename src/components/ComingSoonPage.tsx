@@ -38,7 +38,7 @@ export default function ComingSoonPage() {
         loop
         muted
         playsInline
-        className="absolute inset-0 w-full h-full object-cover"
+        className="absolute inset-0 w-full h-full object-cover blur-sm"
       >
         <source src="/videos/rozq8_3.webm" type="video/webm" />
         <div className="absolute inset-0 bg-gradient-to-br from-slate-900 to-slate-800" />
