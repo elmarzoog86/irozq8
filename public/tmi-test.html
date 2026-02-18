@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>TMI.js Test</title>
+    <script src="https://cdn.jsdelivr.net/npm/tmi.js@1.8.5/lib/tmi.min.js"></script>
+</head>
+<body>
+    <h1>TMI.js Load Test</h1>
+    <div id="status">Loading...</div>
+    <script>
+        setTimeout(() => {
+            if (window.tmi) {
+                document.getElementById('status').innerHTML = '✅ TMI.js loaded successfully!';
+            } else {
+                document.getElementById('status').innerHTML = '❌ TMI.js failed to load';
+            }
+        }, 2000);
+    </script>
+</body>
+</html>

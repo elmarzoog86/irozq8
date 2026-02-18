@@ -31,11 +31,38 @@ function GamePageContent() {
     }
   }, []);
 
+  // Handle chat join for Fruits War
+  const handleChatJoin = useCallback((username: string) => {
+    setPlayers(prevPlayers => {
+      // Check if player already joined
+      const alreadyExists = prevPlayers.some(p => p.name === username);
+      if (alreadyExists) return prevPlayers;
+
+      // Find a non-joined player or create a new one
+      const newPlayer = {
+        id: prevPlayers.length + 1,
+        name: username,
+        score: 0,
+        eliminated: false,
+        joined: true, // Mark as joined via chat
+      };
+
+      return [...prevPlayers, newPlayer];
+    });
+  }, []);
+
   // Connect to Twitch chat when game is running
   useTwitchChat({
     sessionId: sessionId || '',
     enabled: gameStarted && gameId === 'questions',
     onAnswer: handleChatAnswer,
+  });
+
+  // Connect to Twitch chat for Fruits War
+  useTwitchChat({
+    sessionId: sessionId || '',
+    enabled: gameStarted && gameId === 'fruits-war',
+    onJoin: handleChatJoin,
   });
 
   // Debug state display
@@ -212,7 +239,7 @@ function GamePageContent() {
       case 'roulette':
         return <RouletteGame {...gameProps} />;
       case 'fruits-war':
-        return <FruitsWarGame {...gameProps} />;
+        return <FruitsWarGame {...gameProps} onChatJoin={handleChatJoin} />;
       case 'chairs':
         return <ChairsGame {...gameProps} />;
       default:

@@ -7,6 +7,7 @@ interface FruitsWarModeSelectorProps {
   setPlayers: (players: any[]) => void;
   onModeSelect: (mode: 'roulette' | 'voting') => void;
   onEndGame: () => void;
+  onChatJoin?: (username: string) => void;
 }
 
 export default function FruitsWarModeSelector({
@@ -33,7 +34,8 @@ export default function FruitsWarModeSelector({
         <div className="w-96 bg-gradient-to-b from-purple-950 to-black border-l-2 border-purple-500/30 p-8 overflow-y-auto flex flex-col items-center justify-center">
           <h2 className="text-4xl font-bold text-purple-400 mb-12">حرب الفواكه</h2>
           <div className="text-cyan-300 text-center mb-12 text-lg">
-            <p>عدد اللاعبين: {joinedPlayers.length}</p>
+            <p className="mb-4">🎮 أكتب !join في الشات للدخول</p>
+            <p className="text-sm text-purple-300">أو اضغط الزر أدناه</p>
           </div>
           <div className="space-y-3 w-full">
             {joinedPlayers.length > 0 ? (

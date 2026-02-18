@@ -6,6 +6,7 @@ interface UseTwitchChatOptions {
   sessionId?: string;
   onAnswer?: (playerIndex: number, username: string, answer: string) => void;
   onMessage?: (username: string, message: string) => void;
+  onJoin?: (username: string) => void;
   enabled?: boolean;
 }
 
@@ -19,6 +20,7 @@ export function useTwitchChat({
   sessionId,
   onAnswer,
   onMessage,
+  onJoin,
   enabled = true,
 }: UseTwitchChatOptions) {
   const hasInitialized = useRef(false);
@@ -28,6 +30,7 @@ export function useTwitchChat({
   // Memoize callbacks to prevent unnecessary dependency changes
   const memoizedOnAnswer = useCallback(onAnswer || (() => {}), [onAnswer]);
   const memoizedOnMessage = useCallback(onMessage || (() => {}), [onMessage]);
+  const memoizedOnJoin = useCallback(onJoin || (() => {}), [onJoin]);
 
   useEffect(() => {
     console.log(`🎣 [HOOK] useTwitchChat called - enabled: ${enabled}, sessionId: ${sessionId ? 'present' : 'missing'}`);
@@ -110,11 +113,17 @@ export function useTwitchChat({
               // Call message callback
               memoizedOnMessage(data.username, data.message);
 
+              // Check for !join command
+              const message = data.message.toLowerCase().trim();
+              if (message === '!join') {
+                console.log(`✅ [HOOK-EVENT] Join command from ${data.username}`);
+                memoizedOnJoin(data.username);
+              }
+
               // Parse as potential game answer
               // This is a simple implementation - customize based on your game logic
               if (memoizedOnAnswer) {
                 // Try to match the message as a game answer
-                const message = data.message.toLowerCase().trim();
                 // You can add answer parsing logic here
                 console.log(`📝 [HOOK-EVENT] Answer candidate: ${message}`);
                 memoizedOnAnswer(0, data.username, data.message);
@@ -170,7 +179,7 @@ export function useTwitchChat({
 
       hasInitialized.current = false;
     };
-  }, [sessionId, enabled, memoizedOnAnswer, memoizedOnMessage]);
+  }, [sessionId, enabled, memoizedOnAnswer, memoizedOnMessage, memoizedOnJoin]);
 
   return {
     isConnected: eventSourceRef.current !== null,

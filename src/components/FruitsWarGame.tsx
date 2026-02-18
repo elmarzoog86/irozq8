@@ -9,12 +9,14 @@ interface FruitsWarGameProps {
   players: Array<{id: number; name: string; score: number; eliminated: boolean; joined: boolean; fruit?: string}>;
   setPlayers: (players: any[]) => void;
   onEndGame: () => void;
+  onChatJoin?: (username: string) => void;
 }
 
 export default function FruitsWarGame({
   players,
   setPlayers,
   onEndGame,
+  onChatJoin,
 }: FruitsWarGameProps) {
   const [gameMode, setGameMode] = useState<'roulette' | 'voting' | null>(null);
   const [isSpinning, setIsSpinning] = useState(false);
@@ -72,6 +74,7 @@ export default function FruitsWarGame({
         setPlayers={setPlayers}
         onModeSelect={setGameMode}
         onEndGame={onEndGame}
+        onChatJoin={onChatJoin}
       />
     );
   }
