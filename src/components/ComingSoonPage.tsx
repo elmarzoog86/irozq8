@@ -40,7 +40,7 @@ export default function ComingSoonPage() {
         playsInline
         className="absolute inset-0 w-full h-full object-cover blur-lg"
       >
-        <source src="/videos/golden-roz.webm" type="video/webm" />
+        <source src="/videos/new-roz.webm" type="video/webm" />
         <div className="absolute inset-0 bg-gradient-to-br from-black to-gray-950" />
       </video>
 
