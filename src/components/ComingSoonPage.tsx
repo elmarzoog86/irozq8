@@ -31,27 +31,32 @@ export default function ComingSoonPage() {
   const t = content[language];
 
   return (
-    <div className="relative w-full h-screen overflow-hidden bg-black">
-      {/* Full Screen Video Background */}
-      <div className="absolute inset-0 w-full h-full">
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          preload="auto"
-          className="w-full h-full object-cover blur-lg"
-          style={{ display: 'block', width: '100%', height: '100%' }}
-        >
-          <source src="/videos/new-roz.webm" type="video/webm" />
-        </video>
-      </div>
+    <div 
+      className="relative w-full h-screen overflow-hidden"
+      style={{
+        backgroundImage: 'url(/videos/new-roz.webm)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundAttachment: 'fixed'
+      }}
+    >
+      {/* Video Background */}
+      <video
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="absolute inset-0 w-full h-full object-cover"
+        style={{ filter: 'blur(8px)' }}
+      >
+        <source src="/videos/new-roz.webm" type="video/webm" />
+      </video>
 
       {/* Fallback gradient if video doesn't load */}
-      <div className="absolute inset-0 bg-gradient-to-br from-black to-gray-950" />
+      <div className="absolute inset-0 bg-gradient-to-br from-black via-gray-950 to-black" />
 
       {/* Dark Overlay for text readability */}
-      <div className="absolute inset-0 bg-black/50"></div>
+      <div className="absolute inset-0 bg-black/60"></div>
 
       {/* Language Toggle */}
       <div className="absolute top-6 right-6 z-20">
