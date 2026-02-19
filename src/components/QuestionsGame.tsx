@@ -227,17 +227,18 @@ const QuestionsGame = forwardRef<QuestionsGameHandle, QuestionsGameProps>(({
             <label className="block text-yellow-300 mb-3 font-bold text-lg">🎬 إجابة المذيع (سري):</label>
             <div className="flex gap-3">
               <input
-                type="password"
+                type="text"
                 value={streamerAnswer}
                 onChange={(e) => setStreamerAnswer(e.target.value)}
                 onKeyPress={(e) => {
                   if (e.key === 'Enter') {
-                    // Answer is submitted - can add logic here if needed
+                    // Answer is submitted
                     e.currentTarget.blur();
                   }
                 }}
                 placeholder="اكتب إجابتك هنا... (اضغط Enter)"
-                className="flex-1 px-4 py-3 bg-gray-900/50 border-2 border-yellow-400 rounded-lg text-yellow-100 placeholder-yellow-400/50 focus:outline-none focus:border-yellow-300 focus:ring-2 focus:ring-yellow-400/30"
+                className="flex-1 px-4 py-3 bg-gray-900/50 border-2 border-yellow-400 rounded-lg text-yellow-100 placeholder-yellow-400/50 focus:outline-none focus:border-yellow-300 focus:ring-2 focus:ring-yellow-400/30 relative z-10"
+                autoComplete="off"
               />
               <div className="flex items-center px-4 py-3 bg-gray-900/50 border-2 border-yellow-400 rounded-lg">
                 <div className="text-2xl font-bold text-yellow-300 tracking-widest">
@@ -348,7 +349,9 @@ const QuestionsGame = forwardRef<QuestionsGameHandle, QuestionsGameProps>(({
 
                 {/* Players Results */}
                 <div className="p-4 space-y-3">
-                  {players.map((player) => {
+                  {players
+                    .filter((player) => player.joined)
+                    .map((player) => {
                     const playerAnswer = playerAnswers[player.id];
                     const answered = playerAnswer !== undefined;
                     const isCorrect = answered && playerAnswer.answerIndex === currentQuestion.correctAnswer;
