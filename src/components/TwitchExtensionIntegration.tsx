@@ -41,13 +41,13 @@ export default function TwitchExtensionIntegration({ gameId }: { gameId: string 
   }
 
   return (
-    <div className="mt-8 p-6 bg-gradient-to-r from-cyan-900/30 to-pink-900/30 rounded-lg border border-cyan-500/50">
-      <h3 className="text-lg font-bold text-cyan-300 mb-4">
+    <div className="mt-8 p-6 bg-gradient-to-r from-yellow-900/30 to-yellow-900/30 rounded-lg border border-yellow-500/50">
+      <h3 className="text-lg font-bold text-yellow-300 mb-4">
         🎮 لاعبو Twitch ({twitchPlayers.length})
       </h3>
       
       {twitchPlayers.length === 0 ? (
-        <p className="text-cyan-300/70 text-center py-4">
+        <p className="text-yellow-300/70 text-center py-4">
           لا يوجد لاعبون من Twitch حالياً
         </p>
       ) : (
@@ -58,7 +58,7 @@ export default function TwitchExtensionIntegration({ gameId }: { gameId: string 
               className={`p-3 rounded-lg border-2 text-center ${
                 player.eliminated
                   ? 'border-red-500 opacity-50'
-                  : 'border-cyan-500'
+                  : 'border-yellow-500'
               }`}
               style={{
                 background: player.eliminated
@@ -66,8 +66,8 @@ export default function TwitchExtensionIntegration({ gameId }: { gameId: string 
                   : 'rgba(0,217,255,0.1)'
               }}
             >
-              <div className="text-sm font-bold text-cyan-300">{player.name}</div>
-              <div className="text-xs text-pink-400 mt-1">💯 {player.score}</div>
+              <div className="text-sm font-bold text-yellow-300">{player.name}</div>
+              <div className="text-xs text-yellow-400 mt-1">💯 {player.score}</div>
               {player.eliminated && (
                 <div className="text-xs text-red-400 mt-1">مستبعد ❌</div>
               )}
@@ -76,7 +76,7 @@ export default function TwitchExtensionIntegration({ gameId }: { gameId: string 
         </div>
       )}
 
-      <div className="mt-4 p-3 bg-cyan-900/20 rounded border border-cyan-500/50 text-xs text-cyan-300">
+      <div className="mt-4 p-3 bg-yellow-900/20 rounded border border-yellow-500/50 text-xs text-yellow-300">
         <p>💡 المشاهدون يستطيعون كتابة &quot;join&quot; في الشات للانضمام للعبة!</p>
       </div>
     </div>

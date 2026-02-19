@@ -35,16 +35,16 @@ export default function GameLayout({
   const joinedPlayers = players.filter(p => p.joined);
 
   return (
-    <div className="flex h-screen bg-slate-950 text-white overflow-hidden" dir="rtl">
+    <div className="flex h-screen bg-black text-white overflow-hidden" dir="rtl">
       {/* LEFT PANEL: Console + Chat */}
       <div className="w-1/4 flex flex-col gap-4 p-4 overflow-hidden">
         {/* Console Log */}
-        <div className="flex-1 flex flex-col bg-slate-900 border border-cyan-500 rounded-lg overflow-hidden shadow-lg shadow-cyan-500/30">
-          <div className="bg-gradient-to-r from-cyan-600 to-cyan-700 border-b border-cyan-400 px-4 py-2 font-bold text-white text-sm flex items-center gap-2">
+        <div className="flex-1 flex flex-col bg-gray-950 border border-yellow-500 rounded-lg overflow-hidden shadow-lg shadow-yellow-500/30">
+          <div className="bg-gradient-to-r from-yellow-600 to-yellow-700 border-b border-yellow-400 px-4 py-2 font-bold text-white text-sm flex items-center gap-2">
             <span>📋</span>
             <span>سجل النظام</span>
           </div>
-          <div className="flex-1 overflow-y-auto bg-slate-800 space-y-1 p-3">
+          <div className="flex-1 overflow-y-auto bg-gray-900 space-y-1 p-3">
             {consoleLogs.length === 0 ? (
               <div className="text-gray-400 text-xs text-center py-4">لا توجد أحداث حتى الآن</div>
             ) : (
@@ -53,12 +53,12 @@ export default function GameLayout({
                   key={log.id}
                   className={`text-xs py-1 px-2 rounded border-r-2 font-mono ${
                     log.type === 'join'
-                      ? 'bg-cyan-900/60 border-cyan-400 text-cyan-200'
+                      ? 'bg-yellow-900/60 border-yellow-400 text-yellow-200'
                       : log.type === 'leave'
-                        ? 'bg-pink-900/60 border-pink-400 text-pink-200'
+                        ? 'bg-yellow-900/60 border-yellow-400 text-yellow-200'
                         : log.type === 'action'
                           ? 'bg-amber-900/60 border-amber-400 text-amber-200'
-                          : 'bg-slate-700 border-slate-400 text-slate-200'
+                          : 'bg-gray-800 border-gray-400 text-gray-200'
                   }`}
                 >
                   <span className="text-gray-400">[{log.timestamp}]</span> {log.message}
@@ -70,18 +70,18 @@ export default function GameLayout({
         </div>
 
         {/* Chat */}
-        <div className="flex-1 flex flex-col bg-slate-900 border border-pink-500 rounded-lg overflow-hidden shadow-lg shadow-pink-500/30">
-          <div className="bg-gradient-to-r from-pink-600 to-pink-700 border-b border-pink-400 px-4 py-2 font-bold text-white text-sm flex items-center gap-2">
+        <div className="flex-1 flex flex-col bg-gray-950 border border-yellow-500 rounded-lg overflow-hidden shadow-lg shadow-yellow-500/30">
+          <div className="bg-gradient-to-r from-yellow-600 to-yellow-700 border-b border-yellow-400 px-4 py-2 font-bold text-white text-sm flex items-center gap-2">
             <span>💬</span>
             <span>دردشة البث</span>
           </div>
-          <div className="flex-1 overflow-y-auto bg-slate-800 space-y-2 p-3">
+          <div className="flex-1 overflow-y-auto bg-gray-900 space-y-2 p-3">
             {chatMessages.length === 0 ? (
               <div className="text-gray-400 text-xs text-center py-4">لا توجد رسائل حتى الآن</div>
             ) : (
               chatMessages.map((msg, idx) => (
-                <div key={idx} className="text-xs bg-slate-700 rounded p-2 border-r-2 border-pink-500">
-                  <div className="font-bold text-pink-300">{msg.username}</div>
+                <div key={idx} className="text-xs bg-gray-800 rounded p-2 border-r-2 border-yellow-500">
+                  <div className="font-bold text-yellow-300">{msg.username}</div>
                   <div className="text-gray-200 mt-1 break-words">{msg.message}</div>
                   <div className="text-gray-500 text-xs mt-1">{msg.timestamp}</div>
                 </div>
@@ -95,23 +95,23 @@ export default function GameLayout({
       {/* CENTER PANEL: Game Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Header Bar */}
-        <div className="bg-slate-900 border-b border-cyan-500 px-6 py-4 flex justify-between items-center shadow-lg">
+        <div className="bg-gray-950 border-b border-yellow-500 px-6 py-4 flex justify-between items-center shadow-lg">
           <div className="flex items-center gap-4">
             <button 
               onClick={onBack}
-              className="bg-gradient-to-r from-pink-600 to-pink-700 hover:from-pink-500 hover:to-pink-600 text-white font-bold px-4 py-2 rounded flex items-center gap-2 transition-all shadow-lg shadow-pink-500/50"
+              className="bg-gradient-to-r from-yellow-600 to-yellow-700 hover:from-yellow-500 hover:to-yellow-600 text-white font-bold px-4 py-2 rounded flex items-center gap-2 transition-all shadow-lg shadow-yellow-500/50"
             >
               ← الخروج
             </button>
             <div>
-              <h1 className="text-2xl font-bold text-cyan-400">{gameName}</h1>
-              <p className="text-pink-300 text-sm mt-1">{gameDescription}</p>
+              <h1 className="text-2xl font-bold text-yellow-400">{gameName}</h1>
+              <p className="text-yellow-300 text-sm mt-1">{gameDescription}</p>
             </div>
           </div>
         </div>
 
         {/* Main Game Area */}
-        <div className="flex-1 overflow-y-auto p-6 bg-slate-950">
+        <div className="flex-1 overflow-y-auto p-6 bg-black">
           <div className="max-w-6xl mx-auto">
             {children}
           </div>
@@ -119,15 +119,15 @@ export default function GameLayout({
       </div>
 
       {/* RIGHT PANEL: Players List */}
-      <div className="w-1/4 flex flex-col bg-slate-900 border-r border-pink-500 overflow-hidden shadow-lg shadow-pink-500/30">
-        <div className="bg-gradient-to-r from-pink-600 to-pink-700 border-b border-pink-400 px-4 py-3 font-bold text-white text-sm flex items-center justify-between">
+      <div className="w-1/4 flex flex-col bg-gray-950 border-r border-yellow-500 overflow-hidden shadow-lg shadow-yellow-500/30">
+        <div className="bg-gradient-to-r from-yellow-600 to-yellow-700 border-b border-yellow-400 px-4 py-3 font-bold text-white text-sm flex items-center justify-between">
           <span className="flex items-center gap-2">
             <span>👥</span>
             <span>اللاعبون</span>
           </span>
-          <span className="bg-pink-700/80 px-2 py-1 rounded text-xs">({joinedPlayers.length})</span>
+          <span className="bg-yellow-700/80 px-2 py-1 rounded text-xs">({joinedPlayers.length})</span>
         </div>
-        <div className="flex-1 overflow-y-auto bg-slate-800 p-4 space-y-2">
+        <div className="flex-1 overflow-y-auto bg-gray-900 p-4 space-y-2">
           {joinedPlayers.length === 0 ? (
             <div className="text-gray-400 text-sm text-center py-12">
               <div className="text-3xl mb-2">🎮</div>
@@ -140,15 +140,15 @@ export default function GameLayout({
                 key={player.id}
                 className={`rounded-lg p-3 border transition-all ${
                   player.eliminated
-                    ? 'bg-slate-700 border-red-500/50 opacity-60'
-                    : 'bg-gradient-to-r from-cyan-600/40 to-pink-600/40 border-cyan-500 hover:from-cyan-600/60 hover:to-pink-600/60'
+                    ? 'bg-gray-800 border-red-500/50 opacity-60'
+                    : 'bg-gradient-to-r from-yellow-600/40 to-yellow-600/40 border-yellow-500 hover:from-yellow-600/60 hover:to-yellow-600/60'
                 }`}
               >
                 <div className="flex items-center gap-3">
                   <div className="text-2xl">{player.emoji || '👤'}</div>
                   <div className="flex-1 min-w-0">
                     <div className="font-bold text-white text-sm truncate">{player.name}</div>
-                    <div className="text-xs text-cyan-300">#{idx + 1}</div>
+                    <div className="text-xs text-yellow-300">#{idx + 1}</div>
                   </div>
                   {player.score > 0 && (
                     <div className="bg-amber-600 text-amber-100 px-2 py-1 rounded text-xs font-bold">
@@ -163,7 +163,7 @@ export default function GameLayout({
             ))
           )}
         </div>
-        <div className="bg-slate-800 border-t border-cyan-500 px-4 py-3 text-xs text-gray-300 text-center">
+        <div className="bg-gray-900 border-t border-yellow-500 px-4 py-3 text-xs text-gray-300 text-center">
           {joinedPlayers.length > 0
             ? `${joinedPlayers.length} لاعب${joinedPlayers.length > 2 ? 'ين' : ''} متصل${joinedPlayers.length > 2 ? 'ين' : ''}`
             : 'في انتظار اللاعبين'}

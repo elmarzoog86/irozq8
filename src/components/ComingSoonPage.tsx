@@ -41,7 +41,7 @@ export default function ComingSoonPage() {
         className="absolute inset-0 w-full h-full object-cover blur-sm"
       >
         <source src="/videos/rozq8_3.webm" type="video/webm" />
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 to-slate-800" />
+        <div className="absolute inset-0 bg-gradient-to-br from-black to-gray-950" />
       </video>
 
       {/* Dark Overlay for text readability */}
@@ -51,7 +51,7 @@ export default function ComingSoonPage() {
       <div className="absolute top-6 right-6 z-20">
         <button
           onClick={() => setLanguage(language === 'en' ? 'ar' : 'en')}
-          className="px-4 py-2 rounded-lg bg-cyan-500/20 border-2 border-cyan-400/50 text-cyan-300 hover:bg-cyan-500/30 transition-colors font-semibold"
+          className="px-4 py-2 rounded-lg bg-yellow-500/20 border-2 border-yellow-400/50 text-yellow-300 hover:bg-yellow-500/30 transition-colors font-semibold"
         >
           {language === 'en' ? 'العربية' : 'English'}
         </button>
@@ -62,11 +62,11 @@ export default function ComingSoonPage() {
         <div className="text-center">
           <div className="mb-8">
             <div className="text-6xl md:text-7xl lg:text-8xl font-bold mb-4">
-              <span className="bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-yellow-400 via-purple-400 to-yellow-400 bg-clip-text text-transparent">
                 {t.title}
               </span>
             </div>
-            <p className={`text-xl md:text-2xl lg:text-3xl font-bold text-cyan-300 mb-4`}>
+            <p className={`text-xl md:text-2xl lg:text-3xl font-bold text-yellow-300 mb-4`}>
               {t.subtitle}
             </p>
           </div>
@@ -75,13 +75,13 @@ export default function ComingSoonPage() {
             {t.heading}
           </h1>
 
-          <p className="text-lg md:text-xl text-cyan-200/90 mb-8 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-lg md:text-xl text-yellow-200/90 mb-8 max-w-2xl mx-auto leading-relaxed">
             {t.description}
           </p>
 
           {/* Call to Action Box */}
-          <div className="p-6 rounded-lg border-2 border-cyan-400/50 bg-cyan-900/30 backdrop-blur max-w-2xl mx-auto mb-8">
-            <p className="text-cyan-300 text-sm mb-2">{t.preparing}</p>
+          <div className="p-6 rounded-lg border-2 border-yellow-400/50 bg-yellow-900/30 backdrop-blur max-w-2xl mx-auto mb-8">
+            <p className="text-yellow-300 text-sm mb-2">{t.preparing}</p>
             <p className="text-2xl font-bold text-white">
               {t.stayTuned}
             </p>
@@ -94,7 +94,7 @@ export default function ComingSoonPage() {
               href="https://www.twitch.tv/irozq8"
               target="_blank"
               rel="noopener noreferrer"
-              className="px-6 py-3 rounded-lg bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-bold transition-all duration-300 transform hover:scale-105 flex items-center gap-2"
+              className="px-6 py-3 rounded-lg bg-gradient-to-r from-black-600 to-black-700 hover:from-black-700 hover:to-black-800 text-white font-bold transition-all duration-300 transform hover:scale-105 flex items-center gap-2"
               style={{ boxShadow: '0 0 30px rgba(168, 85, 247, 0.4)' }}
             >
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -108,7 +108,7 @@ export default function ComingSoonPage() {
               href="https://streamlabs.com/irozq8/tip"
               target="_blank"
               rel="noopener noreferrer"
-              className="px-6 py-3 rounded-lg bg-gradient-to-r from-pink-600 to-pink-700 hover:from-pink-700 hover:to-pink-800 text-white font-bold transition-all duration-300 transform hover:scale-105 flex items-center gap-2"
+              className="px-6 py-3 rounded-lg bg-gradient-to-r from-yellow-600 to-yellow-700 hover:from-yellow-700 hover:to-yellow-800 text-white font-bold transition-all duration-300 transform hover:scale-105 flex items-center gap-2"
               style={{ boxShadow: '0 0 30px rgba(236, 72, 153, 0.4)' }}
             >
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">

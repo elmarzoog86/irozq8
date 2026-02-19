@@ -130,29 +130,29 @@ export default function ChairsGame({ players, setPlayers, onEndGame }: ChairsGam
     <div className="w-full">
       {/* Game Header */}
       <div className="text-center mb-8">
-        <h1 className="text-4xl font-bold text-cyan-300 mb-2">🪑 جوله كراسي</h1>
-        <p className="text-cyan-200 text-lg mb-4">اجلس على الكرسي بعد توقف الموسيقى وقبل بقية اللاعبين</p>
+        <h1 className="text-4xl font-bold text-yellow-300 mb-2">🪑 جوله كراسي</h1>
+        <p className="text-yellow-200 text-lg mb-4">اجلس على الكرسي بعد توقف الموسيقى وقبل بقية اللاعبين</p>
       </div>
 
       {/* Show waiting state or game state */}
       {!gameStarted ? (
-        <div className="bg-slate-900/50 border-2 border-cyan-500/30 rounded-lg p-8 mb-8 text-center">
+        <div className="bg-gray-950/50 border-2 border-yellow-500/30 rounded-lg p-8 mb-8 text-center">
           {/* Waiting Section */}
           <div className="mb-8">
             <div className="text-6xl mb-4">👥</div>
-            <h2 className="text-2xl font-bold text-cyan-300 mb-2">في انتظار اللاعبين</h2>
-            <p className="text-cyan-200 mb-4">انضم للعبة وكن آخر لاعب يجلس على كرسي!</p>
-            <p className="text-pink-400 font-semibold">يحتاج على الأقل لاعبين اثنين للبدء</p>
+            <h2 className="text-2xl font-bold text-yellow-300 mb-2">في انتظار اللاعبين</h2>
+            <p className="text-yellow-200 mb-4">انضم للعبة وكن آخر لاعب يجلس على كرسي!</p>
+            <p className="text-yellow-400 font-semibold">يحتاج على الأقل لاعبين اثنين للبدء</p>
           </div>
 
           {/* Players List */}
-          <div className="bg-slate-800/50 rounded-lg p-4 mb-6 max-h-40 overflow-y-auto">
+          <div className="bg-gray-900/50 rounded-lg p-4 mb-6 max-h-40 overflow-y-auto">
             {players.length > 0 ? (
               <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                 {players.map(player => (
                   <div
                     key={player.id}
-                    className="p-2 bg-cyan-900/30 border border-cyan-500 rounded text-cyan-300 text-sm font-semibold"
+                    className="p-2 bg-yellow-900/30 border border-yellow-500 rounded text-yellow-300 text-sm font-semibold"
                   >
                     {player.name}
                   </div>
@@ -164,9 +164,9 @@ export default function ChairsGame({ players, setPlayers, onEndGame }: ChairsGam
           </div>
 
           {/* Game Info */}
-          <div className="bg-slate-800/50 border border-cyan-500/30 rounded-lg p-4 mb-6 text-left">
-            <h3 className="text-cyan-300 font-bold mb-3 text-center">📋 قواعد اللعبة</h3>
-            <ul className="text-cyan-200 text-sm space-y-2">
+          <div className="bg-gray-900/50 border border-yellow-500/30 rounded-lg p-4 mb-6 text-left">
+            <h3 className="text-yellow-300 font-bold mb-3 text-center">📋 قواعد اللعبة</h3>
+            <ul className="text-yellow-200 text-sm space-y-2">
               <li>✓ عند بدء الموسيقى، امشِ حول الكراسي مع اللاعبين الآخرين</li>
               <li>✓ عند توقف الموسيقى، يجب أن تجلس بسرعة على كرسي</li>
               <li>✓ في كل جولة، سيتم استبعاد لاعب واحد عشوائياً</li>
@@ -178,7 +178,7 @@ export default function ChairsGame({ players, setPlayers, onEndGame }: ChairsGam
           <button
             onClick={() => setGameStarted(true)}
             disabled={players.filter(p => p.joined).length < 2}
-            className="w-full bg-gradient-to-r from-cyan-600 to-cyan-700 hover:from-cyan-700 hover:to-cyan-800 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3 px-6 rounded-lg text-lg transition-all"
+            className="w-full bg-gradient-to-r from-yellow-600 to-yellow-700 hover:from-yellow-700 hover:to-yellow-800 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3 px-6 rounded-lg text-lg transition-all"
           >
             ✓ بدء اللعبة
           </button>
@@ -186,13 +186,13 @@ export default function ChairsGame({ players, setPlayers, onEndGame }: ChairsGam
       ) : (
         // Game Playing State
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-cyan-300 mb-4">🎵 لعبة كراسي - الجولة {round}</h2>
-          <p className="text-cyan-200 mb-6 text-sm">امشِ حول الكراسي، عند الإيقاف سيتم استبعاد لاعب عشوائي!</p>
+          <h2 className="text-2xl font-bold text-yellow-300 mb-4">🎵 لعبة كراسي - الجولة {round}</h2>
+          <p className="text-yellow-200 mb-6 text-sm">امشِ حول الكراسي، عند الإيقاف سيتم استبعاد لاعب عشوائي!</p>
 
           <div className="mb-6 flex flex-col items-center gap-2">
-            <label className="text-cyan-200 font-bold block mb-2">اختر الأغنية:</label>
+            <label className="text-yellow-200 font-bold block mb-2">اختر الأغنية:</label>
             <select
-              className="bg-slate-800 text-cyan-300 rounded px-4 py-2 border border-cyan-500 w-full max-w-xs"
+              className="bg-gray-900 text-yellow-300 rounded px-4 py-2 border border-yellow-500 w-full max-w-xs"
               value={currentSong.id}
               onChange={e => {
                 const song = SONGS.find(s => s.id === e.target.value);
@@ -208,14 +208,14 @@ export default function ChairsGame({ players, setPlayers, onEndGame }: ChairsGam
 
           <div className="mb-8 flex justify-center gap-4">
         <button
-          className="bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-2 px-8 rounded-lg text-lg transition-all disabled:opacity-50"
+          className="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-8 rounded-lg text-lg transition-all disabled:opacity-50"
           onClick={startMusic}
           disabled={isPlaying}
         >
           ▶️ تشغيل الموسيقى
         </button>
         <button
-          className="bg-pink-600 hover:bg-pink-700 text-white font-bold py-2 px-8 rounded-lg text-lg transition-all disabled:opacity-50"
+          className="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-8 rounded-lg text-lg transition-all disabled:opacity-50"
           onClick={stopMusic}
           disabled={!isPlaying}
         >
@@ -225,7 +225,7 @@ export default function ChairsGame({ players, setPlayers, onEndGame }: ChairsGam
 
       {isPlaying && (
         <div className="mb-6 text-center">
-          <div className="inline-block bg-gradient-to-r from-cyan-500 to-pink-500 text-white font-bold py-2 px-4 rounded-lg">
+          <div className="inline-block bg-gradient-to-r from-yellow-500 to-yellow-500 text-white font-bold py-2 px-4 rounded-lg">
             🎵 الموسيقى تعزف الآن...
           </div>
         </div>
@@ -238,10 +238,10 @@ export default function ChairsGame({ players, setPlayers, onEndGame }: ChairsGam
             className={`p-4 rounded-lg border-2 transition-all duration-500 ${
               player.eliminated
                 ? 'border-red-500 opacity-50 bg-red-900/20'
-                : 'border-cyan-500 bg-cyan-900/20'
+                : 'border-yellow-500 bg-yellow-900/20'
             }`}
           >
-            <div className="text-xl font-bold text-cyan-300">{player.name}</div>
+            <div className="text-xl font-bold text-yellow-300">{player.name}</div>
             {eliminated === player.id && (
               <div className="text-red-500 text-lg font-bold animate-bounce mt-2 text-3xl">
                 ❌
@@ -251,7 +251,7 @@ export default function ChairsGame({ players, setPlayers, onEndGame }: ChairsGam
               <div className="text-red-400 text-sm mt-2 font-bold">مستبعد من اللعبة</div>
             )}
             {!player.eliminated && (
-              <div className="text-cyan-400 text-sm mt-2">🪑 نشيط</div>
+              <div className="text-yellow-400 text-sm mt-2">🪑 نشيط</div>
             )}
           </div>
         ))}

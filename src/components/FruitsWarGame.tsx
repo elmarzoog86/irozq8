@@ -94,12 +94,12 @@ export default function FruitsWarGame({
 
   // Roulette mode (original implementation)
   return (
-    <div className="w-screen h-screen flex flex-col fixed inset-0 bg-slate-950" dir="rtl">
+    <div className="w-screen h-screen flex flex-col fixed inset-0 bg-black" dir="rtl">
       {/* Back Button */}
       <div className="absolute top-4 left-4 z-50">
         <button
           onClick={onEndGame}
-          className="bg-gradient-to-r from-pink-600 to-pink-700 hover:from-pink-500 hover:to-pink-600 text-white font-bold py-2 px-6 rounded-lg transition-colors flex items-center gap-2 shadow-lg shadow-pink-500/50"
+          className="bg-gradient-to-r from-yellow-600 to-yellow-700 hover:from-yellow-500 hover:to-yellow-600 text-white font-bold py-2 px-6 rounded-lg transition-colors flex items-center gap-2 shadow-lg shadow-yellow-500/50"
         >
           ← العودة
         </button>
@@ -108,9 +108,9 @@ export default function FruitsWarGame({
       {/* Game Screen with Wheel and Players - Main Lobby */}
       <div className="flex-1 flex overflow-hidden">
         {/* Left Sidebar - Player Names List */}
-        <div className="w-96 bg-slate-900 border-l-2 border-cyan-500 p-8 overflow-y-auto flex flex-col items-center justify-center shadow-lg shadow-cyan-500/20">
-          <h2 className="text-4xl font-bold text-cyan-400 mb-12">حرب الفواكه</h2>
-          <div className="text-pink-400 text-center mb-12 text-lg font-semibold">
+        <div className="w-96 bg-gray-950 border-l-2 border-yellow-500 p-8 overflow-y-auto flex flex-col items-center justify-center shadow-lg shadow-yellow-500/20">
+          <h2 className="text-4xl font-bold text-yellow-400 mb-12">حرب الفواكه</h2>
+          <div className="text-yellow-400 text-center mb-12 text-lg font-semibold">
             <p>أكتب !join للدخول</p>
           </div>
           <div className="space-y-3 w-full">
@@ -118,13 +118,13 @@ export default function FruitsWarGame({
               joinedPlayers.map((player) => (
                 <div
                   key={player.id}
-                  className="p-4 rounded-lg border-2 border-cyan-500 bg-cyan-600/30 text-center hover:bg-cyan-600/50 transition-all"
+                  className="p-4 rounded-lg border-2 border-yellow-500 bg-yellow-600/30 text-center hover:bg-yellow-600/50 transition-all"
                 >
-                  <div className="font-bold text-cyan-100">{player.name}</div>
+                  <div className="font-bold text-yellow-100">{player.name}</div>
                 </div>
               ))
             ) : (
-              <div className="text-center text-pink-400 py-12">
+              <div className="text-center text-yellow-400 py-12">
                 في انتظار المشاركين...
               </div>
             )}
@@ -135,14 +135,14 @@ export default function FruitsWarGame({
         <div className="flex-1 flex flex-col items-center justify-center p-8 relative">
           {/* Decorative background */}
           <div className="absolute inset-0 opacity-10">
-            <div className="text-8xl text-cyan-400 absolute top-10 left-10">🏮</div>
-            <div className="text-8xl text-pink-400 absolute top-10 right-10">🏮</div>
+            <div className="text-8xl text-yellow-400 absolute top-10 left-10">🏮</div>
+            <div className="text-8xl text-yellow-400 absolute top-10 right-10">🏮</div>
             <div className="text-8xl text-amber-400 absolute bottom-10 left-10">⭐</div>
-            <div className="text-8xl text-cyan-400 absolute bottom-10 right-10">⭐</div>
+            <div className="text-8xl text-yellow-400 absolute bottom-10 right-10">⭐</div>
           </div>
 
           {/* Title */}
-          <h1 className="text-5xl font-bold text-cyan-400 mb-12 relative z-10">حرب الفواكه - روليت</h1>
+          <h1 className="text-5xl font-bold text-yellow-400 mb-12 relative z-10">حرب الفواكه - روليت</h1>
 
           {/* Wheel Container */}
           <div className="relative w-96 h-96 mb-12 z-10">
@@ -154,7 +154,7 @@ export default function FruitsWarGame({
             {/* Wheel */}
             <div
               ref={wheelRef}
-              className="w-full h-full rounded-full border-8 border-pink-500 relative overflow-hidden transition-transform shadow-lg shadow-pink-500/50"
+              className="w-full h-full rounded-full border-8 border-yellow-500 relative overflow-hidden transition-transform shadow-lg shadow-yellow-500/50"
               style={{
                 transform: `rotate(${rotation}deg)`,
                 transitionDuration: isSpinning ? '3s' : '0s',
@@ -164,8 +164,8 @@ export default function FruitsWarGame({
             >
               {/* Center Circle */}
               <div className="absolute inset-0 flex items-center justify-center">
-                <div className="w-24 h-24 rounded-full bg-slate-900 border-4 border-cyan-500 flex items-center justify-center shadow-lg shadow-cyan-500/50">
-                  <span className="text-2xl font-bold text-cyan-400">لف</span>
+                <div className="w-24 h-24 rounded-full bg-gray-950 border-4 border-yellow-500 flex items-center justify-center shadow-lg shadow-yellow-500/50">
+                  <span className="text-2xl font-bold text-yellow-400">لف</span>
                 </div>
               </div>
 
@@ -200,8 +200,8 @@ export default function FruitsWarGame({
               disabled={isSpinning || players.filter(p => !p.eliminated).length === 0}
               className={`font-bold py-4 px-16 rounded-lg text-xl transition-all shadow-lg ${
                 isSpinning || players.filter(p => !p.eliminated).length === 0
-                  ? 'bg-slate-700 text-slate-400 cursor-not-allowed'
-                  : 'bg-gradient-to-r from-cyan-500 to-cyan-600 hover:from-cyan-400 hover:to-cyan-500 text-slate-900 cursor-pointer font-black shadow-cyan-500/60'
+                  ? 'bg-gray-800 text-gray-400 cursor-not-allowed'
+                  : 'bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-400 hover:to-yellow-500 text-gray-900 cursor-pointer font-black shadow-yellow-500/60'
               }`}
             >
               {isSpinning ? '⏳ يدور...' : '🎡 ابدأ الدوران'}

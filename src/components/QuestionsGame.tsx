@@ -181,14 +181,14 @@ const QuestionsGame = forwardRef<QuestionsGameHandle, QuestionsGameProps>(({
   if (!questions.length) {
     return (
       <div className="text-center py-12">
-        <div className="text-2xl text-cyan-300">جاري تحميل الأسئلة...</div>
+        <div className="text-2xl text-yellow-300">جاري تحميل الأسئلة...</div>
       </div>
     );
   }
 
   const currentQuestion = questions[currentQuestionIndex];
   const timerColor =
-    timeLeft > 10 ? 'text-cyan-400' : timeLeft > 5 ? 'text-yellow-400' : 'text-red-400';
+    timeLeft > 10 ? 'text-yellow-400' : timeLeft > 5 ? 'text-yellow-400' : 'text-red-400';
 
   return (
     <div className="w-full">
@@ -196,23 +196,23 @@ const QuestionsGame = forwardRef<QuestionsGameHandle, QuestionsGameProps>(({
         <>
           {/* Question Progress */}
           <div className="mb-6 flex justify-between items-center">
-            <div className="text-cyan-300">
+            <div className="text-yellow-300">
               السؤال {currentQuestionIndex + 1}/{questions.length}
             </div>
             <div className={`text-4xl font-bold ${timerColor}`}>{timeLeft}s</div>
           </div>
 
           {/* Question */}
-          <div className="mb-8 p-6 bg-gradient-to-r from-cyan-600/20 to-pink-600/20 rounded-lg border-2 border-cyan-500">
-            <h2 className="text-2xl font-bold text-cyan-300 text-center">
+          <div className="mb-8 p-6 bg-gradient-to-r from-yellow-600/20 to-yellow-600/20 rounded-lg border-2 border-yellow-500">
+            <h2 className="text-2xl font-bold text-yellow-300 text-center">
               {currentQuestion.question}
             </h2>
           </div>
 
           {/* Answer Input for Chat */}
           <div className="mb-8">
-            <label className="block text-cyan-300 mb-3 font-bold">اكتب الإجابة في الدردشة:</label>
-            <div className="p-4 bg-slate-700/30 rounded-lg border-2 border-cyan-500 min-h-48 max-h-48 overflow-y-auto">
+            <label className="block text-yellow-300 mb-3 font-bold">اكتب الإجابة في الدردشة:</label>
+            <div className="p-4 bg-gray-800/30 rounded-lg border-2 border-yellow-500 min-h-48 max-h-48 overflow-y-auto">
               {chatMessages.length === 0 ? (
                 <div className="text-gray-400 text-center py-12">في انتظار الإجابات...</div>
               ) : (
@@ -225,11 +225,11 @@ const QuestionsGame = forwardRef<QuestionsGameHandle, QuestionsGameProps>(({
                           ? msg.correct
                             ? 'bg-green-600/30 border-l-4 border-green-400'
                             : 'bg-red-600/30 border-l-4 border-red-400'
-                          : 'bg-slate-600/30 border-l-4 border-slate-400'
+                          : 'bg-slate-600/30 border-l-4 border-gray-400'
                       }`}
                     >
                       <div className="flex justify-between items-start">
-                        <span className="font-bold text-cyan-300">{msg.player}:</span>
+                        <span className="font-bold text-yellow-300">{msg.player}:</span>
                         <span className={showResults ? (msg.correct ? 'text-green-300' : 'text-red-300') : 'text-gray-400'}>
                           {showResults ? (msg.correct ? '✅' : '❌') : '⏳'}
                         </span>
@@ -245,11 +245,11 @@ const QuestionsGame = forwardRef<QuestionsGameHandle, QuestionsGameProps>(({
 
           {/* Answer Options Display - always visible so viewers can choose */}
           <div className="mb-8">
-            <p className="text-cyan-300 mb-3 font-bold">الخيارات:</p>
+            <p className="text-yellow-300 mb-3 font-bold">الخيارات:</p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {currentQuestion.options.map((option, index) => {
                 let bgColor = 'bg-slate-600/50';
-                let borderColor = 'border-slate-500';
+                let borderColor = 'border-gray-500';
                 let textColor = 'text-white';
 
                 // Show correct/wrong colors after timer expires
@@ -279,13 +279,13 @@ const QuestionsGame = forwardRef<QuestionsGameHandle, QuestionsGameProps>(({
 
           {/* Show Result Message */}
           {showResults && (
-            <div className="text-center p-6 bg-slate-800/80 rounded-lg border-2 border-cyan-500 mb-8">
+            <div className="text-center p-6 bg-gray-900/80 rounded-lg border-2 border-yellow-500 mb-8">
               {playerAnswers[0]?.answerIndex === currentQuestion.correctAnswer ? (
                 <div className="text-2xl font-bold text-green-400">✅ إجابة صحيحة!</div>
               ) : (
                 <div>
                   <div className="text-2xl font-bold text-red-400 mb-2">❌ إجابة خاطئة</div>
-                  <div className="text-cyan-300">
+                  <div className="text-yellow-300">
                     الإجابة الصحيحة: <span className="font-bold text-green-400">
                       {currentQuestion.options[currentQuestion.correctAnswer]}
                     </span>
@@ -297,7 +297,7 @@ const QuestionsGame = forwardRef<QuestionsGameHandle, QuestionsGameProps>(({
         </>
       ) : (
         <div className="text-center py-12">
-          <h2 className="text-4xl font-bold text-cyan-300 mb-8">🏆 انتهت اللعبة! 🏆</h2>
+          <h2 className="text-4xl font-bold text-yellow-300 mb-8">🏆 انتهت اللعبة! 🏆</h2>
 
           {/* Final Rankings - Only show players who answered */}
           <div className="space-y-4 mb-8">
@@ -307,16 +307,16 @@ const QuestionsGame = forwardRef<QuestionsGameHandle, QuestionsGameProps>(({
               .map((player, index) => (
                 <div
                   key={player.id}
-                  className="p-4 bg-gradient-to-r from-cyan-600/30 to-pink-600/30 rounded-lg border-2 border-cyan-500"
+                  className="p-4 bg-gradient-to-r from-yellow-600/30 to-yellow-600/30 rounded-lg border-2 border-yellow-500"
                 >
                   <div className="flex justify-between items-center">
-                    <div className="text-xl font-bold text-cyan-300">
+                    <div className="text-xl font-bold text-yellow-300">
                       {index === 0 && '🥇 '}
                       {index === 1 && '🥈 '}
                       {index === 2 && '🥉 '}
                       {player.name}
                     </div>
-                    <div className="text-3xl font-bold text-pink-400">{player.score}</div>
+                    <div className="text-3xl font-bold text-yellow-400">{player.score}</div>
                   </div>
                 </div>
               ))}
@@ -324,7 +324,7 @@ const QuestionsGame = forwardRef<QuestionsGameHandle, QuestionsGameProps>(({
 
           <button
             onClick={handleEndGame}
-            className="bg-gradient-to-r from-cyan-500 to-cyan-600 hover:from-cyan-600 hover:to-cyan-700 text-white font-bold py-3 px-8 rounded-lg"
+            className="bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white font-bold py-3 px-8 rounded-lg"
           >
             ← العودة للألعاب
           </button>

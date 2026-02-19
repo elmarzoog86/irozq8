@@ -106,10 +106,10 @@ export default function RouletteGame({
       {gameActive ? (
         <>
           <div className="text-center mb-8">
-            <div className="text-2xl font-bold text-cyan-300 mb-4">
+            <div className="text-2xl font-bold text-yellow-300 mb-4">
               🎡 الروليت - الجولة {spinCount + 1}
             </div>
-            <div className="text-lg text-cyan-200">
+            <div className="text-lg text-yellow-200">
               اللاعبون المتبقيون: {remainingCount}/{playerCount}
             </div>
           </div>
@@ -119,13 +119,13 @@ export default function RouletteGame({
             {players.map((player) => (
               <div
                 key={player.id}
-                className={`p-4 rounded-lg border-2 ${player.eliminated ? 'border-red-500 opacity-50' : 'border-cyan-500'}`}
+                className={`p-4 rounded-lg border-2 ${player.eliminated ? 'border-red-500 opacity-50' : 'border-yellow-500'}`}
                 style={{ background: player.eliminated ? 'rgba(255,0,0,0.1)' : 'rgba(0,217,255,0.2)' }}
               >
-                <div className="text-xl font-bold text-cyan-300">{player.name}</div>
-                <div className="text-lg text-pink-400 mt-2">النقاط: {player.score}</div>
+                <div className="text-xl font-bold text-yellow-300">{player.name}</div>
+                <div className="text-lg text-yellow-400 mt-2">النقاط: {player.score}</div>
                 {typeof player.lives === 'number' && !player.eliminated && (
-                  <div className="text-cyan-200 mt-2">الأرواح: <span className="font-bold">{player.lives}</span></div>
+                  <div className="text-yellow-200 mt-2">الأرواح: <span className="font-bold">{player.lives}</span></div>
                 )}
                 {player.eliminated && (
                   <div className="flex flex-col items-center mt-2">
@@ -233,9 +233,9 @@ export default function RouletteGame({
 
           {/* Selected Player Display */}
           {selectedPlayer && (
-            <div className="text-center mb-8 p-6 bg-gradient-to-r from-cyan-600/30 to-pink-600/30 rounded-lg border-2 border-yellow-400">
+            <div className="text-center mb-8 p-6 bg-gradient-to-r from-yellow-600/30 to-yellow-600/30 rounded-lg border-2 border-yellow-400">
               <div className="text-3xl font-bold text-yellow-400 mb-4">🎯 الفائز!</div>
-              <div className="text-2xl font-bold text-cyan-300 mb-6">{selectedPlayer}</div>
+              <div className="text-2xl font-bold text-yellow-300 mb-6">{selectedPlayer}</div>
               <button
                 onClick={handleEliminateWinner}
                 className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-bold py-3 px-8 rounded-lg"
@@ -253,7 +253,7 @@ export default function RouletteGame({
               className={`text-white font-bold py-4 px-12 rounded-lg text-lg transition-all ${
                 isSpinning || selectedPlayer
                   ? 'bg-gray-600 cursor-not-allowed opacity-50'
-                  : 'bg-gradient-to-r from-cyan-500 to-cyan-600 hover:from-cyan-600 hover:to-cyan-700 cursor-pointer'
+                  : 'bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 cursor-pointer'
               }`}
               style={{
                 boxShadow: !isSpinning && !selectedPlayer ? '0 0 20px rgba(0, 217, 255, 0.4)' : 'none'
@@ -271,11 +271,11 @@ export default function RouletteGame({
                 className={`p-4 rounded-lg border-2 text-center ${
                   player.eliminated
                     ? 'border-red-500 opacity-50 bg-red-900/20'
-                    : 'border-cyan-500 bg-cyan-900/20'
+                    : 'border-yellow-500 bg-yellow-900/20'
                 }`}
               >
-                <div className="font-bold text-cyan-300">{player.name}</div>
-                <div className="text-2xl font-bold text-pink-400 mt-2">{player.score}</div>
+                <div className="font-bold text-yellow-300">{player.name}</div>
+                <div className="text-2xl font-bold text-yellow-400 mt-2">{player.score}</div>
                 {player.eliminated && <div className="text-red-400 text-sm mt-2">مستبعد</div>}
               </div>
             ))}
@@ -283,7 +283,7 @@ export default function RouletteGame({
         </>
       ) : (
         <div className="text-center py-12">
-          <h2 className="text-4xl font-bold text-cyan-300 mb-8">🏆 انتهت اللعبة! 🏆</h2>
+          <h2 className="text-4xl font-bold text-yellow-300 mb-8">🏆 انتهت اللعبة! 🏆</h2>
 
           {/* Final Rankings */}
           <div className="space-y-4 mb-8">
@@ -292,16 +292,16 @@ export default function RouletteGame({
               .map((player, index) => (
                 <div
                   key={player.id}
-                  className="p-4 bg-gradient-to-r from-cyan-600/30 to-pink-600/30 rounded-lg border-2 border-cyan-500"
+                  className="p-4 bg-gradient-to-r from-yellow-600/30 to-yellow-600/30 rounded-lg border-2 border-yellow-500"
                 >
                   <div className="flex justify-between items-center">
-                    <div className="text-xl font-bold text-cyan-300">
+                    <div className="text-xl font-bold text-yellow-300">
                       {index === 0 && '🥇 '}
                       {index === 1 && '🥈 '}
                       {index === 2 && '🥉 '}
                       {player.name}
                     </div>
-                    <div className="text-3xl font-bold text-pink-400">{player.score}</div>
+                    <div className="text-3xl font-bold text-yellow-400">{player.score}</div>
                   </div>
                 </div>
               ))}
@@ -309,7 +309,7 @@ export default function RouletteGame({
 
           <button
             onClick={onEndGame}
-            className="bg-gradient-to-r from-cyan-500 to-cyan-600 hover:from-cyan-600 hover:to-cyan-700 text-white font-bold py-3 px-8 rounded-lg"
+            className="bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white font-bold py-3 px-8 rounded-lg"
           >
             ← العودة للألعاب
           </button>
