@@ -113,7 +113,7 @@ function HomeContent() {
   // If user is logged in and game is running, show dashboard with game
   if (user && gameRunning && selectedGame && sessionId) {
     return (
-      <div style={{background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%)'}} className="min-h-screen">
+      <div style={{background: 'linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%)'}} className="min-h-screen">
         <Header />
         <DashboardGameView 
           user={user}
@@ -133,16 +133,16 @@ function HomeContent() {
       <main className="container mx-auto px-4 py-12">
         {/* Streamer Login Banner - Only show if not logged in AND no session in URL AND not loading */}
         {!user && !loading && !sessionId && (
-          <div className="mb-8 rounded-lg border-2 border-cyan-500/50 p-6 text-center" style={{background: 'linear-gradient(135deg, rgba(0, 217, 255, 0.1) 0%, rgba(255, 0, 110, 0.1) 100%)'}}>
+          <div className="mb-8 rounded-lg border-2 border-yellow-600/50 p-6 text-center" style={{background: 'linear-gradient(135deg, rgba(217, 119, 6, 0.1) 0%, rgba(217, 119, 6, 0.1) 100%)'}}>
             <div className="flex flex-col md:flex-row items-center justify-center gap-4">
               <div className="flex-1">
-                <h3 className="text-xl font-bold text-cyan-300 mb-2">🎮 هل أنت مذيع؟</h3>
-                <p className="text-cyan-300/70">استخدم لوحة التحكم الكاملة للتحكم بالألعاب والتفاعل مع جمهورك على Twitch</p>
+                <h3 className="text-xl font-bold text-yellow-400 mb-2">🎮 هل أنت مذيع؟</h3>
+                <p className="text-yellow-400/70">استخدم لوحة التحكم الكاملة للتحكم بالألعاب والتفاعل مع جمهورك على Twitch</p>
               </div>
               <a 
                 href="/twitch/login"
-                className="px-6 py-3 bg-gradient-to-r from-cyan-600 to-pink-600 hover:from-cyan-700 hover:to-pink-700 text-white font-bold rounded-lg transition-all duration-300 whitespace-nowrap"
-                style={{boxShadow: '0 0 15px rgba(0, 217, 255, 0.4)'}}
+                className="px-6 py-3 bg-gradient-to-r from-yellow-600 to-yellow-700 hover:from-yellow-700 hover:to-yellow-800 text-black font-bold rounded-lg transition-all duration-300 whitespace-nowrap"
+                style={{boxShadow: '0 0 15px rgba(217, 119, 6, 0.4)'}}
               >
                 دخول Twitch
               </a>
@@ -154,8 +154,8 @@ function HomeContent() {
         {user && (
           <div className="mb-8 text-center flex justify-between items-center">
             <div>
-              <h2 className="text-3xl font-bold text-cyan-300 mb-2">مرحباً {user.displayName} 👋</h2>
-              <p className="text-cyan-300/70">اختر لعبة لتبدأ البث المباشر</p>
+              <h2 className="text-3xl font-bold text-yellow-400 mb-2">مرحباً {user.displayName} 👋</h2>
+              <p className="text-yellow-400/70">اختر لعبة لتبدأ البث المباشر</p>
             </div>
             <button
               onClick={handleLogout}
@@ -167,10 +167,10 @@ function HomeContent() {
         )}
 
         <div className="text-center mb-12">
-          <h1 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-cyan-400 via-pink-500 to-purple-500 bg-clip-text text-transparent">
+          <h1 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 bg-clip-text text-transparent">
             اختر اللعبة المفضلة لديك
           </h1>
-          <p className="text-xl text-cyan-300/70">
+          <p className="text-xl text-yellow-400/70">
             مجموعة متنوعة من الفوازير والألعاب التفاعلية لإبقاء متابعيك مستمتعين ومتفاعلين
           </p>
         </div>
@@ -225,8 +225,8 @@ function DashboardGameView({
       {/* Top bar */}
       <div className="flex justify-between items-center mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-cyan-300">{gameData?.nameAr || selectedGame}</h1>
-          <p className="text-cyan-300/70 text-sm mt-1">👥 اللاعبين: {playerCount}</p>
+          <h1 className="text-3xl font-bold text-yellow-400">{gameData?.nameAr || selectedGame}</h1>
+          <p className="text-yellow-400/70 text-sm mt-1">👥 اللاعبين: {playerCount}</p>
         </div>
         <div className="flex gap-4">
           <button
@@ -248,25 +248,25 @@ function DashboardGameView({
       <div className="grid grid-cols-3 gap-6">
         {/* Game canvas - 2/3 width */}
         <div className="col-span-2">
-          <div className="bg-gradient-to-br from-purple-900/20 to-pink-900/20 border-2 border-cyan-500/30 rounded-lg p-6 aspect-video flex items-center justify-center">
+          <div className="bg-gradient-to-br from-yellow-900/20 to-yellow-950/20 border-2 border-yellow-600/30 rounded-lg p-6 aspect-video flex items-center justify-center">
             <div className="text-center">
               <div className="text-5xl mb-4">{gameEmojis[selectedGame] || '🎮'}</div>
-              <h2 className="text-2xl text-cyan-300 font-bold mb-2">{gameData?.nameAr}</h2>
-              <p className="text-cyan-300/70">{gameData?.descriptionAr}</p>
+              <h2 className="text-2xl text-yellow-400 font-bold mb-2">{gameData?.nameAr}</h2>
+              <p className="text-yellow-400/70">{gameData?.descriptionAr}</p>
             </div>
           </div>
         </div>
 
         {/* Info panel - 1/3 width */}
         <div className="col-span-1">
-          <div className="bg-gradient-to-br from-purple-900/40 to-pink-900/40 border-2 border-cyan-500/30 rounded-lg p-6">
+          <div className="bg-gradient-to-br from-yellow-900/40 to-yellow-950/40 border-2 border-yellow-600/30 rounded-lg p-6">
             <div className="space-y-4">
               <div>
-                <p className="text-cyan-300/70 text-sm">المذيع</p>
+                <p className="text-yellow-400/70 text-sm">المذيع</p>
                 <p className="text-white font-bold">{user.displayName}</p>
               </div>
               <div>
-                <p className="text-cyan-300/70 text-sm">الجلسة</p>
+                <p className="text-yellow-400/70 text-sm">الجلسة</p>
                 <p className="text-white font-mono text-xs">{sessionId.substring(0, 8)}...</p>
               </div>
               <div>

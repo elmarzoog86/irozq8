@@ -2,17 +2,17 @@
 
 export default function Header() {
   return (
-    <header className="bg-gradient-to-r from-slate-950 to-slate-900 border-b border-cyan-500/30 sticky top-0 z-50 shadow-lg" style={{backgroundImage: 'linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(15, 23, 42, 0.95) 100%)'}}>
+    <header className="bg-gradient-to-r from-black to-gray-900 border-b border-yellow-600/50 sticky top-0 z-50 shadow-lg" style={{backgroundImage: 'linear-gradient(135deg, rgba(10, 10, 10, 0.95) 0%, rgba(10, 10, 10, 0.95) 100%)'}}>
       <div className="container mx-auto px-4 py-6 flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0" style={{border: '2px solid #00d9ff', boxShadow: '0 0 20px rgba(0, 217, 255, 0.3)'}}>
+          <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0" style={{border: '2px solid #d97706', boxShadow: '0 0 20px rgba(217, 119, 6, 0.3)'}}>
             <img src="/logo.png" alt="iRozQ8 Logo" className="w-full h-full object-cover" />
           </div>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-cyan-400 via-pink-500 to-amber-500 bg-clip-text text-transparent">
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-yellow-500 via-yellow-400 to-yellow-600 bg-clip-text text-transparent">
             iRozQ8
           </h1>
         </div>
-        <p className="text-cyan-300/70 text-sm">منصة ألعاب تفاعلية - Interactive Games Platform</p>
+        <p className="text-yellow-400/70 text-sm">منصة ألعاب تفاعلية - Interactive Games Platform</p>
       </div>
     </header>
   );
