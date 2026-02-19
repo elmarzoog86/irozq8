@@ -32,31 +32,26 @@ export default function ComingSoonPage() {
 
   return (
     <div 
-      className="relative w-full h-screen overflow-hidden"
-      style={{
-        backgroundImage: 'url(/videos/new-roz.webm)',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundAttachment: 'fixed'
-      }}
+      className="relative w-full h-screen overflow-hidden bg-black"
     >
-      {/* Video Background */}
+      {/* Video Background - Only Background */}
       <video
         autoPlay
         loop
         muted
         playsInline
+        preload="metadata"
         className="absolute inset-0 w-full h-full object-cover"
-        style={{ filter: 'blur(8px)' }}
+        style={{ filter: 'blur(12px)', zIndex: 0 }}
       >
         <source src="/videos/new-roz.webm" type="video/webm" />
       </video>
 
       {/* Fallback gradient if video doesn't load */}
-      <div className="absolute inset-0 bg-gradient-to-br from-black via-gray-950 to-black" />
+      <div className="absolute inset-0 bg-gradient-to-br from-black via-gray-950 to-black" style={{ zIndex: -1 }} />
 
       {/* Dark Overlay for text readability */}
-      <div className="absolute inset-0 bg-black/60"></div>
+      <div className="absolute inset-0 bg-black/60" style={{ zIndex: 1 }}></div>
 
       {/* Language Toggle */}
       <div className="absolute top-6 right-6 z-20">
