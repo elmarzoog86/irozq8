@@ -171,10 +171,6 @@ export default function QuestionsLobby({ onStartGame, onBack }: QuestionsLobbyPr
           >
             ← العودة
           </button>
-
-          <button className="w-full py-2 px-4 rounded-lg font-bold bg-red-600/80 hover:bg-red-700 text-white transition-all text-sm">
-            إعادة تعيين إلى الإعدادات الافتراضية
-          </button>
         </div>
       </div>
     </div>

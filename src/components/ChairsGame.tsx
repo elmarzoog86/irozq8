@@ -16,6 +16,7 @@ const SONGS = [
 ];
 
 export default function ChairsGame({ players, setPlayers, onEndGame }: ChairsGameProps) {
+  const [gameStarted, setGameStarted] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentSong, setCurrentSong] = useState(SONGS[0]);
   const [round, setRound] = useState(1);
@@ -126,28 +127,86 @@ export default function ChairsGame({ players, setPlayers, onEndGame }: ChairsGam
   };
 
   return (
-    <div className="w-full text-center">
-      <h2 className="text-2xl font-bold text-cyan-300 mb-4">🎵 لعبة كراسي - الجولة {round}</h2>
-      <p className="text-cyan-200 mb-6 text-sm">امشِ حول الكراسي، عند الإيقاف سيتم استبعاد لاعب عشوائي!</p>
-
-      <div className="mb-6 flex flex-col items-center gap-2">
-        <label className="text-cyan-200 font-bold">اختر الأغنية:</label>
-        <select
-          className="bg-slate-800 text-cyan-300 rounded px-4 py-2 border border-cyan-500"
-          value={currentSong.id}
-          onChange={e => {
-            const song = SONGS.find(s => s.id === e.target.value);
-            if (song) setCurrentSong(song);
-          }}
-          disabled={isPlaying}
-        >
-          {SONGS.map(song => (
-            <option key={song.id} value={song.id}>{song.name}</option>
-          ))}
-        </select>
+    <div className="w-full">
+      {/* Game Header */}
+      <div className="text-center mb-8">
+        <h1 className="text-4xl font-bold text-cyan-300 mb-2">🪑 جوله كراسي</h1>
+        <p className="text-cyan-200 text-lg mb-4">اجلس على الكرسي بعد توقف الموسيقى وقبل بقية اللاعبين</p>
       </div>
 
-      <div className="mb-8 flex justify-center gap-4">
+      {/* Show waiting state or game state */}
+      {!gameStarted ? (
+        <div className="bg-slate-900/50 border-2 border-cyan-500/30 rounded-lg p-8 mb-8 text-center">
+          {/* Waiting Section */}
+          <div className="mb-8">
+            <div className="text-6xl mb-4">👥</div>
+            <h2 className="text-2xl font-bold text-cyan-300 mb-2">في انتظار اللاعبين</h2>
+            <p className="text-cyan-200 mb-4">انضم للعبة وكن آخر لاعب يجلس على كرسي!</p>
+            <p className="text-pink-400 font-semibold">يحتاج على الأقل لاعبين اثنين للبدء</p>
+          </div>
+
+          {/* Players List */}
+          <div className="bg-slate-800/50 rounded-lg p-4 mb-6 max-h-40 overflow-y-auto">
+            {players.length > 0 ? (
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                {players.map(player => (
+                  <div
+                    key={player.id}
+                    className="p-2 bg-cyan-900/30 border border-cyan-500 rounded text-cyan-300 text-sm font-semibold"
+                  >
+                    {player.name}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-gray-400">لا يوجد لاعبون حتى الآن</p>
+            )}
+          </div>
+
+          {/* Game Info */}
+          <div className="bg-slate-800/50 border border-cyan-500/30 rounded-lg p-4 mb-6 text-left">
+            <h3 className="text-cyan-300 font-bold mb-3 text-center">📋 قواعد اللعبة</h3>
+            <ul className="text-cyan-200 text-sm space-y-2">
+              <li>✓ عند بدء الموسيقى، امشِ حول الكراسي مع اللاعبين الآخرين</li>
+              <li>✓ عند توقف الموسيقى، يجب أن تجلس بسرعة على كرسي</li>
+              <li>✓ في كل جولة، سيتم استبعاد لاعب واحد عشوائياً</li>
+              <li>✓ اللاعب الأخير الباقي هو الفائز</li>
+            </ul>
+          </div>
+
+          {/* Start Button */}
+          <button
+            onClick={() => setGameStarted(true)}
+            disabled={players.filter(p => p.joined).length < 2}
+            className="w-full bg-gradient-to-r from-cyan-600 to-cyan-700 hover:from-cyan-700 hover:to-cyan-800 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3 px-6 rounded-lg text-lg transition-all"
+          >
+            ✓ بدء اللعبة
+          </button>
+        </div>
+      ) : (
+        // Game Playing State
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-cyan-300 mb-4">🎵 لعبة كراسي - الجولة {round}</h2>
+          <p className="text-cyan-200 mb-6 text-sm">امشِ حول الكراسي، عند الإيقاف سيتم استبعاد لاعب عشوائي!</p>
+
+          <div className="mb-6 flex flex-col items-center gap-2">
+            <label className="text-cyan-200 font-bold block mb-2">اختر الأغنية:</label>
+            <select
+              className="bg-slate-800 text-cyan-300 rounded px-4 py-2 border border-cyan-500 w-full max-w-xs"
+              value={currentSong.id}
+              onChange={e => {
+                const song = SONGS.find(s => s.id === e.target.value);
+                if (song) setCurrentSong(song);
+              }}
+              disabled={isPlaying}
+            >
+              {SONGS.map(song => (
+                <option key={song.id} value={song.id}>{song.name}</option>
+              ))}
+            </select>
+          </div>
+
+          <div className="mb-8 flex justify-center gap-4">
         <button
           className="bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-2 px-8 rounded-lg text-lg transition-all disabled:opacity-50"
           onClick={startMusic}
@@ -198,9 +257,16 @@ export default function ChairsGame({ players, setPlayers, onEndGame }: ChairsGam
         ))}
       </div>
 
-      <div className="mt-12 text-center text-cyan-300 text-sm">
-        <p>اللاعبون المتبقون: {players.filter(p => !p.eliminated).length}/{players.length}</p>
+      <div className="mt-12 flex gap-4 justify-center">
+        <button
+          onClick={() => setGameStarted(false)}
+          className="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-6 rounded-lg transition-all"
+        >
+          ← العودة
+        </button>
       </div>
+        </div>
+      )}
     </div>
   );
 }
