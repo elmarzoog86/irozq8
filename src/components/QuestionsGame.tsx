@@ -28,7 +28,9 @@ const QuestionsGame = forwardRef<QuestionsGameHandle, QuestionsGameProps>(({
   const [playerAnswers, setPlayerAnswers] = useState<{[key: number]: {answerIndex: number; timeLeft: number}}>({});
   const [gameOver, setGameOver] = useState(false);
   const [showResults, setShowResults] = useState(false);
+  const [showQuestionResults, setShowQuestionResults] = useState(false);
   const [chatMessages, setChatMessages] = useState<Array<{player: string; answer: string; correct: boolean}>>([]);
+  const [streamerAnswer, setStreamerAnswer] = useState('');
   const pointsAwardedRef = useRef(false);
   const playerAnswersRef = useRef<{[key: number]: {answerIndex: number; timeLeft: number}}>({});
   const inTransitionRef = useRef(false);
@@ -50,6 +52,7 @@ const QuestionsGame = forwardRef<QuestionsGameHandle, QuestionsGameProps>(({
     setShowResults(false);
     setPlayerAnswers({});
     setChatMessages([]);
+    setStreamerAnswer('');
     pointsAwardedRef.current = false;
     playerAnswersRef.current = {};
     inTransitionRef.current = false;
@@ -101,7 +104,7 @@ const QuestionsGame = forwardRef<QuestionsGameHandle, QuestionsGameProps>(({
     setTimeout(() => {
       const nextIndex = currentQuestionIndexRef.current + 1;
       if (nextIndex < questions.length) {
-        setCurrentQuestionIndex(nextIndex);
+        setShowQuestionResults(true);
       } else {
         setGameOver(true);
       }
@@ -178,6 +181,16 @@ const QuestionsGame = forwardRef<QuestionsGameHandle, QuestionsGameProps>(({
     onEndGame();
   };
 
+  const handleNextQuestion = () => {
+    setShowQuestionResults(false);
+    const nextIndex = currentQuestionIndex + 1;
+    if (nextIndex < questions.length) {
+      setCurrentQuestionIndex(nextIndex);
+    } else {
+      setGameOver(true);
+    }
+  };
+
   if (!questions.length) {
     return (
       <div className="text-center py-12">
@@ -207,6 +220,26 @@ const QuestionsGame = forwardRef<QuestionsGameHandle, QuestionsGameProps>(({
             <h2 className="text-2xl font-bold text-yellow-300 text-center">
               {currentQuestion.question}
             </h2>
+          </div>
+
+          {/* Streamer Answer Section */}
+          <div className="mb-8 p-6 bg-gradient-to-r from-purple-600/30 to-purple-600/30 rounded-lg border-2 border-purple-500">
+            <label className="block text-purple-300 mb-3 font-bold text-lg">🎬 إجابة المذيع (سري):</label>
+            <div className="flex gap-3">
+              <input
+                type="password"
+                value={streamerAnswer}
+                onChange={(e) => setStreamerAnswer(e.target.value)}
+                placeholder="اكتب إجابتك هنا..."
+                className="flex-1 px-4 py-3 bg-gray-900/50 border-2 border-purple-400 rounded-lg text-purple-100 placeholder-purple-400/50 focus:outline-none focus:border-purple-300"
+              />
+              <div className="flex items-center px-4 py-3 bg-gray-900/50 border-2 border-purple-400 rounded-lg">
+                <div className="text-2xl font-bold text-purple-300 tracking-widest">
+                  {streamerAnswer.split('').map(() => '★').join('')}
+                </div>
+              </div>
+            </div>
+            <p className="text-purple-300 text-sm mt-2">الإجابة محمية - يظهر فقط النجوم للعارضين الآخرين</p>
           </div>
 
           {/* Answer Input for Chat */}
@@ -292,6 +325,73 @@ const QuestionsGame = forwardRef<QuestionsGameHandle, QuestionsGameProps>(({
                   </div>
                 </div>
               )}
+            </div>
+          )}
+
+          {/* Results Modal */}
+          {showQuestionResults && (
+            <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
+              <div className="bg-gradient-to-b from-gray-900 to-black rounded-lg border-2 border-yellow-500 max-w-2xl w-full max-h-96 overflow-y-auto">
+                {/* Modal Header */}
+                <div className="sticky top-0 bg-gradient-to-r from-yellow-600 to-yellow-700 p-4 border-b-2 border-yellow-400">
+                  <h3 className="text-2xl font-bold text-white text-center">
+                    نتائج السؤال {currentQuestionIndex + 1}
+                  </h3>
+                  <p className="text-yellow-100 text-center mt-1">{currentQuestion.question}</p>
+                </div>
+
+                {/* Players Results */}
+                <div className="p-4 space-y-3">
+                  {players.map((player) => {
+                    const playerAnswer = playerAnswers[player.id];
+                    const answered = playerAnswer !== undefined;
+                    const isCorrect = answered && playerAnswer.answerIndex === currentQuestion.correctAnswer;
+                    const pointsEarned = answered ? Math.max(86 - Math.floor((10 - playerAnswer.timeLeft) * 3), 0) : 0;
+
+                    return (
+                      <div
+                        key={player.id}
+                        className={`p-3 rounded-lg border-2 ${
+                          answered
+                            ? isCorrect
+                              ? 'bg-green-900/40 border-green-500'
+                              : 'bg-red-900/40 border-red-500'
+                            : 'bg-gray-800/40 border-gray-600'
+                        }`}
+                      >
+                        <div className="flex justify-between items-start">
+                          <div className="flex-1">
+                            <div className="text-white font-bold">{player.name}</div>
+                            {answered ? (
+                              <div className="text-sm mt-1">
+                                <span className={isCorrect ? 'text-green-300' : 'text-red-300'}>
+                                  {currentQuestion.options[playerAnswer.answerIndex]}
+                                </span>
+                              </div>
+                            ) : (
+                              <div className="text-sm text-gray-400">لم يجب</div>
+                            )}
+                          </div>
+                          <div className="text-right">
+                            <div className="text-2xl font-bold text-yellow-300">{pointsEarned}</div>
+                            <div className="text-xs text-yellow-200">نقاط</div>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Modal Footer */}
+                <div className="sticky bottom-0 bg-gradient-to-r from-yellow-600 to-yellow-700 p-4 border-t-2 border-yellow-400 flex justify-center">
+                  <button
+                    onClick={handleNextQuestion}
+                    className="bg-yellow-500 hover:bg-yellow-400 text-black font-bold py-2 px-8 rounded-lg transition-all"
+                  >
+                    السؤال التالي →
+                  </button>
+                </div>
+              </div>
             </div>
           )}
         </>

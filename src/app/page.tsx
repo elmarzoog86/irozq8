@@ -27,7 +27,7 @@ function HomeContent() {
   const [gameRunning, setGameRunning] = useState(!!gameParam);
   const [playerCount, setPlayerCount] = useState(0);
   const [_gameSessionId, setGameSessionId] = useState<string | null>(null);
-  const [isMainDomain, setIsMainDomain] = useState(true); // Default to true to show coming soon
+  const [isMainDomain, setIsMainDomain] = useState(false); // Default to false for local testing
   
   // Check if coming soon mode is enabled (for env variable)
   const isComingSoonEnv = process.env.NEXT_PUBLIC_COMING_SOON === 'true';
@@ -36,7 +36,8 @@ function HomeContent() {
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const hostname = window.location.hostname;
-      const isMain = hostname === 'irozq8.com' || hostname === 'www.irozq8.com' || hostname === 'localhost' || hostname === '127.0.0.1';
+      // Only show coming soon on actual production domain
+      const isMain = hostname === 'irozq8.com' || hostname === 'www.irozq8.com';
       setIsMainDomain(isMain);
     }
   }, []);
