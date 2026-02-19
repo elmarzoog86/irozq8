@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useImperativeHandle, forwardRef } from 'react';
+import { FRUITS_DATA, getFruitIndexByNameAr } from '@/data/fruits';
 
 interface FruitsWarVotingGameProps {
   players: Array<{ id: number; name: string; score: number; eliminated: boolean; joined: boolean; fruit?: string }>;
@@ -8,10 +9,8 @@ interface FruitsWarVotingGameProps {
   onEndGame: () => void;
 }
 
-const FRUITS = ['🍎', '🍊', '🍋', '🍌', '🍉', '🍓', '🫐', '🍒', '🍑', '🥝', '🍍', '🥭', '🍅', '🥒', '🌽'];
-
 const FruitsWarVotingGame = forwardRef<
-  { handleChatVote: (fruitIndex: number) => void },
+  { handleChatVote: (fruitName: string) => void },
   FruitsWarVotingGameProps
 >(({
   players,
@@ -19,25 +18,11 @@ const FruitsWarVotingGame = forwardRef<
   onEndGame,
 }, ref) => {
   const [votes, setVotes] = useState<Map<number, number>>(new Map());
-  const [roundNumber, setRoundNumber] = useState(1);
   const [timeLeft, setTimeLeft] = useState(60);
-  const [gamePhase, setGamePhase] = useState<'waiting' | 'voting' | 'results' | 'elimination' | 'finished'>('waiting');
+  const [gamePhase, setGamePhase] = useState<'waiting' | 'voting' | 'results' | 'finished'>('waiting');
+  const [voteChatLog, setVoteChatLog] = useState<Array<{username: string; fruit: string}>>([]);
 
   const joinedPlayers = players.filter(p => p.joined && !p.eliminated);
-  const remainingPlayers = joinedPlayers.length;
-
-  // Expose chat vote handler through ref
-  useImperativeHandle(ref, () => ({
-    handleChatVote: (fruitIndex: number) => {
-      if (gamePhase !== 'voting') return;
-      if (fruitIndex < 0 || fruitIndex >= joinedPlayers.length) return;
-
-      const targetPlayer = joinedPlayers[fruitIndex];
-      if (targetPlayer) {
-        handleVote(targetPlayer.id);
-      }
-    },
-  }), [gamePhase, joinedPlayers]);
 
   // Assign fruits to players if not already assigned
   useEffect(() => {
@@ -46,7 +31,7 @@ const FruitsWarVotingGame = forwardRef<
 
     updatedPlayers.forEach((player, index) => {
       if (player.joined && !player.fruit) {
-        updatedPlayers[index].fruit = FRUITS[fruitIndex % FRUITS.length];
+        updatedPlayers[index].fruit = FRUITS_DATA[fruitIndex % FRUITS_DATA.length].emoji;
         fruitIndex++;
       }
     });
@@ -54,14 +39,32 @@ const FruitsWarVotingGame = forwardRef<
     setPlayers(updatedPlayers);
   }, []);
 
+  // Expose chat vote handler through ref - now takes fruit name in Arabic
+  useImperativeHandle(ref, () => ({
+    handleChatVote: (fruitName: string) => {
+      if (gamePhase !== 'voting') return;
+      
+      // Find player by fruit name
+      const fruitIndex = getFruitIndexByNameAr(fruitName);
+      if (fruitIndex < 0) return;
+
+      const targetPlayer = joinedPlayers[fruitIndex];
+      if (targetPlayer) {
+        handleVote(targetPlayer.id);
+        setVoteChatLog(prev => [...prev.slice(-9), {username: 'chat', fruit: fruitName}]);
+      }
+    },
+  }), [gamePhase, joinedPlayers]);
+
   // Timer logic
   useEffect(() => {
     if (gamePhase === 'voting' && timeLeft > 0) {
       const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
       return () => clearTimeout(timer);
     } else if (gamePhase === 'voting' && timeLeft === 0) {
-      // End voting phase
+      // End voting phase and show results
       setGamePhase('results');
+      setTimeout(() => eliminateTopVoted(), 2000);
     }
   }, [timeLeft, gamePhase]);
 
@@ -70,23 +73,10 @@ const FruitsWarVotingGame = forwardRef<
     setVotes(new Map());
     setTimeLeft(60);
     setGamePhase('voting');
+    setVoteChatLog([]);
   };
 
-  // Results display timer
-  useEffect(() => {
-    if (gamePhase === 'results') {
-      const timer = setTimeout(() => {
-        if (remainingPlayers > 2) {
-          setGamePhase('elimination');
-        } else {
-          setGamePhase('voting'); // Final vote between last 2
-        }
-      }, 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [gamePhase, remainingPlayers]);
-
-  // Handle vote command from chat (simulated)
+  // Handle vote
   const handleVote = (playerId: number) => {
     if (gamePhase !== 'voting') return;
 
@@ -96,7 +86,7 @@ const FruitsWarVotingGame = forwardRef<
   };
 
   // Get player with most votes
-  const getMostVoted = (): number | null => {
+  const getMostVoted = (): { playerId: number; voteCount: number } | null => {
     if (votes.size === 0) return null;
 
     let maxVotes = 0;
@@ -109,119 +99,77 @@ const FruitsWarVotingGame = forwardRef<
       }
     });
 
-    return mostVotedId;
+    return mostVotedId ? { playerId: mostVotedId, voteCount: maxVotes } : null;
   };
 
   // Eliminate player with most votes
-  const eliminatePlayer = () => {
-    const mostVotedId = getMostVoted();
-    if (!mostVotedId) return;
+  const eliminateTopVoted = () => {
+    const mostVoted = getMostVoted();
+    if (!mostVoted) return;
 
     const updatedPlayers = [...players];
-    const playerIndex = updatedPlayers.findIndex(p => p.id === mostVotedId);
+    const playerIndex = updatedPlayers.findIndex(p => p.id === mostVoted.playerId);
     if (playerIndex >= 0) {
       updatedPlayers[playerIndex].eliminated = true;
-      updatedPlayers[playerIndex].score += 5;
       setPlayers(updatedPlayers);
     }
 
-    // Reset for next round
-    setVotes(new Map());
-    setTimeLeft(60);
-    setRoundNumber(roundNumber + 1);
-    
     // Check if game should end
-    const remainingAfterElimination = players.filter(p => p.joined && !p.eliminated && p.id !== mostVotedId).length;
+    const remainingAfterElimination = updatedPlayers.filter(p => p.joined && !p.eliminated).length;
     if (remainingAfterElimination === 1) {
       setGamePhase('finished');
     } else {
+      // Reset for next round
+      setVotes(new Map());
+      setTimeLeft(60);
+      setVoteChatLog([]);
       setGamePhase('voting');
     }
   };
 
-  // Handle elimination phase
-  useEffect(() => {
-    if (gamePhase === 'elimination' && remainingPlayers > 2) {
-      const timer = setTimeout(() => {
-        eliminatePlayer();
-      }, 2000);
-      return () => clearTimeout(timer);
-    } else if (gamePhase === 'elimination' && remainingPlayers === 2) {
-      const timer = setTimeout(() => {
-        setGamePhase('voting');
-        setTimeLeft(20);
-      }, 2000);
-      return () => clearTimeout(timer);
-    }
-  }, [gamePhase, remainingPlayers]);
+  // Game over
+  const winner = joinedPlayers.length === 1 ? joinedPlayers[0] : null;
 
-  const mostVotedId = getMostVoted();
-  const mostVotedPlayer = joinedPlayers.find(p => p.id === mostVotedId);
-
-  // Show waiting screen when no game is started
   if (gamePhase === 'waiting') {
     return (
-      <div className="w-screen h-screen flex flex-col fixed inset-0 bg-black" dir="rtl">
-        {/* Back Button */}
-        <div className="absolute top-4 left-4 z-50">
+      <div className="w-screen h-screen flex flex-col fixed inset-0 bg-black items-center justify-center" dir="rtl">
+        <div className="text-center space-y-8">
+          <h1 className="text-6xl font-bold text-yellow-400">حرب الفواكه - التصويت</h1>
+          <p className="text-2xl text-yellow-300">اختر من كل فاكهة لتصويت عليها</p>
           <button
-            onClick={onEndGame}
-            className="bg-gradient-to-r from-yellow-600 to-yellow-700 hover:from-yellow-500 hover:to-yellow-600 text-white font-bold py-2 px-6 rounded-lg transition-colors flex items-center gap-2 shadow-lg shadow-yellow-500/50"
+            onClick={handleStartRound}
+            className="bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-400 hover:to-yellow-500 text-gray-900 font-bold py-4 px-12 rounded-lg text-2xl"
           >
-            ← العودة
+            ▶️ ابدأ الجولة
           </button>
-        </div>
-
-        <div className="flex-1 flex flex-col items-center justify-center p-8 relative">
-          <div className="text-center relative z-10">
-            <h1 className="text-5xl font-bold text-yellow-400 mb-8">حرب الفواكه - تصويت</h1>
-            <div className="mb-12">
-              <h2 className="text-3xl font-bold text-yellow-400 mb-6">المشاركون</h2>
-              <div className="bg-gray-900 border-2 border-yellow-500 rounded-lg p-8 max-w-2xl mx-auto shadow-lg shadow-yellow-500/20">
-                {joinedPlayers.length > 0 ? (
-                  <div className="grid grid-cols-2 gap-4">
-                    {joinedPlayers.map((player) => (
-                      <div key={player.id} className="text-center">
-                        <div className="text-5xl mb-2">{player.fruit}</div>
-                        <p className="text-xl text-yellow-300">{player.name}</p>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-xl text-gray-300">في انتظار المشاركين...</p>
-                )}
-              </div>
-            </div>
-            <p className="text-lg text-yellow-400 mb-6 font-semibold">أكتب !join في الشات للدخول</p>
-            <button
-              onClick={handleStartRound}
-              disabled={joinedPlayers.length < 2}
-              className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-4 px-12 rounded-lg text-xl transition-all"
-            >
-              {joinedPlayers.length < 2 ? '⏳ انتظر 2 لاعبين على الأقل' : '✓ ابدأ الجولة'}
-            </button>
-          </div>
         </div>
       </div>
     );
   }
 
-  // Show winner screen when game finished
-  if (gamePhase === 'finished' || remainingPlayers === 1) {
+  if (gamePhase === 'finished' && winner) {
     return (
-      <div className="w-screen h-screen flex flex-col fixed inset-0 bg-black" dir="rtl">
-        <div className="flex-1 flex items-center justify-center">
-          <div className="text-center">
-            <h1 className="text-6xl font-bold text-amber-400 mb-4">🏆 الفائز! 🏆</h1>
-            <p className="text-4xl font-bold text-yellow-400 mb-8">{joinedPlayers[0]?.name}</p>
-            <p className="text-2xl text-yellow-400 mb-8">{joinedPlayers[0]?.fruit}</p>
-            <button
-              onClick={onEndGame}
-              className="bg-gradient-to-r from-yellow-500 to-yellow-500 hover:from-yellow-600 hover:to-yellow-600 text-white font-bold py-4 px-12 rounded-lg text-xl"
-            >
-              العودة للألعاب
-            </button>
+      <div className="w-screen h-screen flex flex-col fixed inset-0 bg-black items-center justify-center" dir="rtl">
+        <div className="absolute top-4 left-4 z-50">
+          <button
+            onClick={onEndGame}
+            className="bg-gradient-to-r from-yellow-600 to-yellow-700 hover:from-yellow-500 hover:to-yellow-600 text-white font-bold py-2 px-6 rounded-lg transition-colors"
+          >
+            ← العودة
+          </button>
+        </div>
+        <div className="text-center space-y-12">
+          <div className="text-8xl mb-8">🏆</div>
+          <h1 className="text-7xl font-bold text-yellow-400">الفائز!</h1>
+          <div className="text-5xl font-bold text-yellow-300 bg-gradient-to-r from-yellow-600/30 to-yellow-600/30 px-12 py-8 rounded-lg border-4 border-yellow-500">
+            {winner.name}
           </div>
+          <button
+            onClick={onEndGame}
+            className="bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-400 hover:to-yellow-500 text-gray-900 font-bold py-4 px-12 rounded-lg text-2xl"
+          >
+            ← العودة للألعاب
+          </button>
         </div>
       </div>
     );
@@ -233,107 +181,66 @@ const FruitsWarVotingGame = forwardRef<
       <div className="absolute top-4 left-4 z-50">
         <button
           onClick={onEndGame}
-          className="bg-gradient-to-r from-yellow-600 to-yellow-700 hover:from-yellow-500 hover:to-yellow-600 text-white font-bold py-2 px-6 rounded-lg transition-colors flex items-center gap-2 shadow-lg shadow-yellow-500/50"
+          className="bg-gradient-to-r from-yellow-600 to-yellow-700 hover:from-yellow-500 hover:to-yellow-600 text-white font-bold py-2 px-6 rounded-lg transition-colors"
         >
           ← العودة
         </button>
       </div>
 
-      {/* Header */}
-      <div className="bg-gray-950 border-b-2 border-yellow-500 p-6 shadow-lg">
-        <div className="flex justify-between items-center max-w-full">
-          <div className="text-left">
-            <p className="text-yellow-400 text-lg font-bold">الجولة #{roundNumber}</p>
-            <p className="text-yellow-300 text-sm">لاعبين متبقيين: {remainingPlayers}</p>
-          </div>
-          <h1 className="text-4xl font-bold text-yellow-400 flex-1 text-center">حرب الفواكه - تصويت</h1>
-          <div className="text-right">
-            <p className="text-yellow-400 text-lg font-bold">
-              {gamePhase === 'voting' ? `⏱️ ${timeLeft}s` : gamePhase === 'results' ? '📊 النتائج' : '❌ الإقصاء'}
-            </p>
-          </div>
+      {/* Title & Timer */}
+      <div className="p-4 border-b-2 border-yellow-500 flex justify-between items-center">
+        <h1 className="text-3xl font-bold text-yellow-400">حرب الفواكه - التصويت</h1>
+        <div className="text-3xl font-bold text-yellow-300">
+          ⏱️ {timeLeft}s
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex overflow-hidden">
-        {/* Left Sidebar - Vote Counter */}
-        <div className="w-80 bg-gray-950 border-l-2 border-yellow-500 p-6 overflow-y-auto shadow-lg shadow-yellow-500/20">
-          <h2 className="text-2xl font-bold text-yellow-400 mb-6 text-center">الأصوات</h2>
-          <div className="text-yellow-300 text-center mb-6 text-sm">
-            <p className="mb-2">🎮 أكتب !join للدخول</p>
-            <p className="text-xs text-gray-300">صوّت برقم الفاكهة 1-{joinedPlayers.length}</p>
-          </div>
-          <div className="space-y-3">
-            {joinedPlayers.map((player) => (
-              <div
-                key={player.id}
-                className={`p-4 rounded-lg border-2 transition-all ${
-                  player.id === mostVotedId
-                    ? 'border-red-500 bg-red-900/40 shadow-lg shadow-red-500/50'
-                    : 'border-gray-700 bg-gray-900'
-                }`}
-              >
-                <div className="flex items-center justify-between">
-                  <span className="text-2xl">{player.fruit}</span>
-                  <div className="text-right flex-1 mx-2">
-                    <p className="font-bold text-yellow-300 text-sm">{player.name}</p>
-                  </div>
-                  <div className="text-2xl font-bold text-amber-400">
-                    {votes.get(player.id) || 0}
-                  </div>
+      <div className="flex-1 flex flex-col items-center justify-center p-8">
+        <div className="text-center mb-12">
+          <p className="text-2xl text-yellow-300 mb-2">اختر من تصوت عليه لاستبعاده</p>
+          <p className="text-yellow-200">اكتب اسم الفاكهة في الدردشة للتصويت</p>
+        </div>
+
+        {/* Fruits Grid */}
+        <div className="grid grid-cols-4 gap-8 mb-12">
+          {joinedPlayers.map((player) => {
+            const fruitEmoji = player.fruit || '🍎';
+            const fruitData = FRUITS_DATA.find(f => f.emoji === fruitEmoji);
+            const voteCount = votes.get(player.id) || 0;
+
+            return (
+              <div key={player.id} className="flex flex-col items-center space-y-4">
+                <div className="relative">
+                  <div className="text-8xl">{fruitEmoji}</div>
+                  {voteCount > 0 && (
+                    <div className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full w-10 h-10 flex items-center justify-center font-bold text-lg">
+                      {voteCount}
+                    </div>
+                  )}
+                </div>
+                <div className="text-center">
+                  <p className="text-yellow-300 font-bold text-lg">{fruitData?.nameAr}</p>
+                  <p className="text-gray-400 text-sm">{player.name}</p>
                 </div>
               </div>
-            ))}
-          </div>
+            );
+          })}
         </div>
 
-        {/* Main Game Area */}
-        <div className="flex-1 flex flex-col items-center justify-center p-8 relative bg-black">
-          {/* Decorative background */}
-          <div className="absolute inset-0 opacity-10">
-            <div className="text-8xl text-yellow-400 absolute top-10 left-10">🏮</div>
-            <div className="text-8xl text-yellow-400 absolute top-10 right-10">🏮</div>
-            <div className="text-8xl text-amber-400 absolute bottom-10 left-10">⭐</div>
-            <div className="text-8xl text-yellow-400 absolute bottom-10 right-10">⭐</div>
+        {/* Vote Chat Log */}
+        {voteChatLog.length > 0 && (
+          <div className="max-w-2xl w-full">
+            <p className="text-yellow-300 font-bold mb-2">التصويتات:</p>
+            <div className="bg-gray-900/50 border-2 border-yellow-500 rounded-lg p-4 space-y-1 max-h-32 overflow-y-auto">
+              {voteChatLog.map((vote, idx) => (
+                <div key={idx} className="text-yellow-200 text-sm">
+                  صوت على: <span className="font-bold text-yellow-300">{vote.fruit}</span>
+                </div>
+              ))}
+            </div>
           </div>
-
-          {gamePhase === 'voting' && (
-            <div className="text-center relative z-10">
-              <h2 className="text-5xl font-bold text-yellow-400 mb-12">صوّت للإقصاء!</h2>
-              <div className="grid grid-cols-3 gap-6 mb-12">
-                {joinedPlayers.map((player) => (
-                  <div
-                    key={player.id}
-                    onClick={() => handleVote(player.id)}
-                    className="p-6 rounded-2xl border-2 border-gray-700 bg-gray-900 cursor-pointer hover:border-yellow-500 hover:bg-gray-800 transition-all transform hover:scale-110"
-                  >
-                    <div className="text-7xl mb-4">{player.fruit}</div>
-                    <p className="text-yellow-400 font-bold text-lg">{player.name}</p>
-                  </div>
-                ))}
-              </div>
-              <p className="text-gray-300 text-lg">اكتب في الشات: !vote {Math.floor(Math.random() * joinedPlayers.length) + 1}</p>
-            </div>
-          )}
-
-          {gamePhase === 'results' && mostVotedPlayer && mostVotedId !== null && (
-            <div className="text-center relative z-10 animate-bounce">
-              <h2 className="text-5xl font-bold text-red-400 mb-8">الأعلى أصواتاً</h2>
-              <div className="text-9xl mb-8">{mostVotedPlayer.fruit}</div>
-              <p className="text-3xl font-bold text-red-300 mb-4">{mostVotedPlayer.name}</p>
-              <p className="text-2xl font-bold text-amber-400">{votes.get(mostVotedId) || 0} أصوات</p>
-            </div>
-          )}
-
-          {gamePhase === 'elimination' && mostVotedPlayer && (
-            <div className="text-center relative z-10">
-              <h2 className="text-5xl font-bold text-red-500 mb-8 animate-pulse">تم الإقصاء!</h2>
-              <div className="text-9xl mb-8">{mostVotedPlayer.fruit}</div>
-              <p className="text-3xl font-bold text-red-300">{mostVotedPlayer.name}</p>
-            </div>
-          )}
-        </div>
+        )}
       </div>
     </div>
   );

@@ -3,6 +3,7 @@
 import { useState, useRef } from 'react';
 import FruitsWarModeSelector from './FruitsWarModeSelector';
 import FruitsWarVotingGame from './FruitsWarVotingGame';
+import { FRUITS_DATA } from '@/data/fruits';
 
 interface FruitsWarGameProps {
   playerCount: number;
@@ -21,9 +22,11 @@ export default function FruitsWarGame({
   const [gameMode, setGameMode] = useState<'roulette' | 'voting' | null>(null);
   const [isSpinning, setIsSpinning] = useState(false);
   const [rotation, setRotation] = useState(0);
-  const [selectedPlayer, setSelectedPlayer] = useState<{id: number; name: string; eliminated: boolean} | null>(null);
+  const [selectedPlayer, setSelectedPlayer] = useState<{id: number; name: string; eliminated: boolean; fruit?: string} | null>(null);
+  const [fruitInputValue, setFruitInputValue] = useState('');
+  const [eliminationMessage, setEliminationMessage] = useState('');
   const wheelRef = useRef<HTMLDivElement>(null);
-  const votingGameRef = useRef<{handleChatVote: (fruitIndex: number) => void} | null>(null);
+  const votingGameRef = useRef<{handleChatVote: (fruitName: string) => void} | null>(null);
 
   // Get only joined and active players (not eliminated)
   const joinedPlayers = players.filter(p => p.joined && !p.eliminated);
@@ -39,6 +42,8 @@ export default function FruitsWarGame({
 
     setIsSpinning(true);
     setSelectedPlayer(null);
+    setFruitInputValue('');
+    setEliminationMessage('');
 
     const spins = 5 + Math.random() * 3; // 5-8 full rotations
     const randomIndex = Math.floor(Math.random() * joinedPlayers.length);
@@ -54,20 +59,43 @@ export default function FruitsWarGame({
         id: selected.id,
         name: selected.name,
         eliminated: selected.eliminated,
+        fruit: selected.fruit,
       });
       setIsSpinning(false);
     }, 3000);
   };
 
-  const handleEliminateSelected = () => {
-    if (!selectedPlayer) return;
+  const handleFruitNameSubmit = () => {
+    if (!selectedPlayer || !fruitInputValue.trim()) return;
 
-    const updatedPlayers = [...players];
-    const playerIndex = updatedPlayers.findIndex(p => p.id === selectedPlayer.id);
-    if (playerIndex >= 0) {
-      updatedPlayers[playerIndex].eliminated = true;
-      setPlayers(updatedPlayers);
-      setSelectedPlayer(null);
+    // Get the fruit name in Arabic from the player's fruit emoji
+    const fruitEmoji = selectedPlayer.fruit;
+    const selectedFruitData = FRUITS_DATA.find(f => f.emoji === fruitEmoji);
+    
+    if (!selectedFruitData) {
+      setEliminationMessage('خطأ: فاكهة غير معروفة');
+      return;
+    }
+
+    const inputName = fruitInputValue.trim().toLowerCase();
+    const correctName = selectedFruitData.nameAr.toLowerCase();
+
+    if (inputName === correctName) {
+      // Correct answer - eliminate the player
+      const updatedPlayers = [...players];
+      const playerIndex = updatedPlayers.findIndex(p => p.id === selectedPlayer.id);
+      if (playerIndex >= 0) {
+        updatedPlayers[playerIndex].eliminated = true;
+        setPlayers(updatedPlayers);
+        setEliminationMessage(`✅ صحيح! تم استبعاد ${selectedPlayer.name}`);
+        setTimeout(() => {
+          setSelectedPlayer(null);
+          setFruitInputValue('');
+          setEliminationMessage('');
+        }, 2000);
+      }
+    } else {
+      setEliminationMessage(`❌ خطأ! الاسم الصحيح: ${selectedFruitData.nameAr}`);
     }
   };
 
@@ -223,17 +251,38 @@ export default function FruitsWarGame({
           </button>
 
           {selectedPlayer && !selectedPlayer.eliminated && (
-            <button
-              onClick={handleEliminateSelected}
-              className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-bold py-3 px-8 rounded-lg"
-            >
-              ❌ استبعد {selectedPlayer.name}
-            </button>
-          )}
-
-          {selectedPlayer && selectedPlayer.eliminated && (
-            <div className="text-red-400 text-lg font-bold">
-              تم استبعاد {selectedPlayer.name}
+            <div className="text-center space-y-4 bg-gradient-to-r from-yellow-600/30 to-yellow-600/30 p-6 rounded-lg border-2 border-yellow-500">
+              <div className="text-white text-xl">
+                <p className="text-yellow-300 text-2xl font-bold mb-2">{selectedPlayer.fruit}</p>
+                <p className="text-yellow-100">أسم الفاكهة: <span className="font-bold">{selectedPlayer.name}</span></p>
+                <p className="text-gray-300 text-sm mt-2">اكتب اسم الفاكهة بالعربية لاستبعاد اللاعب</p>
+              </div>
+              <div className="flex gap-2 justify-center">
+                <input
+                  type="text"
+                  value={fruitInputValue}
+                  onChange={(e) => setFruitInputValue(e.target.value)}
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter') {
+                      handleFruitNameSubmit();
+                    }
+                  }}
+                  placeholder="اكتب اسم الفاكهة..."
+                  className="px-4 py-2 bg-gray-900/50 border-2 border-yellow-400 rounded-lg text-yellow-100 placeholder-yellow-400/50 focus:outline-none focus:border-yellow-300"
+                  autoFocus
+                />
+                <button
+                  onClick={handleFruitNameSubmit}
+                  className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-bold py-2 px-6 rounded-lg"
+                >
+                  ✓ تأكيد
+                </button>
+              </div>
+              {eliminationMessage && (
+                <div className={eliminationMessage.includes('✅') ? 'text-green-400' : 'text-red-400'}>
+                  {eliminationMessage}
+                </div>
+              )}
             </div>
           )}
         </div>
