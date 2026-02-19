@@ -223,23 +223,29 @@ const QuestionsGame = forwardRef<QuestionsGameHandle, QuestionsGameProps>(({
           </div>
 
           {/* Streamer Answer Section */}
-          <div className="mb-8 p-6 bg-gradient-to-r from-purple-600/30 to-purple-600/30 rounded-lg border-2 border-purple-500">
-            <label className="block text-purple-300 mb-3 font-bold text-lg">🎬 إجابة المذيع (سري):</label>
+          <div className="mb-8 p-6 bg-gradient-to-r from-yellow-600/20 to-yellow-600/20 rounded-lg border-2 border-yellow-500">
+            <label className="block text-yellow-300 mb-3 font-bold text-lg">🎬 إجابة المذيع (سري):</label>
             <div className="flex gap-3">
               <input
                 type="password"
                 value={streamerAnswer}
                 onChange={(e) => setStreamerAnswer(e.target.value)}
-                placeholder="اكتب إجابتك هنا..."
-                className="flex-1 px-4 py-3 bg-gray-900/50 border-2 border-purple-400 rounded-lg text-purple-100 placeholder-purple-400/50 focus:outline-none focus:border-purple-300"
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter') {
+                    // Answer is submitted - can add logic here if needed
+                    e.currentTarget.blur();
+                  }
+                }}
+                placeholder="اكتب إجابتك هنا... (اضغط Enter)"
+                className="flex-1 px-4 py-3 bg-gray-900/50 border-2 border-yellow-400 rounded-lg text-yellow-100 placeholder-yellow-400/50 focus:outline-none focus:border-yellow-300 focus:ring-2 focus:ring-yellow-400/30"
               />
-              <div className="flex items-center px-4 py-3 bg-gray-900/50 border-2 border-purple-400 rounded-lg">
-                <div className="text-2xl font-bold text-purple-300 tracking-widest">
+              <div className="flex items-center px-4 py-3 bg-gray-900/50 border-2 border-yellow-400 rounded-lg">
+                <div className="text-2xl font-bold text-yellow-300 tracking-widest">
                   {streamerAnswer.split('').map(() => '★').join('')}
                 </div>
               </div>
             </div>
-            <p className="text-purple-300 text-sm mt-2">الإجابة محمية - يظهر فقط النجوم للعارضين الآخرين</p>
+            <p className="text-yellow-300 text-sm mt-2">الإجابة محمية - يظهر فقط النجوم للعارضين الآخرين</p>
           </div>
 
           {/* Answer Input for Chat */}
