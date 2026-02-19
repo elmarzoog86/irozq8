@@ -133,23 +133,23 @@ export default function QuestionsLobby({ onStartGame, onBack }: QuestionsLobbyPr
           <p className="text-xs text-gray-400 text-right mt-2">غير محدود</p>
         </div>
 
+        {/* Divider */}
+        <div className="border-t border-cyan-500/20 my-2"></div>
+
         {/* Questions Count */}
         <div>
-          <label className="text-right block text-xs text-gray-300 mb-3">عدد الأسئلة</label>
-          <div className="grid grid-cols-3 gap-2">
-            {[5, 10, 15, 20, 30, 50].map((count) => (
-              <button
-                key={count}
-                onClick={() => setQuestionsCount(count)}
-                className={`py-2 rounded font-bold text-sm transition-all ${
-                  questionsCount === count
-                    ? 'bg-cyan-600 text-white border-2 border-cyan-400'
-                    : 'bg-gray-800 text-gray-300 border-2 border-gray-700 hover:bg-gray-700'
-                }`}
-              >
-                {count}
-              </button>
-            ))}
+          <label className="text-right block text-xs text-gray-300 mb-2">عدد الأسئلة</label>
+          <input
+            type="range"
+            min="1"
+            max="50"
+            value={questionsCount}
+            onChange={(e) => setQuestionsCount(parseInt(e.target.value))}
+            className="w-full accent-cyan-500"
+          />
+          <div className="text-center mt-2">
+            <span className="text-2xl font-bold text-cyan-400">{questionsCount}</span>
+            <p className="text-xs text-gray-400">سؤال</p>
           </div>
         </div>
 
