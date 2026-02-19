@@ -39,10 +39,13 @@ export default function ComingSoonPage() {
         muted
         playsInline
         className="absolute inset-0 w-full h-full object-cover blur-lg"
+        style={{ display: 'block' }}
       >
         <source src="/videos/new-roz.webm" type="video/webm" />
-        <div className="absolute inset-0 bg-gradient-to-br from-black to-gray-950" />
       </video>
+
+      {/* Fallback gradient if video doesn't load */}
+      <div className="absolute inset-0 bg-gradient-to-br from-black to-gray-950" />
 
       {/* Dark Overlay for text readability */}
       <div className="absolute inset-0 bg-black/50"></div>
