@@ -36,7 +36,7 @@ function HomeContent() {
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const hostname = window.location.hostname;
-      const isMain = hostname === 'irozq8.com' || hostname === 'www.irozq8.com';
+      const isMain = hostname === 'irozq8.com' || hostname === 'www.irozq8.com' || hostname === 'localhost' || hostname === '127.0.0.1';
       setIsMainDomain(isMain);
     }
   }, []);
