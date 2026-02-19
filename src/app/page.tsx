@@ -27,7 +27,7 @@ function HomeContent() {
   const [gameRunning, setGameRunning] = useState(!!gameParam);
   const [playerCount, setPlayerCount] = useState(0);
   const [_gameSessionId, setGameSessionId] = useState<string | null>(null);
-  const [isMainDomain, setIsMainDomain] = useState(false);
+  const [isMainDomain, setIsMainDomain] = useState(true); // Default to true to show coming soon
   
   // Check if coming soon mode is enabled (for env variable)
   const isComingSoonEnv = process.env.NEXT_PUBLIC_COMING_SOON === 'true';
