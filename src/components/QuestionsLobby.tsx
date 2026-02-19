@@ -50,11 +50,13 @@ export default function QuestionsLobby({ onStartGame, onBack }: QuestionsLobbyPr
   };
 
   return (
-    <div className="w-full h-full flex" dir="rtl" style={{ background: '#0f0f1e' }}>
+    <div className="w-full h-full flex" dir="rtl" style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1a0a2e 50%, #0f172a 100%)' }}>
       {/* LEFT SECTION - System Log (سجل النظام) */}
-      <div className="w-80 flex flex-col border-r border-cyan-500/20 bg-black/40">
-        <div className="px-4 py-3 border-b border-cyan-500/20">
-          <h3 className="text-sm font-bold text-cyan-300">سجل النظام</h3>
+      <div className="w-80 flex flex-col border-r border-cyan-500/30 bg-gradient-to-b from-slate-900/80 to-slate-950/80 shadow-xl">
+        <div className="px-4 py-3 border-b border-cyan-500/30 bg-gradient-to-r from-cyan-600/20 to-pink-600/20">
+          <h3 className="text-sm font-bold bg-gradient-to-r from-cyan-300 to-pink-400 bg-clip-text text-transparent">
+            ✓ سجل النظام
+          </h3>
         </div>
         
         {/* Chat Messages */}
@@ -62,12 +64,12 @@ export default function QuestionsLobby({ onStartGame, onBack }: QuestionsLobbyPr
           {chatMessages.map((msg) => (
             <div key={msg.id} className="text-xs">
               {msg.type === 'system' ? (
-                <div className="px-2 py-1 bg-cyan-600/20 rounded text-cyan-300 text-xs border border-cyan-600/30">
+                <div className="px-3 py-2 bg-gradient-to-r from-cyan-600/30 to-cyan-600/10 rounded-lg text-cyan-200 text-xs border border-cyan-500/40 shadow-md">
                   {msg.message}
                 </div>
               ) : (
-                <div>
-                  <span className="text-pink-400 font-semibold">{msg.user}: </span>
+                <div className="px-2 py-1">
+                  <span className="text-pink-400 font-bold">{msg.user}: </span>
                   <span className="text-gray-300">{msg.message}</span>
                 </div>
               )}
@@ -76,7 +78,7 @@ export default function QuestionsLobby({ onStartGame, onBack }: QuestionsLobbyPr
         </div>
 
         {/* Chat Input */}
-        <div className="px-3 py-3 border-t border-cyan-500/20">
+        <div className="px-3 py-3 border-t border-cyan-500/30 bg-gradient-to-t from-slate-950/50 to-transparent">
           <div className="flex gap-2">
             <input
               type="text"
@@ -84,11 +86,11 @@ export default function QuestionsLobby({ onStartGame, onBack }: QuestionsLobbyPr
               onChange={(e) => setNewMessage(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
               placeholder="أرسل رسالة..."
-              className="flex-1 bg-gray-800/50 border border-gray-700 rounded px-2 py-1 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-cyan-500"
+              className="flex-1 bg-gray-900/70 border border-cyan-500/40 rounded px-3 py-2 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/50"
             />
             <button
               onClick={handleSendMessage}
-              className="bg-cyan-600 hover:bg-cyan-700 text-white rounded px-3 py-1 text-xs font-bold transition-all"
+              className="bg-gradient-to-r from-cyan-600 to-cyan-500 hover:from-cyan-500 hover:to-cyan-400 text-white rounded px-3 py-2 text-xs font-bold transition-all shadow-lg"
             >
               ➤
             </button>
@@ -97,77 +99,100 @@ export default function QuestionsLobby({ onStartGame, onBack }: QuestionsLobbyPr
       </div>
 
       {/* CENTER SECTION - Waiting Area */}
-      <div className="flex-1 flex flex-col items-center justify-center" style={{ background: 'linear-gradient(135deg, #1a0a2e 0%, #16213e 100%)' }}>
+      <div className="flex-1 flex flex-col items-center justify-center px-8" style={{ background: 'linear-gradient(135deg, #0a1f35 0%, #1a0f35 50%, #0a1f35 100%)' }}>
         {/* Open to Everyone Mode */}
         <>
-          <div className="mb-6 text-7xl animate-bounce">👥</div>
-          <h1 className="text-3xl font-bold text-white mb-2 text-center">في انتظار اللاعبين</h1>
-          <p className="text-cyan-300 text-sm mb-8 text-center max-w-md">اضغط للعبة وكن السريع في الإجابة!</p>
+          <div className="mb-8 text-8xl animate-bounce drop-shadow-lg">❓</div>
+          <h1 className="text-5xl font-black mb-4 text-center bg-gradient-to-r from-cyan-400 via-pink-500 to-amber-500 bg-clip-text text-transparent drop-shadow-lg">
+            سؤال و جواب
+          </h1>
+          <p className="text-lg mb-3 text-center max-w-md bg-gradient-to-r from-cyan-300 to-pink-300 bg-clip-text text-transparent font-bold">
+            في انتظار اللاعبين...
+          </p>
+          <p className="text-sm mb-12 text-center max-w-md text-gray-300">كن أسرع من الجميع في الإجابة الصحيحة!</p>
 
-          <div className="bg-cyan-600/30 border border-cyan-500/50 rounded-lg p-6 max-w-md w-full text-center">
-            <h3 className="text-cyan-300 font-bold mb-3">خطوات الانضمام إلى اللعبة</h3>
-            <div className="bg-cyan-700/30 rounded px-4 py-3">
-              <p className="text-cyan-300 text-sm font-bold">1</p>
-              <p className="text-gray-300 text-xs mt-2">أي شخص في الشات يمكنه الإجابة مباشرة</p>
+          <div className="relative w-full max-w-md">
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-500 via-pink-500 to-amber-500 rounded-xl blur opacity-30 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
+            <div className="relative bg-gradient-to-br from-blue-900/40 to-teal-900/40 border border-cyan-500/60 rounded-xl p-8 text-center shadow-2xl">
+              <h3 className="text-lg font-bold mb-4 bg-gradient-to-r from-cyan-300 to-pink-400 bg-clip-text text-transparent">
+                📋 قواعد اللعبة
+              </h3>
+              <div className="space-y-3">
+                <div className="flex items-center gap-3">
+                  <span className="text-xl">🎯</span>
+                  <p className="text-gray-300 text-sm text-right">أجب على الأسئلة بسرعة</p>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="text-xl">⚡</span>
+                  <p className="text-gray-300 text-sm text-right">أول إجابة صحيحة تفوز</p>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="text-xl">🏆</span>
+                  <p className="text-gray-300 text-sm text-right">اكتسب نقاط مع كل إجابة صحيحة</p>
+                </div>
+              </div>
             </div>
           </div>
         </>
       </div>
 
       {/* RIGHT SECTION - Settings */}
-      <div className="w-96 flex flex-col border-l border-cyan-500/20 bg-black/40 p-4 space-y-4 overflow-y-auto">
+      <div className="w-96 flex flex-col border-l border-cyan-500/30 bg-gradient-to-b from-slate-900/80 to-slate-950/80 p-4 space-y-4 overflow-y-auto shadow-xl">
         
         {/* Header with Tabs */}
         <div className="flex gap-2 mb-4">
-          <button className="flex-1 bg-cyan-600 text-white py-2 px-4 rounded font-bold text-sm">
-            إعدادات اللعبة
-          </button>
+          <div className="flex-1 bg-gradient-to-r from-cyan-600 to-cyan-500 text-white py-3 px-4 rounded-lg font-bold text-sm text-center shadow-lg">
+            ⚙️ إعدادات اللعبة
+          </div>
         </div>
 
-        {/* Player Count */}
-        <div>
-          <label className="text-right block text-xs text-gray-300 mb-2">اللاعبون</label>
+        {/* Player Count Card */}
+        <div className="bg-gradient-to-br from-pink-600/20 to-pink-600/5 border border-pink-500/40 rounded-lg p-4 shadow-md">
+          <label className="text-right block text-xs font-bold text-pink-300 mb-2">👥 اللاعبون</label>
           <div className="text-right">
-            <span className="text-3xl font-bold text-cyan-400">∞</span>
+            <span className="text-4xl font-black bg-gradient-to-r from-pink-400 to-pink-500 bg-clip-text text-transparent">∞</span>
           </div>
-          <p className="text-xs text-gray-400 text-right mt-2">غير محدود</p>
+          <p className="text-xs text-pink-300/70 text-right mt-2">غير محدود - كل من يريد</p>
         </div>
 
         {/* Divider */}
-        <div className="border-t border-cyan-500/20 my-2"></div>
+        <div className="border-t border-gradient-to-r from-cyan-500/30 via-pink-500/30 to-amber-500/30"></div>
 
-        {/* Questions Count */}
-        <div>
-          <label className="text-right block text-xs text-gray-300 mb-2">عدد الأسئلة</label>
-          <input
-            type="range"
-            min="1"
-            max="50"
-            value={questionsCount}
-            onChange={(e) => setQuestionsCount(parseInt(e.target.value))}
-            className="w-full accent-cyan-500"
-          />
-          <div className="text-center mt-2">
-            <span className="text-2xl font-bold text-cyan-400">{questionsCount}</span>
-            <p className="text-xs text-gray-400">سؤال</p>
+        {/* Questions Count Card */}
+        <div className="bg-gradient-to-br from-amber-600/20 to-amber-600/5 border border-amber-500/40 rounded-lg p-4 shadow-md">
+          <label className="text-right block text-xs font-bold text-amber-300 mb-4">📊 عدد الأسئلة</label>
+          <div className="grid grid-cols-2 gap-3">
+            {[5, 10, 15, 20, 25, 30, 35, 40, 45, 50].map((num) => (
+              <button
+                key={num}
+                onClick={() => setQuestionsCount(num)}
+                className={`py-3 px-2 rounded-lg text-sm font-bold transition-all transform hover:scale-105 ${
+                  questionsCount === num
+                    ? 'bg-gradient-to-r from-amber-600 to-amber-500 text-white border-2 border-amber-300 shadow-lg shadow-amber-500/50'
+                    : 'bg-gradient-to-br from-slate-700 to-slate-800 hover:from-slate-600 hover:to-slate-700 text-gray-300 border border-slate-600/50'
+                }`}
+              >
+                {num}
+              </button>
+            ))}
           </div>
         </div>
 
         {/* Divider */}
-        <div className="border-t border-cyan-500/20 my-2"></div>
+        <div className="border-t border-gradient-to-r from-cyan-500/30 via-pink-500/30 to-amber-500/30"></div>
 
         {/* Action Buttons */}
-        <div className="space-y-2 mt-auto pt-4 border-t border-cyan-500/20">
+        <div className="space-y-3 mt-auto pt-4 border-t border-cyan-500/30">
           <button
             onClick={handleStartGame}
-            className="w-full py-3 px-4 rounded-lg font-bold transition-all text-sm bg-green-600 hover:bg-green-700 text-white shadow-lg"
+            className="w-full py-4 px-4 rounded-lg font-bold transition-all transform hover:scale-105 text-sm bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white shadow-lg shadow-green-600/50"
           >
-            ✓ بدء اللعبة
+            🎮 بدء اللعبة
           </button>
 
           <button
             onClick={onBack}
-            className="w-full py-2 px-4 rounded-lg font-bold bg-gray-700 hover:bg-gray-600 text-white transition-all text-sm"
+            className="w-full py-3 px-4 rounded-lg font-bold bg-gradient-to-r from-gray-700 to-gray-600 hover:from-gray-600 hover:to-gray-500 text-white transition-all text-sm shadow-md"
           >
             ← العودة
           </button>
