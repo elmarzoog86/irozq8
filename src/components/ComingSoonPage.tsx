@@ -38,14 +38,14 @@ export default function ComingSoonPage() {
         loop
         muted
         playsInline
-        className="absolute inset-0 w-full h-full object-cover blur-sm"
+        className="absolute inset-0 w-full h-full object-cover blur-lg"
       >
-        <source src="/videos/rozq8_3.webm" type="video/webm" />
+        <source src="/videos/golden-roz.webm" type="video/webm" />
         <div className="absolute inset-0 bg-gradient-to-br from-black to-gray-950" />
       </video>
 
       {/* Dark Overlay for text readability */}
-      <div className="absolute inset-0 bg-black/40"></div>
+      <div className="absolute inset-0 bg-black/50"></div>
 
       {/* Language Toggle */}
       <div className="absolute top-6 right-6 z-20">
@@ -62,11 +62,11 @@ export default function ComingSoonPage() {
         <div className="text-center">
           <div className="mb-8">
             <div className="text-6xl md:text-7xl lg:text-8xl font-bold mb-4">
-              <span className="bg-gradient-to-r from-yellow-400 via-purple-400 to-yellow-400 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-yellow-300 via-yellow-400 to-yellow-500 bg-clip-text text-transparent">
                 {t.title}
               </span>
             </div>
-            <p className={`text-xl md:text-2xl lg:text-3xl font-bold text-yellow-300 mb-4`}>
+            <p className={`text-xl md:text-2xl lg:text-3xl font-bold text-yellow-400 mb-4`}>
               {t.subtitle}
             </p>
           </div>
@@ -94,8 +94,8 @@ export default function ComingSoonPage() {
               href="https://www.twitch.tv/irozq8"
               target="_blank"
               rel="noopener noreferrer"
-              className="px-6 py-3 rounded-lg bg-gradient-to-r from-black-600 to-black-700 hover:from-black-700 hover:to-black-800 text-white font-bold transition-all duration-300 transform hover:scale-105 flex items-center gap-2"
-              style={{ boxShadow: '0 0 30px rgba(168, 85, 247, 0.4)' }}
+              className="px-6 py-3 rounded-lg bg-gradient-to-r from-gray-900 to-black hover:from-gray-800 hover:to-gray-900 text-yellow-400 font-bold transition-all duration-300 transform hover:scale-105 flex items-center gap-2 border border-yellow-500/50"
+              style={{ boxShadow: '0 0 30px rgba(217, 119, 6, 0.4)' }}
             >
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M11.571 4.714h1.429v5.286h1.393V4.714h1.429v5.286h1.393V4.714h1.429v7.143c0 .947-.791 1.714-1.771 1.714h-8.571c-.98 0-1.771-.767-1.771-1.714V4.714zm-4.714 12h2.143V8.857H6.857v7.857zm3.429 0h2.143v-5.571H10.286v5.571zm3.429 0h2.143v-3.714h2.143v-1.571h-2.143v-1.143c0-.393.32-.714.714-.714h1.429V8.857c-.233-.028-.47-.043-.714-.043-1.39 0-2.571 1.134-2.571 2.571v1.714z" />
@@ -108,8 +108,8 @@ export default function ComingSoonPage() {
               href="https://streamlabs.com/irozq8/tip"
               target="_blank"
               rel="noopener noreferrer"
-              className="px-6 py-3 rounded-lg bg-gradient-to-r from-yellow-600 to-yellow-700 hover:from-yellow-700 hover:to-yellow-800 text-white font-bold transition-all duration-300 transform hover:scale-105 flex items-center gap-2"
-              style={{ boxShadow: '0 0 30px rgba(236, 72, 153, 0.4)' }}
+              className="px-6 py-3 rounded-lg bg-gradient-to-r from-yellow-600 to-yellow-700 hover:from-yellow-700 hover:to-yellow-800 text-black font-bold transition-all duration-300 transform hover:scale-105 flex items-center gap-2"
+              style={{ boxShadow: '0 0 30px rgba(217, 119, 6, 0.4)' }}
             >
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M12 2c-5.523 0-10 4.477-10 10s4.477 10 10 10 10-4.477 10-10-4.477-10-10-10zm0 2c4.418 0 8 3.582 8 8s-3.582 8-8 8-8-3.582-8-8 3.582-8 8-8zm3.5 9c.828 0 1.5.672 1.5 1.5s-.672 1.5-1.5 1.5-1.5-.672-1.5-1.5.672-1.5 1.5-1.5zm-7 0c.828 0 1.5.672 1.5 1.5s-.672 1.5-1.5 1.5-1.5-.672-1.5-1.5.672-1.5 1.5-1.5zm3.5-6c-2.761 0-5 1.790-5 4h2c0-1.657 1.343-3 3-3s3 1.343 3 3h2c0-2.210-2.239-4-5-4z" />
