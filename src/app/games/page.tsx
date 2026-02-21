@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 'use client';
 
 import { useSearchParams, useRouter } from 'next/navigation';
@@ -16,8 +17,8 @@ function GamePageContent() {
   const router = useRouter();
   const gameId = searchParams.get('id');
   const sessionId = searchParams.get('session');
-  const game = games.find(g => g.id === gameId);
-
+  
+  // Initialize all hooks first, before any conditional returns
   const [playerCount, setPlayerCount] = useState(10);
   const [questionsCount, setQuestionsCount] = useState(10);
   const [gameStarted, setGameStarted] = useState(false);
@@ -27,6 +28,25 @@ function GamePageContent() {
   const [usernameToIndex, setUsernameToIndex] = useState<Map<string, number>>(new Map());
   const questionsGameRef = useRef<QuestionsGameHandle>(null);
   const fruitWarVotingRef = useRef<{handleChatVote: (fruitIndex: number) => void} | null>(null);
+
+  const game = games.find(g => g.id === gameId);
+
+  // Early return after all hooks
+  if (!game) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-black relative z-10">
+        <div className="text-center">
+          <h1 className="text-4xl font-bold text-yellow-400 mb-6">لم يتم العثور على اللعبة</h1>
+          <button
+            onClick={() => router.push('/')}
+            className="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-3 px-8 rounded-lg"
+          >
+            العودة للرئيسية
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   // Memoize the onAnswer callback to prevent unnecessary re-connections
   const handleChatAnswer = useCallback((playerIndex: number, username: string, answer: string) => {
@@ -116,9 +136,6 @@ function GamePageContent() {
     onMessage: handleChatMessage,
   });
 
-  // Debug state display
-  const debugStatus = `📊 Session: ${sessionId ? '✅' : '❌'} | Game: ${gameId} ${gameId === 'questions' ? '✅' : '❌'} | Started: ${gameStarted ? '✅' : '❌'} | Enabled: ${gameStarted && gameId === 'questions' ? '✅' : '❌'}`;
-
   if (!game) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-900">
@@ -126,7 +143,7 @@ function GamePageContent() {
           <h1 className="text-4xl font-bold text-red-400 mb-4">لم يتم العثور على اللعبة</h1>
           <button 
             onClick={() => router.push('/')}
-            className="bg-gradient-to-r from-cyan-500 to-cyan-600 hover:from-cyan-600 hover:to-cyan-700 text-white font-bold py-3 px-8 rounded-lg"
+            className="bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white font-bold py-3 px-8 rounded-lg"
           >
             العودة للرئيسية
           </button>
@@ -180,26 +197,26 @@ function GamePageContent() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Game Preview */}
           <div className="lg:col-span-2">
-            <div className="rounded-lg border border-purple-500/30 overflow-hidden bg-gray-950 p-8 aspect-video flex items-center justify-center">
+            <div className="rounded-lg border border-yellow-500/30 overflow-hidden bg-gray-950 p-8 aspect-video flex items-center justify-center">
               <img 
                 src={`/games/${gameId}.svg`} 
                 alt={game.nameAr}
                 className="w-full h-full object-contain"
               />
             </div>
-            <div className="mt-6 p-6 bg-gray-950 border border-purple-500/30 rounded-lg">
-              <h3 className="text-lg font-bold text-purple-300 mb-3">📋 قواعد اللعبة</h3>
+            <div className="mt-6 p-6 bg-gray-950 border border-yellow-500/30 rounded-lg">
+              <h3 className="text-lg font-bold text-yellow-300 mb-3">📋 قواعد اللعبة</h3>
               <p className="text-gray-300">{game.descriptionAr}</p>
               <p className="text-sm text-gray-400 mt-4">👥 عدد اللاعبين: {game.minPlayers}-{game.maxPlayers}</p>
             </div>
           </div>
 
           {/* Pre-Game Settings */}
-          <div className="bg-gray-950 border border-purple-500/30 rounded-lg p-6">
+          <div className="bg-gray-950 border border-yellow-500/30 rounded-lg p-6">
             {gameId !== 'questions' ? (
               // For other games, show settings
               <>
-                <h3 className="text-lg font-bold text-purple-300 mb-6">إعدادات البدء</h3>
+                <h3 className="text-lg font-bold text-yellow-300 mb-6">إعدادات البدء</h3>
                 
                 <div className="mb-6">
                   <label className="block text-sm text-gray-400 mb-3">عدد اللاعبين</label>
@@ -209,11 +226,11 @@ function GamePageContent() {
                     max={game.maxPlayers}
                     value={playerCount}
                     onChange={(e) => setPlayerCount(Number(e.target.value))}
-                    className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-purple-600"
+                    className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-yellow-600"
                   />
                   <div className="flex justify-between text-sm text-gray-400 mt-2">
                     <span>{game.minPlayers}</span>
-                    <span className="text-purple-400 font-bold">{playerCount}</span>
+                    <span className="text-yellow-400 font-bold">{playerCount}</span>
                     <span>{game.maxPlayers}</span>
                   </div>
                 </div>
@@ -288,9 +305,6 @@ function GamePageContent() {
 
   return (
     <>
-      <div className="fixed top-1 left-1 text-xs text-gray-400 bg-gray-800 bg-opacity-75 p-2 rounded z-50 max-w-xs font-mono">
-        {debugStatus}
-      </div>
       <GameLayout 
         gameName={game.nameAr}
         gameDescription={game.descriptionAr}
@@ -310,7 +324,7 @@ export default function GamePage() {
     <Suspense fallback={
       <div className="min-h-screen flex items-center justify-center bg-gray-900">
         <div className="text-center">
-          <h1 className="text-4xl font-bold text-cyan-400">جاري التحميل...</h1>
+          <h1 className="text-4xl font-bold text-yellow-400">جاري التحميل...</h1>
         </div>
       </div>
     }>

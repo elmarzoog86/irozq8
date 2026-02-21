@@ -20,6 +20,7 @@ function HomeContent() {
   const router = useRouter();
   const sessionId = searchParams.get('session');
   const gameParam = searchParams.get('game');
+  const channelParam = searchParams.get('channel');
   
   const [selectedGame, setSelectedGame] = useState<string | null>(gameParam || null);
   const [user, setUser] = useState<TwitchUser | null>(null);
@@ -28,6 +29,7 @@ function HomeContent() {
   const [playerCount, setPlayerCount] = useState(0);
   const [_gameSessionId, setGameSessionId] = useState<string | null>(null);
   const [isMainDomain, setIsMainDomain] = useState(false); // Default to false for local testing
+  const [streamerChannel, setStreamerChannel] = useState<string | null>(channelParam || null);
   
   // Check if coming soon mode is enabled (for env variable)
   const isComingSoonEnv = process.env.NEXT_PUBLIC_COMING_SOON === 'true';
@@ -84,8 +86,12 @@ function HomeContent() {
   };
 
   const handleSelectGame = (gameId: string) => {
-    // Navigate to the games page with game ID and session parameter
-    if (sessionId) {
+    // Navigate to the games page with game ID
+    if (streamerChannel) {
+      // For streamer with channel name
+      router.push(`/games?id=${gameId}&channel=${streamerChannel}`);
+    } else if (sessionId) {
+      // For user with session
       router.push(`/games?id=${gameId}&session=${sessionId}`);
     }
   };
@@ -129,15 +135,30 @@ function HomeContent() {
   }
 
   return (
-    <div style={{background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%)'}} className="min-h-screen">
+    <div className="min-h-screen relative">
+      {/* Wallpaper Video Background */}
+      <video
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="fixed inset-0 w-full h-full object-cover -z-10"
+        style={{ filter: 'blur(8px)', opacity: 0.7 }}
+      >
+        <source src="/videos/wallpaper.webm" type="video/webm" />
+      </video>
+      
+      {/* Dark overlay */}
+      <div className="fixed inset-0 bg-black/40 -z-10"></div>
+      
       <Header />
-      <main className="container mx-auto px-4 py-12">
-        {/* Streamer Login Banner - Only show if not logged in AND no session in URL AND not loading */}
-        {!user && !loading && !sessionId && (
+      <main className="container mx-auto px-4 py-12 relative z-10">
+        {/* Streamer Login Banner - Only show if not logged in AND no session in URL AND not loading AND no channel */}
+        {!user && !loading && !sessionId && !streamerChannel && (
           <div className="mb-8 rounded-lg border-2 border-yellow-600/50 p-6 text-center" style={{background: 'linear-gradient(135deg, rgba(217, 119, 6, 0.1) 0%, rgba(217, 119, 6, 0.1) 100%)'}}>
             <div className="flex flex-col md:flex-row items-center justify-center gap-4">
               <div className="flex-1">
-                <h3 className="text-xl font-bold text-yellow-400 mb-2">🎮 هل أنت مذيع؟</h3>
+                <h3 className="text-xl font-bold text-yellow-400 mb-2">🎮 هل أنت ستريمر؟</h3>
                 <p className="text-yellow-400/70">استخدم لوحة التحكم الكاملة للتحكم بالألعاب والتفاعل مع جمهورك على Twitch</p>
               </div>
               <a 
@@ -151,19 +172,34 @@ function HomeContent() {
           </div>
         )}
 
-        {/* Welcome message if logged in */}
-        {user && (
+        {/* Welcome message if logged in or streamer channel is set */}
+        {(user || streamerChannel) && (
           <div className="mb-8 text-center flex justify-between items-center">
             <div>
-              <h2 className="text-3xl font-bold text-yellow-400 mb-2">مرحباً {user.displayName} 👋</h2>
+              <h2 className="text-3xl font-bold text-yellow-400 mb-2">
+                {user ? `مرحباً ${user.displayName} 👋` : `مرحباً بك في القناة: ${streamerChannel} 📡`}
+              </h2>
               <p className="text-yellow-400/70">اختر لعبة لتبدأ البث المباشر</p>
             </div>
-            <button
-              onClick={handleLogout}
-              className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg transition-colors"
-            >
-              تسجيل خروج
-            </button>
+            {user && (
+              <button
+                onClick={handleLogout}
+                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg transition-colors"
+              >
+                تسجيل خروج
+              </button>
+            )}
+            {streamerChannel && !user && (
+              <button
+                onClick={() => {
+                  setStreamerChannel(null);
+                  window.location.href = '/';
+                }}
+                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg transition-colors"
+              >
+                تسجيل خروج
+              </button>
+            )}
           </div>
         )}
 
@@ -178,11 +214,11 @@ function HomeContent() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {games.map((game) => (
-            <div key={game.id} onClick={() => user ? handleSelectGame(game.id) : null}>
+            <div key={game.id} onClick={() => (user || streamerChannel) ? handleSelectGame(game.id) : null}>
               <GameCard
                 game={game}
                 isSelected={selectedGame === game.id}
-                onSelect={() => user ? handleSelectGame(game.id) : null}
+                onSelect={() => (user || streamerChannel) ? handleSelectGame(game.id) : null}
                 sessionId={sessionId || undefined}
               />
             </div>
@@ -263,7 +299,7 @@ function DashboardGameView({
           <div className="bg-gradient-to-br from-yellow-900/40 to-yellow-950/40 border-2 border-yellow-600/30 rounded-lg p-6">
             <div className="space-y-4">
               <div>
-                <p className="text-yellow-400/70 text-sm">المذيع</p>
+                <p className="text-yellow-400/70 text-sm">ستريمر</p>
                 <p className="text-white font-bold">{user.displayName}</p>
               </div>
               <div>
@@ -271,7 +307,7 @@ function DashboardGameView({
                 <p className="text-white font-mono text-xs">{sessionId.substring(0, 8)}...</p>
               </div>
               <div>
-                <p className="text-cyan-300/70 text-sm">اللاعبون النشطون</p>
+                <p className="text-yellow-300/70 text-sm">اللاعبون النشطون</p>
                 <p className="text-white font-bold text-xl">{playerCount}</p>
               </div>
             </div>
