@@ -5,16 +5,18 @@ import { useState, useEffect } from 'react';
 interface Player {
   id: number;
   name: string;
-  number: number;
-  lives: number;
+  number?: number;
+  lives?: number;
   eliminated: boolean;
   joined: boolean;
+  score?: number;
+  emoji?: string;
 }
 
 interface RouletteGameProps {
-  playerCount: number;
+  playerCount?: number;
   players: Player[];
-  setPlayers: (players: Player[]) => void;
+  setPlayers: (players: any[]) => void;
   onEndGame: () => void;
 }
 
@@ -78,9 +80,9 @@ export default function RouletteGame({
     const targetIndex = updatedPlayers.findIndex(p => p.id === target.id);
     
     if (targetIndex >= 0) {
-      updatedPlayers[targetIndex].lives -= 1;
+      updatedPlayers[targetIndex].lives = (updatedPlayers[targetIndex].lives || 0) - 1;
       
-      if (updatedPlayers[targetIndex].lives <= 0) {
+      if ((updatedPlayers[targetIndex].lives || 0) <= 0) {
         updatedPlayers[targetIndex].eliminated = true;
       }
     }
@@ -227,7 +229,7 @@ export default function RouletteGame({
                 <div className="text-2xl font-bold text-yellow-300">#{player.number}</div>
                 <div className="text-lg font-bold text-yellow-300 mt-1">{player.name}</div>
                 <div className="text-yellow-400 mt-2">
-                  {'❤️'.repeat(Math.max(0, player.lives))}
+                  {'❤️'.repeat(Math.max(0, player.lives || 0))}
                 </div>
                 {player.eliminated && (
                   <div className="text-red-400 text-sm mt-2 font-bold">مستبعد</div>

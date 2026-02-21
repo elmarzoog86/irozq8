@@ -22,7 +22,7 @@ function GamePageContent() {
   const [playerCount, setPlayerCount] = useState(10);
   const [questionsCount, setQuestionsCount] = useState(10);
   const [gameStarted, setGameStarted] = useState(false);
-  const [players, setPlayers] = useState<Array<{id: number; name: string; score: number; eliminated: boolean; joined: boolean; emoji?: string}>>([]);
+  const [players, setPlayers] = useState<Array<{id: number; name: string; score: number; eliminated: boolean; joined: boolean; emoji?: string; number?: number; lives?: number}>>([]);
   const [consoleLogs, setConsoleLogs] = useState<Array<{id: string; message: string; type: 'join' | 'leave' | 'system' | 'action'; timestamp: string}>>([]);
   const [chatMessages, setChatMessages] = useState<Array<{username: string; message: string; timestamp: string}>>([]);
   const [usernameToIndex, setUsernameToIndex] = useState<Map<string, number>>(new Map());
