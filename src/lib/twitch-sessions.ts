@@ -1,100 +1,102 @@
 /**
  * Twitch Session Store
- * File-based session management for Twitch OAuth
- * Uses disk storage to ensure persistence across processes
+ * In-memory session management for Twitch OAuth
+ * Works on Vercel and other serverless platforms
+ * Note: For production, implement with Redis or database
  */
 
-import * as fs from 'fs';
-import * as path from 'path';
+// Global session storage - works across all serverless requests in same container
+const sessions = new Map<string, any>();
 
-const SESSIONS_DIR = path.join(process.cwd(), '.sessions');
+// Session TTL: 7 days
+const SESSION_TTL = 7 * 24 * 60 * 60 * 1000;
 
-// Create sessions directory if it doesn't exist
-if (!fs.existsSync(SESSIONS_DIR)) {
-  fs.mkdirSync(SESSIONS_DIR, { recursive: true });
-  console.log(`🔐 [SESSION STORE INIT] Created sessions directory: ${SESSIONS_DIR}`);
-}
+// Cleanup task for expired sessions
+const cleanupInterval = setInterval(() => {
+  const now = Date.now();
+  let cleaned = 0;
+  
+  for (const [sessionId, sessionData] of sessions.entries()) {
+    if (sessionData.expiresAt && sessionData.expiresAt < now) {
+      sessions.delete(sessionId);
+      cleaned++;
+      console.log(`🗑️ [SESSION CLEANUP] Removed expired session: ${sessionId}`);
+    }
+  }
+  
+  if (cleaned > 0) {
+    console.log(`🗑️ [SESSION CLEANUP] Removed ${cleaned} expired sessions, ${sessions.size} remaining`);
+  }
+}, 60 * 60 * 1000); // Run cleanup every hour
+
+// Prevent the interval from keeping the process alive
+cleanupInterval.unref?.();
+
+console.log(`🔐 [SESSION STORE INIT] In-memory session store initialized (TTL: ${SESSION_TTL}ms)`);
 
 export function storeSession(sessionId: string, data: any) {
-  const sessionPath = path.join(SESSIONS_DIR, `${sessionId}.json`);
-  const sessionData = JSON.stringify(data, null, 2);
-  
   console.log(`🔐 [SESSION STORE] Storing session: ${sessionId}`);
-  console.log(`   Path: ${sessionPath}`);
   
-  try {
-    fs.writeFileSync(sessionPath, sessionData, 'utf-8');
-    console.log(`   ✅ Stored successfully`);
-  } catch (error) {
-    console.error(`   ❌ Failed to store session:`, error);
-  }
+  // Store with TTL metadata
+  const sessionWithTTL = {
+    ...data,
+    storedAt: Date.now(),
+    expiresAt: Date.now() + SESSION_TTL,
+  };
+  
+  sessions.set(sessionId, sessionWithTTL);
+  console.log(`   ✅ Stored successfully (${sessions.size} sessions in memory)`);
 }
 
 export function getSession(sessionId: string) {
-  const sessionPath = path.join(SESSIONS_DIR, `${sessionId}.json`);
+  console.log(`🔐 [SESSION RETRIEVE] Looking for session: ${sessionId}`);
   
-  console.log(`� [SESSION RETRIEVE] Looking for session: ${sessionId}`);
-  console.log(`   Path: ${sessionPath}`);
+  const sessionData = sessions.get(sessionId);
   
-  try {
-    if (fs.existsSync(sessionPath)) {
-      const sessionData = fs.readFileSync(sessionPath, 'utf-8');
-      const parsed = JSON.parse(sessionData);
-      console.log(`   ✅ Found and parsed successfully`);
-      return parsed;
-    } else {
-      console.log(`   ❌ File does not exist`);
-      return undefined;
-    }
-  } catch (error) {
-    console.error(`   ❌ Failed to retrieve session:`, error);
+  if (!sessionData) {
+    console.log(`   ❌ Session not found (${sessions.size} sessions in memory)`);
     return undefined;
   }
+  
+  // Check if session has expired
+  if (sessionData.expiresAt && sessionData.expiresAt < Date.now()) {
+    console.log(`   ⏰ Session expired, deleting`);
+    sessions.delete(sessionId);
+    return undefined;
+  }
+  
+  console.log(`   ✅ Found and valid (expires in ${Math.round((sessionData.expiresAt - Date.now()) / 1000)}s)`);
+  return sessionData;
 }
 
 export function deleteSession(sessionId: string) {
-  const sessionPath = path.join(SESSIONS_DIR, `${sessionId}.json`);
-  try {
-    if (fs.existsSync(sessionPath)) {
-      fs.unlinkSync(sessionPath);
-      console.log(`🗑️ [SESSION DELETE] Deleted session: ${sessionId}`);
-    }
-  } catch (error) {
-    console.error(`🗑️ [SESSION DELETE] Failed to delete session:`, error);
+  const existed = sessions.has(sessionId);
+  if (existed) {
+    sessions.delete(sessionId);
+    console.log(`🗑️ [SESSION DELETE] Deleted session: ${sessionId} (${sessions.size} remaining)`);
+  } else {
+    console.log(`🗑️ [SESSION DELETE] Session not found: ${sessionId}`);
   }
 }
 
 export function getAllSessions() {
-  try {
-    const files = fs.readdirSync(SESSIONS_DIR);
-    const sessions: Array<[string, any]> = [];
-    
-    for (const file of files) {
-      if (file.endsWith('.json')) {
-        const sessionId = file.replace('.json', '');
-        const sessionPath = path.join(SESSIONS_DIR, file);
-        const sessionData = JSON.parse(fs.readFileSync(sessionPath, 'utf-8'));
-        sessions.push([sessionId, sessionData]);
-      }
+  console.log(`📊 [SESSION LIST] Total sessions: ${sessions.size}`);
+  
+  const result: Array<[string, any]> = [];
+  const now = Date.now();
+  
+  for (const [sessionId, sessionData] of sessions.entries()) {
+    // Only include non-expired sessions
+    if (!sessionData.expiresAt || sessionData.expiresAt > now) {
+      result.push([sessionId, sessionData]);
     }
-    
-    return sessions;
-  } catch (error) {
-    console.error('Failed to get all sessions:', error);
-    return [];
   }
+  
+  return result;
 }
 
 export function clearAllSessions() {
-  try {
-    const files = fs.readdirSync(SESSIONS_DIR);
-    for (const file of files) {
-      if (file.endsWith('.json')) {
-        fs.unlinkSync(path.join(SESSIONS_DIR, file));
-      }
-    }
-    console.log(`🗑️ [SESSION CLEAR] Cleared all sessions`);
-  } catch (error) {
-    console.error('Failed to clear sessions:', error);
-  }
+  const count = sessions.size;
+  sessions.clear();
+  console.log(`🗑️ [SESSION CLEAR] Cleared all ${count} sessions`);
 }
