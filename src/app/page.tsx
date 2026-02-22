@@ -20,7 +20,6 @@ function HomeContent() {
   const router = useRouter();
   const sessionId = searchParams.get('session');
   const gameParam = searchParams.get('game');
-  const channelParam = searchParams.get('channel');
   
   const [selectedGame, setSelectedGame] = useState<string | null>(gameParam || null);
   const [user, setUser] = useState<TwitchUser | null>(null);
@@ -29,7 +28,6 @@ function HomeContent() {
   const [playerCount, setPlayerCount] = useState(0);
   const [_gameSessionId, setGameSessionId] = useState<string | null>(null);
   const [isMainDomain, setIsMainDomain] = useState(false); // Default to false for local testing
-  const [streamerChannel, setStreamerChannel] = useState<string | null>(channelParam || null);
   
   // Check if coming soon mode is enabled (for env variable)
   const isComingSoonEnv = process.env.NEXT_PUBLIC_COMING_SOON === 'true';
@@ -86,12 +84,8 @@ function HomeContent() {
   };
 
   const handleSelectGame = (gameId: string) => {
-    // Navigate to the games page with game ID
-    if (streamerChannel) {
-      // For streamer with channel name
-      router.push(`/games?id=${gameId}&channel=${streamerChannel}`);
-    } else if (sessionId) {
-      // For user with session
+    // Navigate to the games page with game ID and session parameter
+    if (sessionId) {
       router.push(`/games?id=${gameId}&session=${sessionId}`);
     }
   };
@@ -153,8 +147,8 @@ function HomeContent() {
       
       <Header />
       <main className="container mx-auto px-4 py-12 relative z-10">
-        {/* Streamer Login Banner - Only show if not logged in AND no session in URL AND not loading AND no channel */}
-        {!user && !loading && !sessionId && !streamerChannel && (
+        {/* Streamer Login Banner - Only show if not logged in AND no session in URL AND not loading */}
+        {!user && !loading && !sessionId && (
           <div className="mb-8 rounded-lg border-2 border-yellow-600/50 p-6 text-center" style={{background: 'linear-gradient(135deg, rgba(217, 119, 6, 0.1) 0%, rgba(217, 119, 6, 0.1) 100%)'}}>
             <div className="flex flex-col md:flex-row items-center justify-center gap-4">
               <div className="flex-1">
@@ -172,34 +166,19 @@ function HomeContent() {
           </div>
         )}
 
-        {/* Welcome message if logged in or streamer channel is set */}
-        {(user || streamerChannel) && (
+        {/* Welcome message if logged in */}
+        {user && (
           <div className="mb-8 text-center flex justify-between items-center">
             <div>
-              <h2 className="text-3xl font-bold text-yellow-400 mb-2">
-                {user ? `مرحباً ${user.displayName} 👋` : `مرحباً بك في القناة: ${streamerChannel} 📡`}
-              </h2>
+              <h2 className="text-3xl font-bold text-yellow-400 mb-2">مرحباً {user.displayName} 👋</h2>
               <p className="text-yellow-400/70">اختر لعبة لتبدأ البث المباشر</p>
             </div>
-            {user && (
-              <button
-                onClick={handleLogout}
-                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg transition-colors"
-              >
-                تسجيل خروج
-              </button>
-            )}
-            {streamerChannel && !user && (
-              <button
-                onClick={() => {
-                  setStreamerChannel(null);
-                  window.location.href = '/';
-                }}
-                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg transition-colors"
-              >
-                تسجيل خروج
-              </button>
-            )}
+            <button
+              onClick={handleLogout}
+              className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg transition-colors"
+            >
+              تسجيل خروج
+            </button>
           </div>
         )}
 
@@ -214,11 +193,11 @@ function HomeContent() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {games.map((game) => (
-            <div key={game.id} onClick={() => (user || streamerChannel) ? handleSelectGame(game.id) : null}>
+            <div key={game.id} onClick={() => user ? handleSelectGame(game.id) : null}>
               <GameCard
                 game={game}
                 isSelected={selectedGame === game.id}
-                onSelect={() => (user || streamerChannel) ? handleSelectGame(game.id) : null}
+                onSelect={() => user ? handleSelectGame(game.id) : null}
                 sessionId={sessionId || undefined}
               />
             </div>
