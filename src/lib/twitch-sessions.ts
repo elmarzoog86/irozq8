@@ -36,6 +36,8 @@ console.log(`🔐 [SESSION STORE INIT] In-memory session store initialized (TTL:
 
 export function storeSession(sessionId: string, data: any) {
   console.log(`🔐 [SESSION STORE] Storing session: ${sessionId}`);
+  console.log(`   Data keys:`, Object.keys(data));
+  console.log(`   User:`, data.user?.login);
   
   // Store with TTL metadata
   const sessionWithTTL = {
@@ -46,6 +48,10 @@ export function storeSession(sessionId: string, data: any) {
   
   sessions.set(sessionId, sessionWithTTL);
   console.log(`   ✅ Stored successfully (${sessions.size} sessions in memory)`);
+  
+  // Verify immediately
+  const storedData = sessions.get(sessionId);
+  console.log(`   🔍 Verification: session ${storedData ? 'EXISTS ✅' : 'MISSING ❌'} in memory`);
 }
 
 export function getSession(sessionId: string) {

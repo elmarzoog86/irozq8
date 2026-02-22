@@ -1,5 +1,5 @@
 import { NextResponse, NextRequest } from 'next/server';
-import { getSession, deleteSession } from '@/lib/twitch-sessions';
+import { getSession, deleteSession, getAllSessions } from '@/lib/twitch-sessions';
 
 export const dynamic = 'force-dynamic';
 
@@ -55,6 +55,24 @@ export async function GET(request: NextRequest) {
       const response = NextResponse.json({ success: true });
       response.cookies.delete('twitch_session');
       return response;
+    }
+
+    if (action === 'debug') {
+      // DEBUG: List all sessions in memory
+      const allSessions = getAllSessions();
+      console.log(`📊 [DEBUG] Total sessions in memory: ${allSessions.length}`);
+      
+      const sessionList = allSessions.map(([id, data]) => ({
+        sessionId: id,
+        user: data.user?.login || 'unknown',
+        expiresAt: new Date(data.expiresAt).toISOString(),
+      }));
+      
+      return NextResponse.json({
+        success: true,
+        totalSessions: allSessions.length,
+        sessions: sessionList,
+      });
     }
 
     return NextResponse.json(
