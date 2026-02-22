@@ -122,18 +122,11 @@ function GamePageContent() {
   // Connect to Twitch chat when game is running
   useTwitchChat({
     sessionId: sessionId || '',
-    enabled: gameStarted && gameId === 'questions',
+    enabled: gameStarted,
     onAnswer: handleChatAnswer,
     onMessage: handleChatMessage,
-  });
-
-  // Connect to Twitch chat for Fruits War
-  useTwitchChat({
-    sessionId: sessionId || '',
-    enabled: gameStarted && gameId === 'fruits-war',
     onJoin: handleChatJoin,
     onVote: handleChatVote,
-    onMessage: handleChatMessage,
   });
 
   if (!game) {
