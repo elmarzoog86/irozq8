@@ -23,32 +23,20 @@ function TwitchLoginContent() {
     setError('');
 
     try {
-      // Generate state for CSRF protection
-      const state = Math.random().toString(36).substring(7);
+      // Get OAuth URL from backend
+      const response = await fetch('/api/twitch/auth-url');
+      const data = await response.json();
       
-      // Store state in session storage
-      if (typeof window !== 'undefined') {
-        sessionStorage.setItem('twitch_oauth_state', state);
-      }
-
-      const TWITCH_CLIENT_ID = process.env.NEXT_PUBLIC_TWITCH_CLIENT_ID;
-      
-      if (!TWITCH_CLIENT_ID) {
-        setError('خطأ: لم يتم تكوين عميل Twitch بشكل صحيح');
+      if (!data.success || !data.authUrl) {
+        setError('خطأ: لم يتم تكوين عميل Twitch بشكل صحيح. تأكد من تعيين المتغيرات على Vercel');
         setLoading(false);
         return;
       }
 
-      const authUrl = new URL('https://id.twitch.tv/oauth2/authorize');
-      authUrl.searchParams.append('client_id', TWITCH_CLIENT_ID);
-      authUrl.searchParams.append('redirect_uri', window.location.origin + '/api/twitch/callback');
-      authUrl.searchParams.append('response_type', 'code');
-      authUrl.searchParams.append('scope', 'user:read:email user:read:chat chat:read analytics:read:extensions');
-      authUrl.searchParams.append('state', state);
-
       // Redirect to Twitch OAuth
-      window.location.href = authUrl.toString();
+      window.location.href = data.authUrl;
     } catch (err) {
+      console.error('Error:', err);
       setError('حدث خطأ أثناء محاولة تسجيل الدخول. يرجى المحاولة مرة أخرى.');
       setLoading(false);
     }
