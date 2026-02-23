@@ -6,7 +6,7 @@ import { useState, Suspense, useRef, useCallback } from 'react';
 import GameLayout from '@/components/GameLayout';
 import QuestionsGame, { type QuestionsGameHandle } from '@/components/QuestionsGame';
 import QuestionsLobby from '@/components/QuestionsLobby';
-import RouletteGame from '@/components/RouletteGame';
+import MusicalChairsGame from '@/components/MusicalChairsGame';
 import FruitsWarGame from '@/components/FruitsWarGame';
 import ChairsGame from '@/components/ChairsGame';
 import { useTwitchChat } from '@/hooks/useTwitchChat';
@@ -25,7 +25,7 @@ function GamePageContent() {
   const [players, setPlayers] = useState<Array<{id: number; name: string; score: number; eliminated: boolean; joined: boolean; emoji?: string; number?: number; lives?: number}>>([]);
   const [consoleLogs, setConsoleLogs] = useState<Array<{id: string; message: string; type: 'join' | 'leave' | 'system' | 'action'; timestamp: string}>>([]);
   const [chatMessages, setChatMessages] = useState<Array<{username: string; message: string; timestamp: string}>>([]);
-  const [usernameToIndex, setUsernameToIndex] = useState<Map<string, number>>(new Map());
+  const usernameToIndexRef = useRef<Map<string, number>>(new Map());
   const questionsGameRef = useRef<QuestionsGameHandle>(null);
   const fruitWarVotingRef = useRef<{handleChatVote: (fruitIndex: number) => void} | null>(null);
 
@@ -38,7 +38,13 @@ function GamePageContent() {
         <div className="text-center">
           <h1 className="text-4xl font-bold text-yellow-400 mb-6">لم يتم العثور على اللعبة</h1>
           <button
-            onClick={() => router.push('/')}
+            onClick={() => {
+              if (sessionId) {
+                router.push(`/?session=${sessionId}`);
+              } else {
+                router.push('/');
+              }
+            }}
             className="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-3 px-8 rounded-lg"
           >
             العودة للرئيسية
@@ -50,47 +56,67 @@ function GamePageContent() {
 
   // Memoize the onAnswer callback to prevent unnecessary re-connections
   const handleChatAnswer = useCallback((playerIndex: number, username: string, answer: string) => {
+    console.log(`🎮 [GAMES] handleChatAnswer called: playerIndex=${playerIndex}, username=${username}, answer=${answer}`);
+    
     // Auto-assign player index if not provided and username not seen before
     let actualPlayerIndex = playerIndex;
     if (playerIndex === 0 || playerIndex === undefined) {
-      // Find if we've seen this username before
-      const mapCopy = new Map(usernameToIndex);
-      if (!mapCopy.has(username)) {
+      // Find if we've seen this username before (use ref to avoid hook re-triggers)
+      if (!usernameToIndexRef.current.has(username)) {
         // Assign next available index
-        actualPlayerIndex = mapCopy.size;
-        mapCopy.set(username, actualPlayerIndex);
-        setUsernameToIndex(mapCopy);
+        actualPlayerIndex = usernameToIndexRef.current.size;
+        usernameToIndexRef.current.set(username, actualPlayerIndex);
+        console.log(`  → Assigned new player index: ${actualPlayerIndex} for ${username}`);
       } else {
-        actualPlayerIndex = mapCopy.get(username) || 0;
+        actualPlayerIndex = usernameToIndexRef.current.get(username) || 0;
+        console.log(`  → Found existing player index: ${actualPlayerIndex} for ${username}`);
       }
     }
     
+    console.log(`  → Passing to questionsGameRef.current with actualPlayerIndex=${actualPlayerIndex}`);
     if (questionsGameRef.current) {
       questionsGameRef.current.handleChatAnswer(actualPlayerIndex, username, answer);
+      console.log(`  ✅ Called questionsGameRef.current.handleChatAnswer`);
+    } else {
+      console.log(`  ⚠️ questionsGameRef.current is null!`);
     }
-  }, [usernameToIndex]);
+  }, []);
 
   // Handle all chat messages - display in chat panel
   const handleChatMessage = useCallback((username: string, message: string) => {
     const timestamp = new Date().toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-    setChatMessages(prevMessages => [...prevMessages, {
-      username,
-      message,
-      timestamp,
-    }]);
+    setChatMessages(prevMessages => {
+      // Check if the last message is identical to prevent duplicates
+      if (prevMessages.length > 0) {
+        const lastMsg = prevMessages[prevMessages.length - 1];
+        if (lastMsg.username === username && lastMsg.message === message && lastMsg.timestamp === timestamp) {
+          // Duplicate detected, don't add it
+          console.log(`⏭️  [CHAT] Duplicate message detected: ${username}: ${message}, skipping`);
+          return prevMessages;
+        }
+      }
+      // Not a duplicate, add it
+      console.log(`💬 [CHAT] Adding message: ${username}: ${message}`);
+      return [...prevMessages, {
+        username,
+        message,
+        timestamp,
+      }];
+    });
   }, []);
 
   // Handle chat join for Fruits War
   const handleChatJoin = useCallback((username: string) => {
     const timestamp = new Date().toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
     
+    // Check if player already exists (get from current state to avoid double adds)
     setPlayers(prevPlayers => {
-      // Check if player already joined
       const alreadyExists = prevPlayers.some(p => p.name === username);
       if (alreadyExists) return prevPlayers;
 
-      // Create a new player with random emoji
+      // Create a new player with random emoji and profile image
       const emojis = ['🍎', '🍊', '🍋', '🍌', '🍉', '🍇', '🍓', '🍒', '🥝', '🥑'];
+      // Use a generic Twitch profile URL format - will fallback to initials if not available
       const newPlayer = {
         id: prevPlayers.length + 1,
         name: username,
@@ -98,18 +124,19 @@ function GamePageContent() {
         eliminated: false,
         joined: true,
         emoji: emojis[(prevPlayers.length) % emojis.length],
+        profileImage: `https://static-cdn.jtvnw.net/jtv_user_pictures/${username.toLowerCase()}.png`,
       };
-
-      // Add to console log
-      setConsoleLogs(prevLogs => [...prevLogs, {
-        id: `join-${Date.now()}`,
-        message: `${username} انضم إلى اللعبة`,
-        type: 'join',
-        timestamp,
-      }]);
 
       return [...prevPlayers, newPlayer];
     });
+
+    // Add to console log separately
+    setConsoleLogs(prevLogs => [...prevLogs, {
+      id: `join-${username}-${Date.now()}`,
+      message: `${username} انضم إلى اللعبة`,
+      type: 'join',
+      timestamp,
+    }]);
   }, []);
 
   // Handle chat voting for Fruits War voting game
@@ -135,7 +162,13 @@ function GamePageContent() {
         <div className="text-center">
           <h1 className="text-4xl font-bold text-red-400 mb-4">لم يتم العثور على اللعبة</h1>
           <button 
-            onClick={() => router.push('/')}
+            onClick={() => {
+              if (sessionId) {
+                router.push(`/?session=${sessionId}`);
+              } else {
+                router.push('/');
+              }
+            }}
             className="bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white font-bold py-3 px-8 rounded-lg"
           >
             العودة للرئيسية
@@ -165,7 +198,11 @@ function GamePageContent() {
               setGameStarted(true);
             }}
             onBack={() => {
-              router.push('/');
+              if (sessionId) {
+                router.push(`/?session=${sessionId}`);
+              } else {
+                router.push('/');
+              }
             }}
           />
         </div>
@@ -181,11 +218,32 @@ function GamePageContent() {
       return null;
     }
 
+    // For Chairs game, start immediately with 100 players
+    if (gameId === 'chairs') {
+      const infinitePlayers = Array.from({ length: 100 }, (_, i) => ({
+        id: i + 1,
+        name: `لاعب ${i + 1}`,
+        score: 0,
+        eliminated: false,
+        joined: false,
+      }));
+      setPlayers(infinitePlayers);
+      setGameStarted(true);
+      // Return nothing to let it render the game on next render
+      return null;
+    }
+
     return (
       <GameLayout 
         gameName={game.nameAr}
         gameDescription={game.descriptionAr}
-        onBack={() => router.push('/')}
+        onBack={() => {
+          if (sessionId) {
+            router.push(`/?session=${sessionId}`);
+          } else {
+            router.push('/');
+          }
+        }}
       >
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Game Preview */}
@@ -245,7 +303,13 @@ function GamePageContent() {
                   ✓ بدء اللعبة
                 </button>
                 <button 
-                  onClick={() => router.push('/')}
+                  onClick={() => {
+                    if (sessionId) {
+                      router.push(`/?session=${sessionId}`);
+                    } else {
+                      router.push('/');
+                    }
+                  }}
                   className="w-full bg-gray-800 hover:bg-gray-700 text-white font-bold py-2 rounded-lg border border-gray-700"
                 >
                   ← العودة
@@ -268,13 +332,15 @@ function GamePageContent() {
       players,
       setPlayers,
       onEndGame: () => {
-        setGameStarted(false);
-        // Navigate back to home while preserving session
+        console.log('🔙 onEndGame called, navigating back...');
+        // Navigate back to home while preserving session (do this first)
         if (sessionId) {
           router.push(`/?session=${sessionId}`);
         } else {
           router.push('/');
         }
+        // Then set game started to false
+        setGameStarted(false);
       },
     };
 
@@ -286,7 +352,7 @@ function GamePageContent() {
           questionsPerRound={questionsCount}
         />;
       case 'roulette':
-        return <RouletteGame {...gameProps} />;
+        return <MusicalChairsGame {...gameProps} />;
       case 'fruits-war':
         return <FruitsWarGame {...gameProps} onChatJoin={handleChatJoin} />;
       case 'chairs':

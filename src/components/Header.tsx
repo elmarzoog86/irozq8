@@ -1,6 +1,12 @@
 'use client';
 
+import { useSearchParams } from 'next/navigation';
+import UserProfile from './UserProfile';
+
 export default function Header() {
+  const searchParams = useSearchParams();
+  const sessionId = searchParams.get('session');
+
   return (
     <header className="bg-gradient-to-r from-black to-gray-900 border-b border-yellow-600/50 sticky top-0 z-50 shadow-lg" style={{backgroundImage: 'linear-gradient(135deg, rgba(10, 10, 10, 0.95) 0%, rgba(10, 10, 10, 0.95) 100%)'}}>
       <div className="container mx-auto px-4 py-6 flex items-center justify-between">
@@ -18,6 +24,9 @@ export default function Header() {
 
         {/* Social Links & Contact */}
         <div className="flex items-center gap-6">
+          {/* User Profile - Show if logged in */}
+          {sessionId && <UserProfile />}
+
           {/* Discord */}
           <a
             href="https://discord.com/users/m86"

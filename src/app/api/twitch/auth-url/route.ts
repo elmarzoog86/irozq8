@@ -32,15 +32,21 @@ export async function GET() {
     authUrl.searchParams.append('client_id', TWITCH_CLIENT_ID);
     authUrl.searchParams.append('redirect_uri', TWITCH_REDIRECT_URI);
     authUrl.searchParams.append('response_type', 'code');
-    authUrl.searchParams.append('scope', 'user:read:email user:read:chat chat:read analytics:read:extensions');
+    authUrl.searchParams.append('scope', 'user:read:email chat:read');
     authUrl.searchParams.append('state', state);
 
     console.log(`✅ [AUTH-URL] Generated OAuth URL`);
-    console.log(`   Redirect to: ${TWITCH_REDIRECT_URI}`);
+    console.log(`   Client ID: ${TWITCH_CLIENT_ID}`);
+    console.log(`   Redirect URI: ${TWITCH_REDIRECT_URI}`);
+    console.log(`   Full URL: ${authUrl.toString()}`);
 
     return NextResponse.json({
       success: true,
-      authUrl: authUrl.toString()
+      authUrl: authUrl.toString(),
+      debug: {
+        clientId: TWITCH_CLIENT_ID,
+        redirectUri: TWITCH_REDIRECT_URI
+      }
     });
   } catch (error) {
     console.error('❌ [AUTH-URL] Error:', error);

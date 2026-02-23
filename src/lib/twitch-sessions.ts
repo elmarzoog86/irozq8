@@ -5,34 +5,48 @@
  * Note: For production, implement with Redis or database
  */
 
-// Global session storage - works across all serverless requests in same container
-const sessions = new Map<string, any>();
+// Global session storage - declare at module level
+declare global {
+  var twitchSessions: Map<string, any>;
+}
+
+// Initialize or use existing session store
+if (!global.twitchSessions) {
+  global.twitchSessions = new Map();
+  console.log(`🔐 [SESSION STORE INIT] Creating new in-memory session store`);
+} else {
+  console.log(`🔐 [SESSION STORE INIT] Using existing session store (${global.twitchSessions.size} sessions)`);
+}
+
+const sessions = global.twitchSessions;
 
 // Session TTL: 7 days
 const SESSION_TTL = 7 * 24 * 60 * 60 * 1000;
 
-// Cleanup task for expired sessions
-const cleanupInterval = setInterval(() => {
-  const now = Date.now();
-  let cleaned = 0;
-  
-  for (const [sessionId, sessionData] of sessions.entries()) {
-    if (sessionData.expiresAt && sessionData.expiresAt < now) {
-      sessions.delete(sessionId);
-      cleaned++;
-      console.log(`🗑️ [SESSION CLEANUP] Removed expired session: ${sessionId}`);
+// Cleanup task for expired sessions - only create once
+if (!global.sessionCleanupInitialized) {
+  const cleanupInterval = setInterval(() => {
+    const now = Date.now();
+    let cleaned = 0;
+    
+    for (const [sessionId, sessionData] of sessions.entries()) {
+      if (sessionData.expiresAt && sessionData.expiresAt < now) {
+        sessions.delete(sessionId);
+        cleaned++;
+        console.log(`🗑️ [SESSION CLEANUP] Removed expired session: ${sessionId}`);
+      }
     }
-  }
+    
+    if (cleaned > 0) {
+      console.log(`🗑️ [SESSION CLEANUP] Removed ${cleaned} expired sessions, ${sessions.size} remaining`);
+    }
+  }, 60 * 60 * 1000); // Run cleanup every hour
+
+  // Prevent the interval from keeping the process alive
+  cleanupInterval.unref?.();
   
-  if (cleaned > 0) {
-    console.log(`🗑️ [SESSION CLEANUP] Removed ${cleaned} expired sessions, ${sessions.size} remaining`);
-  }
-}, 60 * 60 * 1000); // Run cleanup every hour
-
-// Prevent the interval from keeping the process alive
-cleanupInterval.unref?.();
-
-console.log(`🔐 [SESSION STORE INIT] In-memory session store initialized (TTL: ${SESSION_TTL}ms)`);
+  global.sessionCleanupInitialized = true;
+}
 
 export function storeSession(sessionId: string, data: any) {
   console.log(`🔐 [SESSION STORE] Storing session: ${sessionId}`);

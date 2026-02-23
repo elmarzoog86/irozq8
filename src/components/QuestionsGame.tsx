@@ -46,16 +46,21 @@ const QuestionsGame = forwardRef<QuestionsGameHandle, QuestionsGameProps>(({
   useEffect(() => {
     if (!questions.length) return;
     
+    console.log(`🔄 [QUESTIONS] Resetting for question ${currentQuestionIndex + 1}`);
+    
     currentQuestionIndexRef.current = currentQuestionIndex;
     setTimeLeft(15);
     setAnswered(false);
-    setShowResults(false);
+    setShowResults(false);  // CRITICAL: Must reset before showing new question
+    setShowQuestionResults(false); // Also reset results modal
     setPlayerAnswers({});
     setChatMessages([]);
     setStreamerAnswer('');
     pointsAwardedRef.current = false;
     playerAnswersRef.current = {};
     inTransitionRef.current = false;
+    
+    console.log(`✅ [QUESTIONS] Reset complete - ready for question ${currentQuestionIndex + 1}`);
   }, [currentQuestionIndex, questions.length]);
 
   // Timer countdown effect
@@ -84,6 +89,9 @@ const QuestionsGame = forwardRef<QuestionsGameHandle, QuestionsGameProps>(({
     pointsAwardedRef.current = true;
     inTransitionRef.current = true;
 
+    console.log(`🏆 [POINTS] Awarding points for question ${currentQuestionIndexRef.current + 1}`);
+    console.log(`   Player answers: ${JSON.stringify(playerAnswersRef.current)}`);
+
     // Award points now that timer has ended
     const updatedPlayers = [...players];
     Object.entries(playerAnswersRef.current).forEach(([playerIndexStr, answerData]) => {
@@ -96,8 +104,11 @@ const QuestionsGame = forwardRef<QuestionsGameHandle, QuestionsGameProps>(({
       // Scoring: 86 at start (15s left), drops 3 points per second
       // Formula: 86 - (seconds elapsed * 3) = 86 - ((15 - timeLeftWhenAnswered) * 3)
       const points = isCorrect ? Math.max(0, 86 - ((15 - timeLeftWhenAnswered) * 3)) : 0;
+      console.log(`   → Player ${playerIndex} (${updatedPlayers[playerIndex].name}): isCorrect=${isCorrect}, timeLeft=${timeLeftWhenAnswered}, points=${points}`);
       updatedPlayers[playerIndex].score += points;
     });
+    
+    console.log(`   Final scores:`, updatedPlayers.map(p => `${p.name}=${p.score}`).join(', '));
     setPlayers(updatedPlayers);
     setShowResults(true);
 
@@ -118,7 +129,12 @@ const QuestionsGame = forwardRef<QuestionsGameHandle, QuestionsGameProps>(({
   }));
 
   const handleChatAnswer = (playerIndex: number, playerName: string, answer: string) => {
-    if (answered) return;
+    if (answered) {
+      console.log(`⏭️  [QUESTIONS] Ignoring answer - already answered`);
+      return;
+    }
+
+    console.log(`📝 [QUESTIONS] handleChatAnswer: playerIndex=${playerIndex}, playerName=${playerName}, answer=${answer}`);
 
     const currentQuestion = questions[currentQuestionIndex];
     
@@ -126,6 +142,9 @@ const QuestionsGame = forwardRef<QuestionsGameHandle, QuestionsGameProps>(({
     let answerIndex = currentQuestion.options.findIndex(
       (opt) => opt.toLowerCase().trim() === answer.toLowerCase().trim()
     );
+
+    console.log(`  → Searching for answer in options: ${currentQuestion.options.join(', ')}`);
+    console.log(`  → Found by text: answerIndex=${answerIndex}`);
 
     // Also check by number (1, 2, 3, 4)
     if (answerIndex === -1) {
@@ -138,14 +157,21 @@ const QuestionsGame = forwardRef<QuestionsGameHandle, QuestionsGameProps>(({
       const firstChar = answer.trim()[0];
       if (numberMap[firstChar] !== undefined) {
         answerIndex = numberMap[firstChar];
+        console.log(`  → Found by number: answerIndex=${answerIndex}`);
       }
     }
 
+    console.log(`  → Final answerIndex: ${answerIndex}, currentQuestion.correctAnswer: ${currentQuestion.correctAnswer}`);
+
     if (answerIndex !== -1) {
       // Only process first answer from this player
-      if (playerAnswers[playerIndex]) return;
+      if (playerAnswers[playerIndex]) {
+        console.log(`  ⏭️  Player ${playerIndex} already answered`);
+        return;
+      }
 
       const isCorrect = answerIndex === currentQuestion.correctAnswer;
+      console.log(`  → isCorrect: ${isCorrect}`);
 
       // Record the answer with the current timeLeft WITHOUT awarding points yet
       const updatedAnswers = { ...playerAnswers, [playerIndex]: {answerIndex, timeLeft} };
@@ -165,13 +191,17 @@ const QuestionsGame = forwardRef<QuestionsGameHandle, QuestionsGameProps>(({
         correct: isCorrect 
       };
       setChatMessages((prev) => [...prev, newMessage]);
+      console.log(`  ✅ Added message to chat: ${playerName} answered ${currentQuestion.options[answerIndex]}`);
 
       // If all players answered or it's the streamer's answer, show results
       if (Object.keys(updatedAnswers).length >= players.length || playerIndex === 0) {
+        console.log(`  → Setting answered=true (${Object.keys(updatedAnswers).length}/${players.length} players answered)`);
         setAnswered(true);
         // Don't show results yet - wait for timer to expire
         // setShowResults will be set to true when timer reaches 0
       }
+    } else {
+      console.log(`  ❌ Answer not found in options`);
     }
   };
 
@@ -230,13 +260,14 @@ const QuestionsGame = forwardRef<QuestionsGameHandle, QuestionsGameProps>(({
                 type="password"
                 value={streamerAnswer}
                 onChange={(e) => setStreamerAnswer(e.target.value)}
-                onKeyPress={(e) => {
+                onKeyDown={(e) => {
                   if (e.key === 'Enter') {
                     // Answer is submitted on Enter
-                    e.currentTarget.blur();
+                    handleChatAnswer(0, 'الستريمر', streamerAnswer);
+                    setStreamerAnswer('');
                   }
                 }}
-                placeholder="اكتب إجابتك هنا... (اضغط Enter)"
+                placeholder="اكتب إجابتك هنا... (اضغط Enter أو اضغط الزر)"
                 className="flex-1 px-4 py-3 bg-gray-900/50 border-2 border-yellow-400 rounded-lg text-yellow-100 placeholder-yellow-400/50 focus:outline-none focus:border-yellow-300 focus:ring-2 focus:ring-yellow-400/30 relative z-10"
                 autoComplete="off"
               />
@@ -245,6 +276,18 @@ const QuestionsGame = forwardRef<QuestionsGameHandle, QuestionsGameProps>(({
                   {streamerAnswer.split('').map(() => '★').join('')}
                 </div>
               </div>
+              <button
+                onClick={() => {
+                  if (streamerAnswer.trim()) {
+                    handleChatAnswer(0, 'الستريمر', streamerAnswer);
+                    setStreamerAnswer('');
+                  }
+                }}
+                disabled={answered || !streamerAnswer.trim()}
+                className="px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 disabled:from-gray-600 disabled:to-gray-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold rounded-lg transition-all whitespace-nowrap"
+              >
+                ✓ إرسال الإجابة
+              </button>
             </div>
             <p className="text-yellow-300 text-sm mt-2">الإجابة محمية - يظهر فقط النجوم للعارضين الآخرين</p>
           </div>
@@ -269,12 +312,11 @@ const QuestionsGame = forwardRef<QuestionsGameHandle, QuestionsGameProps>(({
                       }`}
                     >
                       <div className="flex justify-between items-start">
-                        <span className="font-bold text-yellow-300">{msg.player}:</span>
+                        <span className="font-bold text-yellow-300">{msg.player}</span>
                         <span className={showResults ? (msg.correct ? 'text-green-300' : 'text-red-300') : 'text-gray-400'}>
                           {showResults ? (msg.correct ? '✅' : '❌') : '⏳'}
                         </span>
                       </div>
-                      <div className="text-white ml-2">{msg.answer}</div>
                     </div>
                   ))}
                 </div>
@@ -355,7 +397,11 @@ const QuestionsGame = forwardRef<QuestionsGameHandle, QuestionsGameProps>(({
                     const playerAnswer = playerAnswers[player.id];
                     const answered = playerAnswer !== undefined;
                     const isCorrect = answered && playerAnswer.answerIndex === currentQuestion.correctAnswer;
-                    const pointsEarned = answered ? Math.max(86 - Math.floor((10 - playerAnswer.timeLeft) * 3), 0) : 0;
+                    // Points calculation: max 86, drops 3 points per second
+                    // Formula: isCorrect ? 86 - ((15 - timeLeftWhenAnswered) * 3) : 0
+                    const pointsEarned = answered && isCorrect ? Math.max(0, 86 - ((15 - playerAnswer.timeLeft) * 3)) : 0;
+
+                    console.log(`📊 [RESULTS] ${player.name}: answered=${answered}, isCorrect=${isCorrect}, timeLeft=${playerAnswer?.timeLeft}, pointsEarned=${pointsEarned}`);
 
                     return (
                       <div
@@ -382,7 +428,9 @@ const QuestionsGame = forwardRef<QuestionsGameHandle, QuestionsGameProps>(({
                             )}
                           </div>
                           <div className="text-right">
-                            <div className="text-2xl font-bold text-yellow-300">{pointsEarned}</div>
+                            <div className={`text-2xl font-bold ${isCorrect && pointsEarned > 0 ? 'text-yellow-300' : 'text-red-400'}`}>
+                              {pointsEarned > 0 ? `+${pointsEarned}` : '0'}
+                            </div>
                             <div className="text-xs text-yellow-200">نقاط</div>
                           </div>
                         </div>

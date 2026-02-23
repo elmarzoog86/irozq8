@@ -63,11 +63,11 @@ export default function QuestionsLobby({ onStartGame, onBack }: QuestionsLobbyPr
         <source src="/videos/wallpaper.webm" type="video/webm" />
       </video>
       
-      {/* Dark overlay */}
-      <div className="fixed inset-0 bg-black/50 -z-10"></div>
+      {/* Dark overlay with golden tint */}
+      <div className="fixed inset-0 bg-gradient-to-br from-black/75 via-yellow-950/40 to-black/75 -z-10"></div>
 
       {/* LEFT SECTION - System Log (سجل النظام) */}
-      <div className="w-80 flex flex-col border-r border-yellow-600/30 bg-gradient-to-b from-gray-950/80 to-black/80 shadow-xl relative z-10">
+      <div className="w-80 flex flex-col border-r-2 border-yellow-600/50 bg-gradient-to-b from-black/90 to-gray-950/90 shadow-2xl relative z-10">
         <div className="px-4 py-3 border-b border-yellow-600/30 bg-gradient-to-r from-yellow-600/20 to-yellow-700/20">
           <h3 className="text-sm font-bold bg-gradient-to-r from-yellow-400 to-yellow-500 bg-clip-text text-transparent">
             ✓ سجل النظام
@@ -152,7 +152,7 @@ export default function QuestionsLobby({ onStartGame, onBack }: QuestionsLobbyPr
       </div>
 
       {/* RIGHT SECTION - Settings */}
-      <div className="w-96 flex flex-col border-l border-yellow-600/30 bg-gradient-to-b from-gray-950/80 to-black/80 p-4 space-y-4 overflow-y-auto shadow-xl relative z-10">
+      <div className="w-96 flex flex-col border-l-2 border-yellow-600/50 bg-gradient-to-b from-black/90 to-gray-950/90 p-4 space-y-4 overflow-y-auto shadow-2xl relative z-10">
         
         {/* Header with Tabs */}
         <div className="flex gap-2 mb-4">

@@ -38,13 +38,19 @@ export function useTwitchChat({
   useEffect(() => {
     console.log(`🎣 [HOOK] useTwitchChat called - enabled: ${enabled}, sessionId: ${sessionId ? 'present' : 'missing'}`);
 
-    if (!enabled || !sessionId || hasInitialized.current) {
-      console.log(`⏭️  [HOOK] Skipping - enabled: ${enabled}, sessionId: ${!!sessionId}, hasInitialized: ${hasInitialized.current}`);
+    if (!enabled || !sessionId) {
+      console.log(`⏭️  [HOOK] Skipping - enabled: ${enabled}, sessionId: ${!!sessionId}`);
+      return;
+    }
+
+    // Only initialize once per session
+    if (hasInitialized.current) {
+      console.log(`⏭️  [HOOK] Already initialized, skipping`);
       return;
     }
 
     hasInitialized.current = true;
-    console.log(`� [HOOK] Initializing Twitch chat for session: ${sessionId}`);
+    console.log(`🎬 [HOOK] Initializing Twitch chat for session: ${sessionId}`);
 
     const initializeChat = async () => {
       try {
@@ -164,15 +170,17 @@ export function useTwitchChat({
         eventSource.addEventListener('message', (event) => {
           try {
             const data = JSON.parse(event.data);
-            console.log(`📨 [HOOK-EVENT] Received:`, data.type);
+            console.log(`📨 [HOOK-EVENT] Received:`, data.type, data);
 
             if (data.type === 'connected') {
               console.log(`✅ [HOOK-EVENT] Connected to channel: ${data.channel}`);
             } else if (data.type === 'message') {
               console.log(`💬 [HOOK-EVENT] Message from ${data.username}: ${data.message}`);
+              console.log(`   → Calling memoizedOnMessage callback`);
               
               // Call message callback
               memoizedOnMessage(data.username, data.message);
+              console.log(`   ✅ memoizedOnMessage callback completed`);
 
               // Check for !join command
               const message = data.message.toLowerCase().trim();
@@ -188,15 +196,6 @@ export function useTwitchChat({
                 console.log(`🗳️  [HOOK-EVENT] Vote command from ${data.username}: ${voteMatch[1]}`);
                 memoizedOnVote({playerIndex, username: data.username});
               }
-
-              // Parse as potential game answer
-              // This is a simple implementation - customize based on your game logic
-              if (memoizedOnAnswer) {
-                // Try to match the message as a game answer
-                // You can add answer parsing logic here
-                console.log(`📝 [HOOK-EVENT] Answer candidate: ${message}`);
-                memoizedOnAnswer(0, data.username, data.message);
-              }
             } else if (data.type === 'disconnected') {
               console.log(`❌ [HOOK-EVENT] Disconnected from channel: ${data.channel}`);
             }
@@ -208,8 +207,18 @@ export function useTwitchChat({
         eventSource.onerror = (error) => {
           console.error('❌ [HOOK-EVENT] SSE connection error:', error);
           if (eventSource.readyState === EventSource.CLOSED) {
-            console.log('❌ [HOOK-EVENT] SSE connection closed');
+            console.log('❌ [HOOK-EVENT] SSE connection closed, will retry automatically');
+            // Allow reconnection by resetting initialization flag
             hasInitialized.current = false;
+            // Auto-reconnect after delay
+            setTimeout(() => {
+              if (!hasInitialized.current) {
+                console.log('🔄 [HOOK] Auto-reconnecting...');
+                // Force reinitialization
+                hasInitialized.current = false;
+                initializeChat();
+              }
+            }, 2000);
           }
         };
 

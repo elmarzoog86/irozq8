@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 
 interface GameLayoutProps {
   gameName: string;
@@ -26,14 +26,6 @@ export default function GameLayout({
   const [minimizedConsole, setMinimizedConsole] = useState(false);
   const [minimizedChat, setMinimizedChat] = useState(false);
   const [minimizedPlayers, setMinimizedPlayers] = useState(false);
-
-  useEffect(() => {
-    consoleEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [consoleLogs]);
-
-  useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [chatMessages]);
 
   const joinedPlayers = players.filter(p => p.joined);
 

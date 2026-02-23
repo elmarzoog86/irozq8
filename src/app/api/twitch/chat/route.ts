@@ -106,6 +106,14 @@ export async function POST(request: NextRequest) {
 
           console.log(`📨 [CHAT PROXY] ${messageData.username}: ${message}`);
           
+          // Debug: Check if we have listeners
+          const client = activeChatClients.get(channelName);
+          if (client) {
+            console.log(`  → Broadcasting to ${client.listeners.size} listeners`);
+          } else {
+            console.log(`  ⚠️ No chat client found for ${channelName}`);
+          }
+          
           // Broadcast to all listeners
           broadcastToListeners(channelName, JSON.stringify(messageData));
         });
@@ -225,6 +233,18 @@ export function GET(request: NextRequest) {
         console.log(`⚠️  [CHAT SSE] No chat client for channel: ${channelName}`);
       }
 
+      // Heartbeat to keep connection alive
+      const heartbeatInterval = setInterval(() => {
+        try {
+          const heartbeat = encoder.encode(`:heartbeat\n\n`);
+          controller.enqueue(heartbeat);
+          console.log(`💓 [CHAT SSE] Heartbeat sent for ${channelName}`);
+        } catch (error) {
+          console.log(`Connection closed for ${channelName}`);
+          clearInterval(heartbeatInterval);
+        }
+      }, 30000); // Every 30 seconds
+
       // Handle client disconnect
       const cleanup = () => {
         const client = activeChatClients.get(channelName);
@@ -232,6 +252,7 @@ export function GET(request: NextRequest) {
           client.listeners.delete(listener);
           console.log(`➖ [CHAT SSE] Removed listener for ${channelName}, total: ${client.listeners.size}`);
         }
+        clearInterval(heartbeatInterval);
         try {
           controller.close();
         } catch (e) {
